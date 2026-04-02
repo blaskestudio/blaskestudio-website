@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getAllWork } from '@/lib/work';
 import WorkGrid from '@/components/ui/WorkGrid';
 
@@ -11,7 +12,9 @@ export default async function WorkPage() {
 
   return (
     <main className="pt-16 md:pt-24" style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
-      <WorkGrid items={work} />
+      <Suspense>
+        <WorkGrid items={work} />
+      </Suspense>
     </main>
   );
 }
