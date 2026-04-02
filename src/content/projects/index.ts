@@ -1,12 +1,12 @@
 import { Project } from '@/lib/types';
 
 export const projects: Project[] = [
-  // ── COMMERCIAL ────────────────────────────────────────────────────────────
+  // ── BRANDED ───────────────────────────────────────────────────────────────
   {
     slug: 'ranch-hand',
     contentType: 'project',
     title: 'Built to Take a Hit',
-    category: 'commercial',
+    category: 'branded',
     client: 'Ranch Hand',
     year: 2023,
     thumbnailGif: '/work/ranch-hand/preview.gif',
@@ -24,7 +24,7 @@ export const projects: Project[] = [
     slug: 'downtown-dining-alliance',
     contentType: 'project',
     title: 'Taste The Difference',
-    category: 'commercial',
+    category: 'branded',
     client: 'Downtown Dining Alliance',
     year: 2023,
     thumbnailGif: '/work/downtown-dining-alliance/preview.gif',
@@ -42,7 +42,7 @@ export const projects: Project[] = [
     slug: 'viewrail',
     contentType: 'project',
     title: 'The Difference',
-    category: 'commercial',
+    category: 'branded',
     client: 'Viewrail',
     year: 2023,
     thumbnailGif: '/work/viewrail/preview.gif',
@@ -60,7 +60,7 @@ export const projects: Project[] = [
     slug: 'janus-motorcycles',
     contentType: 'project',
     title: 'Do Not Go Gentle',
-    category: 'commercial',
+    category: 'branded',
     client: 'Janus Motorcycles',
     year: 2023,
     thumbnailGif: '/work/janus-motorcycles/preview.gif',
@@ -78,7 +78,7 @@ export const projects: Project[] = [
     slug: 'we-you',
     contentType: 'project',
     title: 'Clay Bottom Farm',
-    category: 'commercial',
+    category: 'branded',
     client: 'WE+YOU',
     year: 2023,
     thumbnailGif: '/work/we-you/preview.gif',
