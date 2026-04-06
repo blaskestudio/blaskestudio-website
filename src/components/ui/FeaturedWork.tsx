@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 function getSilentSrc(item: WorkItem): string {
   const video = item.contentType === 'project' ? item.video : item.heroVideo;
-  if (!video || video.type === 'local') return '';
+  if (!video || video.type === 'local' || !video.id) return '';
   if (video.type === 'vimeo')
     return `https://player.vimeo.com/video/${video.id}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`;
   if (video.type === 'youtube')
@@ -46,7 +46,7 @@ function FeaturedCard({ item, onClick, reversed }: { item: WorkItem; onClick: ()
       className={`group flex flex-col gap-6 sm:gap-8 py-12 items-start ${reversed ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setIframeReady(false); }}
+      onMouseLeave={() => setHovered(false)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
@@ -68,7 +68,7 @@ function FeaturedCard({ item, onClick, reversed }: { item: WorkItem; onClick: ()
             unoptimized={thumbnail.startsWith('https://img.youtube')}
           />
         )}
-        {silentSrc && hovered && (
+        {silentSrc && (
           <iframe
             src={silentSrc}
             className="absolute inset-0 w-full h-full transition-opacity duration-500"
