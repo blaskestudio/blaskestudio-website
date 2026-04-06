@@ -72,7 +72,7 @@ function Field({
 }
 
 const inputClass =
-  'w-full border border-neutral-200 rounded-full px-5 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400';
+  'w-full border border-neutral-200 px-5 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400';
 
 export default function InquireForm() {
   const [form, setForm] = useState({
@@ -172,7 +172,7 @@ export default function InquireForm() {
           placeholder="What are you hoping to create? Share the idea, goals, or vision for the project."
           value={form.project}
           onChange={(e) => set('project')(e.target.value)}
-          className="w-full border border-neutral-200 rounded-2xl px-5 py-4 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400 resize-none"
+          className="w-full border border-neutral-200 px-5 py-4 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400 resize-none"
         />
       </Field>
 
@@ -186,7 +186,7 @@ export default function InquireForm() {
         <button
           type="submit"
           disabled={loading}
-          className="px-10 py-3 bg-black text-white text-[10px] tracking-[0.12em] uppercase font-semibold rounded-full hover:bg-neutral-800 transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+          className="px-10 py-3 bg-black text-white text-[10px] tracking-[0.12em] uppercase font-semibold hover:bg-neutral-800 transition-colors duration-150 disabled:opacity-50 cursor-pointer"
         >
           {loading ? 'Sending…' : 'Send Inquiry'}
         </button>

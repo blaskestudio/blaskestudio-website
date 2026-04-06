@@ -26,7 +26,7 @@ export default function NewsletterForm() {
       </p>
       {/* Pill-shaped input + submit as a unified unit — height locked to match .pill */}
       <div
-        className="flex overflow-hidden border border-neutral-300 rounded-full transition-colors duration-150 focus-within:border-black"
+        className="flex overflow-hidden border border-neutral-300 transition-colors duration-150 focus-within:border-black"
         style={{ lineHeight: 1 }}
       >
         <input
