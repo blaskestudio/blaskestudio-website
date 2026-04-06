@@ -57,14 +57,16 @@ export default function FooterWordmark() {
   return (
     <>
       <style>{`
-        @keyframes letterRotate {
-          0%   { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        @keyframes letterBounce {
+          0%   { transform: translateY(0); }
+          35%  { transform: translateY(-14px); }
+          65%  { transform: translateY(-14px); }
+          100% { transform: translateY(0); }
         }
-        .letter-spin {
+        .letter-bounce {
           transform-box: fill-box;
-          transform-origin: center;
-          animation: letterRotate 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          transform-origin: bottom center;
+          animation: letterBounce 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
       `}</style>
 
@@ -80,7 +82,7 @@ export default function FooterWordmark() {
           <g
             key={i}
             transform={tx > 0 ? `translate(${tx} 0)` : undefined}
-            className={animated ? 'letter-spin' : undefined}
+            className={animated ? 'letter-bounce' : undefined}
             style={animated ? { animationDelay: `${i * 80}ms` } : undefined}
           >
             <path d={d} fill="black" />
