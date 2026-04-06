@@ -79,13 +79,15 @@ export default function FooterWordmark() {
         className="w-full block"
       >
         {LETTERS.map(({ d, tx }, i) => (
-          <g
-            key={i}
-            transform={tx > 0 ? `translate(${tx} 0)` : undefined}
-            className={animated ? 'letter-bounce' : undefined}
-            style={animated ? { animationDelay: `${i * 80}ms` } : undefined}
-          >
-            <path d={d} fill="black" />
+          // Outer g: handles SVG x-position (never animated)
+          // Inner g: handles the CSS bounce (no SVG transform, so no conflict)
+          <g key={i} transform={tx > 0 ? `translate(${tx} 0)` : undefined}>
+            <g
+              className={animated ? 'letter-bounce' : undefined}
+              style={animated ? { animationDelay: `${i * 80}ms` } : undefined}
+            >
+              <path d={d} fill="black" />
+            </g>
           </g>
         ))}
       </svg>
