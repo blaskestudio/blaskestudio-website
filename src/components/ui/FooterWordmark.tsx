@@ -42,13 +42,18 @@ export default function FooterWordmark() {
 
   useEffect(() => {
     if (!svgRef.current) return;
+    const hasBeenHidden = { current: false };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !animated) {
+        // Only fire after the element has been scrolled out of view at least once
+        if (!entry.isIntersecting) {
+          hasBeenHidden.current = true;
+        } else if (hasBeenHidden.current && !animated) {
           setAnimated(true);
         }
       },
-      { threshold: 0.6 }
+      { threshold: 0.2 }
     );
     observer.observe(svgRef.current);
     return () => observer.disconnect();
