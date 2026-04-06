@@ -18,7 +18,7 @@ export default function Nav() {
   const isHome = pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [introduced, setIntroduced] = useState(!isHome);
+  const [pastHero, setPastHero] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const lastScrollY = useRef(0);
 
@@ -26,14 +26,24 @@ export default function Nav() {
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   useEffect(() => {
-    if (!isHome) return;
-    const t = setTimeout(() => setIntroduced(true), 2500);
-    return () => clearTimeout(t);
+    // Sync immediately on route change
+    if (isHome) {
+      setPastHero(window.scrollY > window.innerHeight - 80);
+    } else {
+      setPastHero(true);
+    }
   }, [isHome]);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
+
+      // Track hero boundary on home page
+      if (isHome) {
+        setPastHero(currentY > window.innerHeight - 80);
+      }
+
+      // Hide/show on scroll direction
       if (currentY <= 0) {
         setHidden(false);
       } else if (currentY > lastScrollY.current && currentY > 80) {
@@ -46,10 +56,12 @@ export default function Nav() {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHome]);
 
-const textColor = isHome && !introduced ? 'white' : 'black';
-  const colorTransition = 'color 500ms ease, fill 500ms ease';
+  // White style only on home page while the hero is in view
+  const showWhite = isHome && !pastHero;
+
+  const textColor = showWhite ? 'white' : 'black';
 
   const linkClass = 'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold no-underline';
 
@@ -58,31 +70,18 @@ const textColor = isHome && !introduced ? 'white' : 'black';
       className="relative md:fixed md:top-0 md:left-0 md:right-0 z-50 overflow-visible"
       style={{
         height: 'var(--nav-height)',
-        background: 'transparent',
+        backgroundColor: showWhite ? 'transparent' : 'white',
         transform: hidden ? 'translateY(-100%)' : 'translateY(0)',
-        transition: 'transform 300ms cubic-bezier(0.4,0,0.2,1)',
+        transition: 'background-color 300ms ease, transform 300ms cubic-bezier(0.4,0,0.2,1)',
       }}
     >
-      {/* White background bar */}
-      <div
-        className="absolute inset-0 bg-white"
-        style={{
-          transform: (isHome && !introduced) ? 'translateY(-100%)' : 'translateY(0)',
-          transition: 'transform 800ms cubic-bezier(0.4,0,0.2,1)',
-          zIndex: 0,
-        }}
-      />
-
       {/* Nav content */}
       <div
         className="relative h-full flex items-center justify-between"
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         {/* Logo */}
-        <Link
-          href="/"
-          className="no-underline shrink-0"
-        >
+        <Link href="/" className="no-underline shrink-0">
           <Image
             src="/logo.webp"
             alt="Blaske Studio"
@@ -92,17 +91,19 @@ const textColor = isHome && !introduced ? 'white' : 'black';
               height: '36px',
               width: 'auto',
               display: 'block',
-              filter: (isHome && !introduced) ? 'invert(1)' : 'invert(0)',
-              transition: 'filter 500ms ease',
+              filter: showWhite ? 'invert(1)' : 'invert(0)',
+              transition: 'filter 300ms ease',
             }}
             priority
           />
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map(({ href, label, external }) => {
             const active = !external && isActive(href);
+            const hovered = hoveredLink === href;
+
             return (
               <Link
                 key={href}
@@ -111,14 +112,32 @@ const textColor = isHome && !introduced ? 'white' : 'black';
                 aria-current={active ? 'page' : undefined}
                 onMouseEnter={() => { if (!active) setHoveredLink(href); }}
                 onMouseLeave={() => setHoveredLink(null)}
-                className={[
-                  linkClass,
-                  active ? 'underline underline-offset-[3px] decoration-[2.84px] pointer-events-none' : '',
-                ].join(' ')}
-                style={{
-                  color: textColor,
-                  transition: colorTransition,
-                }}
+                className={linkClass}
+                style={
+                  active
+                    ? {
+                        // Box outline for active link, same height as logo
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        height: '36px',
+                        padding: '0 10px',
+                        border: `1px solid ${textColor}`,
+                        color: textColor,
+                        transition: 'color 300ms ease, border-color 300ms ease',
+                        pointerEvents: 'none',
+                      }
+                    : {
+                        // Filled box on hover for non-active
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        height: '36px',
+                        padding: '0 10px',
+                        backgroundColor: hovered ? 'black' : 'transparent',
+                        color: hovered ? 'white' : textColor,
+                        border: hovered ? '1px solid black' : '1px solid transparent',
+                        transition: 'background-color 150ms ease, color 150ms ease, border-color 150ms ease',
+                      }
+                }
               >
                 {label}
               </Link>
@@ -133,19 +152,25 @@ const textColor = isHome && !introduced ? 'white' : 'black';
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          <span className={`block h-px transition-all duration-300 origin-center ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}
-            style={{ backgroundColor: textColor, transition: `background-color 500ms ease, transform 300ms` }} />
-          <span className={`block h-px transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}
-            style={{ backgroundColor: textColor, transition: `background-color 500ms ease, opacity 300ms` }} />
-          <span className={`block h-px transition-all duration-300 origin-center ${menuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`}
-            style={{ backgroundColor: textColor, transition: `background-color 500ms ease, transform 300ms` }} />
+          <span
+            className={`block h-px transition-all duration-300 origin-center ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}
+            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, transform 300ms' }}
+          />
+          <span
+            className={`block h-px transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}
+            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, opacity 300ms' }}
+          />
+          <span
+            className={`block h-px transition-all duration-300 origin-center ${menuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`}
+            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, transform 300ms' }}
+          />
         </button>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
         <nav
-          className="md:hidden absolute top-full left-0 right-0 bg-white"
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-neutral-100"
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
         >
           <ul className="flex flex-col py-6 gap-6">
