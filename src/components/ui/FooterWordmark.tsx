@@ -59,14 +59,13 @@ export default function FooterWordmark() {
       <style>{`
         @keyframes letterBounce {
           0%   { transform: translateY(0); }
-          35%  { transform: translateY(-14px); }
-          65%  { transform: translateY(-14px); }
+          40%  { transform: translateY(-10px); }
           100% { transform: translateY(0); }
         }
         .letter-bounce {
           transform-box: fill-box;
           transform-origin: bottom center;
-          animation: letterBounce 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+          animation: letterBounce 0.22s ease-in-out forwards;
         }
       `}</style>
 
@@ -77,6 +76,7 @@ export default function FooterWordmark() {
         xmlns="http://www.w3.org/2000/svg"
         aria-label="Blaske"
         className="w-full block"
+        overflow="visible"
       >
         {LETTERS.map(({ d, tx }, i) => (
           // Outer g: handles SVG x-position (never animated)
@@ -84,7 +84,7 @@ export default function FooterWordmark() {
           <g key={i} transform={tx > 0 ? `translate(${tx} 0)` : undefined}>
             <g
               className={animated ? 'letter-bounce' : undefined}
-              style={animated ? { animationDelay: `${i * 80}ms` } : undefined}
+              style={animated ? { animationDelay: `${i * 45}ms` } : undefined}
             >
               <path d={d} fill="black" />
             </g>
