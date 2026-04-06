@@ -13,10 +13,6 @@ export default function InquirePage() {
         <h1 className="text-4xl md:text-5xl font-medium tracking-tight mb-4">
           Let&rsquo;s make something.
         </h1>
-        <p className="text-base text-neutral-600 mb-12 leading-relaxed">
-          Tell us about your project and we&rsquo;ll be in touch.
-        </p>
-
         <div className="border border-black p-8 md:p-12">
           <InquireForm />
         </div>
