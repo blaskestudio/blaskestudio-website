@@ -103,11 +103,13 @@ function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void 
         </div>
 
         {/* Metadata */}
-        <div className="flex flex-col gap-3 sm:w-1/4">
-          <span className="text-xl md:text-[32px] font-bold tracking-tight text-black leading-tight">
-            {item.title}
-          </span>
-          <span className="text-sm text-neutral-700">{item.client}</span>
+        <div className="flex flex-col gap-4 sm:w-1/4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xl md:text-[32px] font-bold tracking-tight text-black leading-tight">
+              {item.title}
+            </span>
+            <span className="text-sm text-neutral-400 font-normal">{item.client}</span>
+          </div>
           <div className="flex flex-col gap-2 mt-2">
             <Link
               href={`/work?category=${item.contentType === 'case-study' ? 'case-study' : item.category}`}
