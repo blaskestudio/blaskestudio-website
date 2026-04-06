@@ -23,6 +23,7 @@ export default function Nav() {
   const [hidden, setHidden] = useState(false);
   const [introduced, setIntroduced] = useState(!isHome);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [logoHovered, setLogoHovered] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
   const workRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
@@ -98,7 +99,12 @@ export default function Nav() {
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center no-underline shrink-0">
+        <Link
+          href="/"
+          className="flex flex-col items-start no-underline shrink-0 gap-[3px]"
+          onMouseEnter={() => setLogoHovered(true)}
+          onMouseLeave={() => setLogoHovered(false)}
+        >
           <svg
             viewBox="0 0 456 88"
             fill="none"
@@ -113,6 +119,23 @@ export default function Nav() {
             <g transform="translate(310 0)"><path d="M0 0H30.15V39.36C32.11 35.27 32.5 33.54 34.46 30.32L51.69 0H79.49L54.82 40.85L80.27 86.65H48.94L33.28 54.34C32.11 51.99 30.93 48.65 30.15 45.06V86.65H0V0Z" fill="currentColor" /></g>
             <g transform="translate(399 0)"><path d="M30.15 37.13H50.51V46.04H30.15V77.73H56.39V86.64H0V0H56.39V8.91H30.15V37.13Z" fill="currentColor" /></g>
           </svg>
+
+          {/* STUDIO — reveals on logo hover */}
+          <span
+            style={{
+              color: textColor,
+              fontSize: '8px',
+              fontWeight: 700,
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+              opacity: logoHovered ? 1 : 0,
+              transform: logoHovered ? 'translateY(0)' : 'translateY(-3px)',
+              transition: `opacity 200ms ease, transform 200ms ease, ${colorTransition}`,
+            }}
+          >
+            Studio
+          </span>
         </Link>
 
         {/* Desktop nav */}
