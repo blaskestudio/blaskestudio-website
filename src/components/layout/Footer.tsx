@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import NewsletterForm from '@/components/ui/NewsletterForm';
 
 const SOCIAL_LINKS = [
@@ -44,52 +45,67 @@ const SOCIAL_LINKS = [
   },
 ];
 
-const footerLabelClass =
+const labelClass =
   'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase text-black font-bold leading-none';
+
+// External link arrow (↗)
+const ExternalArrow = () => (
+  <svg
+    width="10" height="10" viewBox="0 0 10 10"
+    fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+    aria-hidden="true"
+    style={{ flexShrink: 0 }}
+  >
+    <path d="M2 8L8 2M4 2H8V6" />
+  </svg>
+);
 
 export default function Footer() {
   return (
     <footer className="mt-auto shrink-0 min-h-screen flex flex-col justify-between">
 
-      {/* Main grid */}
+      {/* Main grid — 3 cols on desktop */}
       <div
-        className="py-12 grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-6"
+        className="py-12 grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-6"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
 
-        {/* Col 1 — Studio info */}
+        {/* Col 1 — Location & Hours */}
         <div className="flex flex-col gap-5">
-          <p className={footerLabelClass}>Blaske Studio</p>
-
-          <div className="flex flex-col gap-4 mt-1 text-sm text-neutral-700">
-            <p>
-              <span className="text-black font-medium">Contact: </span>
-              <a
-                href="mailto:hello@blaskestudio.com"
-                className="hover:text-black transition-colors duration-150"
-              >
-                hello@blaskestudio.com
-              </a>
-            </p>
-
-            <div className="flex flex-col gap-0.5">
-              <span className="text-black font-medium">Location:</span>
-              <span>240 E Tutt Street</span>
-              <span>South Bend, IN 46601</span>
-            </div>
-
-            <p>
-              <span className="text-black font-medium">Hours: </span>
-              By appointment
-            </p>
+          <p className={labelClass}>Location &amp; Hours</p>
+          <div className="flex flex-col gap-0.5 text-sm text-neutral-700 leading-relaxed">
+            <span>240 E Tutt Street</span>
+            <span>South Bend, IN 46601</span>
+            <span className="mt-3">By appointment only</span>
           </div>
         </div>
 
-        {/* Col 2 — Newsletter + social icons */}
-        <div className="flex flex-col gap-5 justify-start">
-          <NewsletterForm />
+        {/* Col 2 — Contact Us */}
+        <div className="flex flex-col gap-5">
+          <p className={labelClass}>Contact Us</p>
+          <div className="flex flex-col gap-3 text-sm text-neutral-700">
+            <a
+              href="mailto:hello@blaskestudio.com"
+              className="inline-flex items-center gap-1.5 hover:text-black transition-colors duration-150"
+            >
+              hello@blaskestudio.com
+              <ExternalArrow />
+            </a>
+            <Link
+              href="/inquire"
+              className="inline-flex items-center gap-1.5 hover:text-black transition-colors duration-150 no-underline"
+            >
+              Inquire
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M0 4H9M6 1L9 4L6 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
 
-          {/* Social icons */}
+        {/* Col 3 — Newsletter + social */}
+        <div className="flex flex-col gap-5">
+          <NewsletterForm />
           <div className="flex gap-3">
             {SOCIAL_LINKS.map(({ label, href, icon }) => (
               <a

@@ -2,68 +2,105 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, CSSProperties } from 'react';
 import Image from 'next/image';
 
-const NAV_LINKS = [
-  { href: '/work', label: 'Work' },
-  { href: '/capabilities', label: 'Capabilities' },
+const WORK_LINKS = [
+  { href: '/work?type=video', label: 'Video' },
+  { href: '/work?type=photo', label: 'Photo' },
+];
+
+const ABOUT_LINKS = [
+  { href: '/about', label: 'About Us' },
+  { href: '/studio', label: 'Studio Space' },
   { href: 'https://blaskestudio.substack.com/', label: 'News', external: true },
-  { href: '/about', label: 'About' },
-  { href: '/inquire', label: 'Inquire' },
 ];
 
 export default function Nav() {
   const pathname = usePathname();
   const isHome = pathname === '/';
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [workOpen, setWorkOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+
   const lastScrollY = useRef(0);
+  const workTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const aboutTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+    pathname.startsWith(href.split('?')[0]);
+
+  const workActive = pathname.startsWith('/work');
+  const aboutActive = pathname.startsWith('/about') || pathname.startsWith('/studio');
 
   useEffect(() => {
-    // Sync immediately on route change
-    if (isHome) {
-      setPastHero(window.scrollY > window.innerHeight - 80);
-    } else {
-      setPastHero(true);
-    }
+    setPastHero(isHome ? window.scrollY > window.innerHeight - 80 : true);
   }, [isHome]);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentY = window.scrollY;
-
-      // Track hero boundary on home page
-      if (isHome) {
-        setPastHero(currentY > window.innerHeight - 80);
-      }
-
-      // Hide/show on scroll direction
-      if (currentY <= 0) {
-        setHidden(false);
-      } else if (currentY > lastScrollY.current && currentY > 80) {
-        setHidden(true);
-        setMenuOpen(false);
-      } else if (currentY < lastScrollY.current) {
-        setHidden(false);
-      }
-      lastScrollY.current = currentY;
+      const y = window.scrollY;
+      if (isHome) setPastHero(y > window.innerHeight - 80);
+      if (y <= 0) setHidden(false);
+      else if (y > lastScrollY.current && y > 80) { setHidden(true); setMenuOpen(false); }
+      else if (y < lastScrollY.current) setHidden(false);
+      lastScrollY.current = y;
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isHome]);
 
-  // White style only on home page while the hero is in view
   const showWhite = isHome && !pastHero;
-
   const textColor = showWhite ? 'white' : 'black';
 
+  // Dropdown open/close with short delay so mouse can travel to panel
+  const openWork  = () => { clearTimeout(workTimer.current);  setWorkOpen(true);  };
+  const closeWork = () => { workTimer.current  = setTimeout(() => setWorkOpen(false),  80); };
+  const keepWork  = () => { clearTimeout(workTimer.current); };
+  const openAbout  = () => { clearTimeout(aboutTimer.current); setAboutOpen(true);  };
+  const closeAbout = () => { aboutTimer.current = setTimeout(() => setAboutOpen(false), 80); };
+  const keepAbout  = () => { clearTimeout(aboutTimer.current); };
+
+  // Nav item style — active = filled, hover = outline, default = plain
+  const itemStyle = (active: boolean, hovered: boolean): CSSProperties => {
+    const base: CSSProperties = {
+      display: 'inline-flex', alignItems: 'center',
+      height: '36px', padding: '0 10px',
+      transition: 'background-color 150ms ease, color 150ms ease, border-color 150ms ease',
+    };
+    if (active) {
+      return {
+        ...base,
+        backgroundColor: showWhite ? 'white' : 'black',
+        color: showWhite ? 'black' : 'white',
+        border: `1px solid ${showWhite ? 'white' : 'black'}`,
+        pointerEvents: 'none',
+      };
+    }
+    if (hovered) {
+      return {
+        ...base,
+        backgroundColor: 'transparent',
+        color: textColor,
+        border: `1px solid ${textColor}`,
+      };
+    }
+    return {
+      ...base,
+      backgroundColor: 'transparent',
+      color: textColor,
+      border: '1px solid transparent',
+    };
+  };
+
   const linkClass = 'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold no-underline';
+
+  const dropdownItemClass =
+    'block px-4 py-2.5 text-[12px] tracking-[0.06em] uppercase font-semibold text-black hover:bg-neutral-50 no-underline transition-colors duration-100';
 
   return (
     <header
@@ -75,7 +112,6 @@ export default function Nav() {
         transition: 'background-color 300ms ease, transform 300ms cubic-bezier(0.4,0,0.2,1)',
       }}
     >
-      {/* Nav content */}
       <div
         className="relative h-full flex items-center justify-between"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
@@ -88,9 +124,7 @@ export default function Nav() {
             width={120}
             height={46}
             style={{
-              height: '36px',
-              width: 'auto',
-              display: 'block',
+              height: '36px', width: 'auto', display: 'block',
               filter: showWhite ? 'invert(1)' : 'invert(0)',
               transition: 'filter 300ms ease',
             }}
@@ -99,50 +133,80 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map(({ href, label, external }) => {
-            const active = !external && isActive(href);
-            const hovered = hoveredLink === href;
+        <nav className="hidden md:flex items-center gap-4">
 
-            return (
-              <Link
-                key={href}
-                href={href}
-                {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-                aria-current={active ? 'page' : undefined}
-                onMouseEnter={() => { if (!active) setHoveredLink(href); }}
-                onMouseLeave={() => setHoveredLink(null)}
-                className={linkClass}
-                style={
-                  active
-                    ? {
-                        // Box outline for active link, same height as logo
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        height: '36px',
-                        padding: '0 10px',
-                        border: `1px solid ${textColor}`,
-                        color: textColor,
-                        transition: 'color 300ms ease, border-color 300ms ease',
-                        pointerEvents: 'none',
-                      }
-                    : {
-                        // Filled box on hover for non-active
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        height: '36px',
-                        padding: '0 10px',
-                        backgroundColor: hovered ? 'black' : 'transparent',
-                        color: hovered ? 'white' : textColor,
-                        border: hovered ? '1px solid black' : '1px solid transparent',
-                        transition: 'background-color 150ms ease, color 150ms ease, border-color 150ms ease',
-                      }
-                }
+          {/* Work dropdown */}
+          <div className="relative" onMouseEnter={openWork} onMouseLeave={closeWork}>
+            <Link href="/work" className={linkClass} style={itemStyle(workActive, workOpen && !workActive)}>
+              Work
+            </Link>
+            {workOpen && (
+              <div
+                className="absolute left-0 top-full pt-1 z-50"
+                onMouseEnter={keepWork}
+                onMouseLeave={closeWork}
               >
-                {label}
-              </Link>
-            );
-          })}
+                <div className="bg-white border border-neutral-100 shadow-sm py-1 min-w-[148px]">
+                  {WORK_LINKS.map(({ href, label }) => (
+                    <Link key={href} href={href} onClick={() => setWorkOpen(false)} className={dropdownItemClass}>
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Capabilities */}
+          <Link
+            href="/capabilities"
+            className={linkClass}
+            onMouseEnter={() => setHoveredLink('/capabilities')}
+            onMouseLeave={() => setHoveredLink(null)}
+            style={itemStyle(isActive('/capabilities'), hoveredLink === '/capabilities')}
+          >
+            Capabilities
+          </Link>
+
+          {/* About dropdown */}
+          <div className="relative" onMouseEnter={openAbout} onMouseLeave={closeAbout}>
+            <Link href="/about" className={linkClass} style={itemStyle(aboutActive, aboutOpen && !aboutActive)}>
+              About
+            </Link>
+            {aboutOpen && (
+              <div
+                className="absolute left-0 top-full pt-1 z-50"
+                onMouseEnter={keepAbout}
+                onMouseLeave={closeAbout}
+              >
+                <div className="bg-white border border-neutral-100 shadow-sm py-1 min-w-[160px]">
+                  {ABOUT_LINKS.map(({ href, label, external }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setAboutOpen(false)}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className={dropdownItemClass}
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Inquire */}
+          <Link
+            href="/inquire"
+            className={linkClass}
+            onMouseEnter={() => setHoveredLink('/inquire')}
+            onMouseLeave={() => setHoveredLink(null)}
+            style={itemStyle(isActive('/inquire'), hoveredLink === '/inquire')}
+          >
+            Inquire
+          </Link>
+
         </nav>
 
         {/* Mobile hamburger */}
@@ -152,18 +216,13 @@ export default function Nav() {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          <span
-            className={`block h-px transition-all duration-300 origin-center ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}
-            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, transform 300ms' }}
-          />
-          <span
-            className={`block h-px transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}
-            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, opacity 300ms' }}
-          />
-          <span
-            className={`block h-px transition-all duration-300 origin-center ${menuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`}
-            style={{ backgroundColor: textColor, transition: 'background-color 300ms ease, transform 300ms' }}
-          />
+          {(['rotate-45 translate-y-[7px]', '', '-rotate-45 -translate-y-[7px]'] as const).map((rotate, i) => (
+            <span
+              key={i}
+              className={`block h-px transition-all duration-300 ${i === 0 ? `origin-center ${menuOpen ? rotate : ''}` : i === 1 ? `${menuOpen ? 'opacity-0' : ''}` : `origin-center ${menuOpen ? rotate : ''}`}`}
+              style={{ backgroundColor: textColor }}
+            />
+          ))}
         </button>
       </div>
 
@@ -173,21 +232,46 @@ export default function Nav() {
           className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-neutral-100"
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
         >
-          <ul className="flex flex-col py-6 gap-6">
-            {NAV_LINKS.map(({ href, label, external }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  onClick={() => setMenuOpen(false)}
-                  {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-                  className={`text-[13px] tracking-[0.04em] uppercase font-bold ${
-                    !external && isActive(href) ? 'text-black' : 'text-neutral-700 hover:text-black'
-                  }`}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
+          <ul className="flex flex-col py-6 gap-5">
+            <li>
+              <p className="text-[10px] tracking-[0.08em] uppercase font-bold text-neutral-400 mb-2">Work</p>
+              <ul className="flex flex-col gap-3 pl-3">
+                {WORK_LINKS.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link href={href} onClick={() => setMenuOpen(false)}
+                      className="text-[13px] tracking-[0.04em] uppercase font-bold text-neutral-700 hover:text-black no-underline">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li>
+              <Link href="/capabilities" onClick={() => setMenuOpen(false)}
+                className={`text-[13px] tracking-[0.04em] uppercase font-bold no-underline ${isActive('/capabilities') ? 'text-black' : 'text-neutral-700 hover:text-black'}`}>
+                Capabilities
+              </Link>
+            </li>
+            <li>
+              <p className="text-[10px] tracking-[0.08em] uppercase font-bold text-neutral-400 mb-2">About</p>
+              <ul className="flex flex-col gap-3 pl-3">
+                {ABOUT_LINKS.map(({ href, label, external }) => (
+                  <li key={href}>
+                    <Link href={href} onClick={() => setMenuOpen(false)}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="text-[13px] tracking-[0.04em] uppercase font-bold text-neutral-700 hover:text-black no-underline">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li>
+              <Link href="/inquire" onClick={() => setMenuOpen(false)}
+                className={`text-[13px] tracking-[0.04em] uppercase font-bold no-underline ${isActive('/inquire') ? 'text-black' : 'text-neutral-700 hover:text-black'}`}>
+                Inquire
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
