@@ -3,7 +3,6 @@ import { GeistSans } from 'geist/font/sans';
 import './globals.css';
 import 'dialkit/styles.css';
 import ConditionalShell from '@/components/layout/ConditionalShell';
-import CursorLabel from '@/components/ui/CursorLabel';
 import { DialRoot } from 'dialkit';
 
 export const metadata: Metadata = {
@@ -28,7 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.variable}>
       <body className="flex flex-col min-h-screen">
-        <CursorLabel />
         <ConditionalShell>{children}</ConditionalShell>
         <DialRoot />
       </body>

@@ -135,8 +135,8 @@ const textColor = isHome && !introduced ? 'white' : 'black';
                   active ? 'underline underline-offset-[3px] decoration-[2.84px] pointer-events-none' : '',
                 ].join(' ')}
                 style={{
-                  color: hoveredLink === href ? '#60A5FA' : textColor,
-                  transition: hoveredLink === href ? 'color 150ms ease' : colorTransition,
+                  color: textColor,
+                  transition: colorTransition,
                 }}
               >
                 {label}

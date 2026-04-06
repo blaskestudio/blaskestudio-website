@@ -4,20 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
 const HERO_ID = 'OUhcJS9PIBE';
-const NAV_DELAY = 2500; // must match Nav.tsx
 
 const SILENT_SRC = `https://www.youtube.com/embed/${HERO_ID}?autoplay=1&mute=1&controls=0&loop=1&playlist=${HERO_ID}&modestbranding=1&rel=0&playsinline=1&disablekb=1`;
 const SOUND_SRC  = `https://www.youtube.com/embed/${HERO_ID}?autoplay=1&rel=0&modestbranding=1`;
 
 export default function HeroVideo() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [cursorReady, setCursorReady]   = useState(false);
-
-  // Show cursor label at the same moment the nav slides in
-  useEffect(() => {
-    const t = setTimeout(() => setCursorReady(true), NAV_DELAY);
-    return () => clearTimeout(t);
-  }, []);
 
   const close = useCallback(() => setLightboxOpen(false), []);
 
@@ -41,7 +33,6 @@ export default function HeroVideo() {
         role="button"
         aria-label="Play reel with sound"
         tabIndex={0}
-        {...(cursorReady ? { 'data-cursor-label': 'Watch Full Reel' } : {})}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setLightboxOpen(true); }}
       >
         <iframe

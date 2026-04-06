@@ -72,7 +72,7 @@ function Field({
 }
 
 const inputClass =
-  'w-full border border-neutral-200 px-5 py-3 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400';
+  'w-full border border-black px-5 py-3 text-sm text-black bg-white focus:outline-none transition-colors duration-150 placeholder:text-neutral-400 placeholder:font-normal';
 
 export default function InquireForm() {
   const [form, setForm] = useState({
@@ -172,7 +172,7 @@ export default function InquireForm() {
           placeholder="What are you hoping to create? Share the idea, goals, or vision for the project."
           value={form.project}
           onChange={(e) => set('project')(e.target.value)}
-          className="w-full border border-neutral-200 px-5 py-4 text-sm text-black bg-white focus:outline-none focus:border-black transition-colors duration-150 placeholder:text-neutral-400 resize-none"
+          className="w-full border border-black px-5 py-4 text-sm text-black bg-white focus:outline-none transition-colors duration-150 placeholder:text-neutral-400 placeholder:font-normal resize-none"
         />
       </Field>
 

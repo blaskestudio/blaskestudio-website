@@ -72,7 +72,7 @@ export default function WorkCard({ item, onClick }: Props) {
       <div
         className="relative w-full aspect-video overflow-hidden"
         style={{ background: '#111' }}
-        data-cursor-label={isCaseStudy ? 'Read the Story' : 'Watch Video'}
+
       >
         {/* Thumbnail — fades out once iframe is playing */}
         {thumbnail && (

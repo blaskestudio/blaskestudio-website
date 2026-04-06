@@ -17,7 +17,7 @@ export default function InquirePage() {
           Tell us about your project and we&rsquo;ll be in touch.
         </p>
 
-        <div className="border border-neutral-200 rounded-2xl p-8 md:p-12">
+        <div className="border border-black p-8 md:p-12">
           <InquireForm />
         </div>
 

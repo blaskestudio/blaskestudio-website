@@ -66,7 +66,7 @@ export default function Footer() {
               <span className="text-black font-medium">Contact: </span>
               <a
                 href="mailto:hello@blaskestudio.com"
-                className="hover:text-[#60A5FA] transition-colors duration-150"
+                className="hover:text-black transition-colors duration-150"
               >
                 hello@blaskestudio.com
               </a>
@@ -98,7 +98,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-600 hover:border-[#60A5FA] hover:text-[#60A5FA] transition-colors duration-150"
+                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-black hover:border-black transition-colors duration-150"
               >
                 {icon}
               </a>

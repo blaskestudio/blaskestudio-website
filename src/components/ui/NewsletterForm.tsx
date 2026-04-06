@@ -26,7 +26,7 @@ export default function NewsletterForm() {
       </p>
       {/* Pill-shaped input + submit as a unified unit — height locked to match .pill */}
       <div
-        className="flex overflow-hidden border border-neutral-300 transition-colors duration-150 focus-within:border-black"
+        className="flex overflow-hidden border border-black transition-colors duration-150"
         style={{ lineHeight: 1 }}
       >
         <input
@@ -34,7 +34,7 @@ export default function NewsletterForm() {
           name="email"
           placeholder="your@email.com"
           required
-          className="flex-1 min-w-0 text-[10px] tracking-[0.12em] font-semibold uppercase text-black placeholder-neutral-400 bg-white outline-none leading-none"
+          className="flex-1 min-w-0 text-[10px] tracking-[0.12em] font-semibold uppercase text-black placeholder:text-neutral-400 placeholder:font-normal placeholder:tracking-normal placeholder:normal-case bg-white outline-none leading-none"
           style={{ padding: '0.75rem 1.25rem', lineHeight: 1 }}
         />
         <button

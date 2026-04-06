@@ -89,7 +89,7 @@ export default function DesignSystemPage() {
               { name: 'Neutral 400', hex: '#a3a3a3', bg: 'bg-neutral-400' },
               { name: 'Neutral 500', hex: '#737373', bg: 'bg-neutral-500', light: true },
               { name: 'Neutral 700', hex: '#404040', bg: 'bg-neutral-700', light: true },
-              { name: 'Accent Blue', hex: '#60A5FA', bg: 'bg-[#60A5FA]' },
+              { name: 'Accent', hex: '#0a0a0a', bg: 'bg-[#0a0a0a]', light: true },
               { name: 'Accent Yellow', hex: '#FFD000', bg: 'bg-[#FFD000]' },
             ].map(({ name, hex, bg, light, border }) => (
               <div key={hex}>
@@ -130,7 +130,7 @@ export default function DesignSystemPage() {
             ].map(({ label, value, desc }) => (
               <div key={label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3 border-b border-neutral-100">
                 <span className="font-mono text-[12px] text-black min-w-[220px]">{label}</span>
-                <span className="font-mono text-[12px] text-[#60A5FA]">{value}</span>
+                <span className="font-mono text-[12px] text-neutral-500">{value}</span>
                 <span className="text-[12px] text-neutral-400">{desc}</span>
               </div>
             ))}
@@ -152,7 +152,7 @@ export default function DesignSystemPage() {
             ].map(({ label, value, desc }) => (
               <div key={label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3 border-b border-neutral-100">
                 <span className="font-mono text-[12px] text-black min-w-[260px]">{label}</span>
-                <span className="font-mono text-[12px] text-[#60A5FA]">{value}</span>
+                <span className="font-mono text-[12px] text-neutral-500">{value}</span>
                 <span className="text-[12px] text-neutral-400">{desc}</span>
               </div>
             ))}
@@ -167,7 +167,7 @@ export default function DesignSystemPage() {
               { label: 'CHM Collections', url: 'https://www.computerhistory.org/collections/catalog/102776101/', note: 'Bold all-caps nav pills, high contrast' },
             ].map(({ label, url, note }) => (
               <div key={url} className="flex items-baseline gap-4 py-3 border-b border-neutral-100">
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-black hover:text-[#60A5FA] transition-colors">{label}</a>
+                <a href={url} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-black hover:opacity-60 transition-opacity">{label}</a>
                 <span className="text-[12px] text-neutral-400">{note}</span>
               </div>
             ))}

@@ -23,19 +23,22 @@ export default async function Home() {
 
       {/* ── 2. Studio statement ───────────────────────────────── */}
       <section
-        className="relative py-16 md:py-24"
+        className="py-16 md:py-24 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        {/* Fine vertical rule — right content edge, top of section → bottom of section */}
-        <div
-          className="absolute top-0 bottom-0 w-px bg-neutral-200 pointer-events-none"
-          style={{ right: 'var(--page-gutter)' }}
-          aria-hidden="true"
-        />
-
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight max-w-2xl leading-tight">
           Award-winning, full-service production company based in South Bend, Indiana.
         </h2>
+        <Link
+          href="/work"
+          className="shrink-0 inline-flex items-center gap-2 border border-black px-6 py-3 text-[10px] tracking-[0.12em] uppercase font-semibold text-black bg-transparent hover:bg-black hover:text-white transition-colors duration-150 no-underline"
+        >
+          View All Work
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}>
+            <line x1="0" y1="5" x2="7" y2="5" />
+            <polyline points="7,0 12,5 7,10" />
+          </svg>
+        </Link>
       </section>
 
       {/* ── 3. Selected Work ──────────────────────────────────── */}
@@ -43,22 +46,12 @@ export default async function Home() {
 
         {/* Sticky label row */}
         <div
-          className="sticky top-0 z-40 bg-white flex items-baseline justify-between py-4"
+          className="sticky top-0 z-40 bg-white flex items-baseline py-4"
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
         >
-          <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">
+          <h2 className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase text-black font-bold">
             Selected Work
           </h2>
-          <Link
-            href="/work"
-            className="flex items-center gap-2 text-sm tracking-[0.12em] uppercase text-black font-semibold no-underline hover:text-[#60A5FA] transition-colors duration-150"
-          >
-            View All
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}>
-              <line x1="0" y1="5" x2="7" y2="5" />
-              <polyline points="7,0 12,5 7,10" />
-            </svg>
-          </Link>
         </div>
 
         <div

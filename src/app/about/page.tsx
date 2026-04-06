@@ -50,7 +50,7 @@ export default function AboutPage() {
             </p>
             <Link
               href="/studio"
-              className="flex items-center gap-2 text-[10px] tracking-[0.12em] uppercase font-semibold text-black no-underline hover:text-[#60A5FA] transition-colors duration-150 mt-2 self-start"
+              className="flex items-center gap-2 text-[10px] tracking-[0.12em] uppercase font-semibold text-black no-underline hover:opacity-60 transition-opacity duration-150 mt-2 self-start"
             >
               See the space
               <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}>

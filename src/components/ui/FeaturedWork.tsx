@@ -55,7 +55,6 @@ function FeaturedCard({ item, onClick, reversed }: { item: WorkItem; onClick: ()
       <div
         className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0"
         style={{ background: '#111' }}
-        data-cursor-label={isCaseStudy ? 'Read the Story' : 'Watch Video'}
       >
         {thumbnail && (
           <Image
@@ -100,7 +99,7 @@ function FeaturedCard({ item, onClick, reversed }: { item: WorkItem; onClick: ()
 
       {/* Metadata */}
       <div className={`flex flex-col gap-3 sm:pt-1 sm:w-1/4 ${reversed ? 'sm:items-end sm:text-right' : ''}`}>
-        <span className="text-[14px] md:text-[17px] lg:text-[20px] font-bold text-black leading-tight">
+        <span className="text-3xl md:text-5xl font-bold tracking-tight text-black leading-tight">
           {item.title}
         </span>
         <span className="text-sm text-neutral-700">{item.client}</span>
