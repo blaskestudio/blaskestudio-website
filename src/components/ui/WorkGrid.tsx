@@ -10,7 +10,6 @@ const FILTERS: { label: string; value: WorkCategory | 'all' | 'case-study' }[] =
   { label: 'All', value: 'all' },
   { label: 'Branded', value: 'branded' },
   { label: 'Documentary', value: 'documentary' },
-  { label: 'Photography', value: 'photography' },
   { label: 'Case Studies', value: 'case-study' },
 ];
 

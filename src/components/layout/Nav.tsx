@@ -5,11 +5,15 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 const NAV_LINKS = [
-  { href: '/work', label: 'Work' },
   { href: '/capabilities', label: 'Capabilities' },
   { href: 'https://blaskestudio.substack.com/', label: 'News', external: true },
   { href: '/about', label: 'About' },
   { href: '/inquire', label: 'Inquire' },
+];
+
+const WORK_DROPDOWN = [
+  { href: '/work', label: 'Video' },
+  { href: '/film', label: 'Film' },
 ];
 
 export default function Nav() {
@@ -19,10 +23,14 @@ export default function Nav() {
   const [hidden, setHidden] = useState(false);
   const [introduced, setIntroduced] = useState(!isHome);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [workOpen, setWorkOpen] = useState(false);
+  const workRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+  const isWorkActive = pathname.startsWith('/work') || pathname.startsWith('/film');
 
   useEffect(() => {
     if (!isHome) return;
@@ -38,6 +46,7 @@ export default function Nav() {
       } else if (currentY > lastScrollY.current && currentY > 80) {
         setHidden(true);
         setMenuOpen(false);
+        setWorkOpen(false);
       } else if (currentY < lastScrollY.current) {
         setHidden(false);
       }
@@ -47,23 +56,33 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // On home before introduced: text is white, floating over video
-  // After introduced (or not home): text turns black
+  // Close work dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (workRef.current && !workRef.current.contains(e.target as Node)) {
+        setWorkOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
   const textColor = isHome && !introduced ? 'white' : 'black';
   const colorTransition = 'color 500ms ease, fill 500ms ease';
 
+  const linkClass = 'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold no-underline';
+
   return (
     <header
-      className="relative md:fixed md:top-0 md:left-0 md:right-0 z-50 overflow-hidden"
+      className="relative md:fixed md:top-0 md:left-0 md:right-0 z-50 overflow-visible"
       style={{
         height: 'var(--nav-height)',
         background: 'transparent',
-        // Scroll hide/show — whole header
         transform: hidden ? 'translateY(-100%)' : 'translateY(0)',
         transition: 'transform 300ms cubic-bezier(0.4,0,0.2,1)',
       }}
     >
-      {/* ── White background bar — slides in on intro only ── */}
+      {/* White background bar */}
       <div
         className="absolute inset-0 bg-white"
         style={{
@@ -73,14 +92,10 @@ export default function Nav() {
         }}
       />
 
-      {/* ── Nav content — always visible, color transitions ── */}
+      {/* Nav content */}
       <div
         className="relative h-full flex items-center justify-between"
-        style={{
-          paddingLeft: 'var(--page-gutter)',
-          paddingRight: 'var(--page-gutter)',
-          zIndex: 1,
-        }}
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
       >
         {/* Logo */}
         <Link href="/" className="flex items-center no-underline shrink-0">
@@ -100,8 +115,66 @@ export default function Nav() {
           </svg>
         </Link>
 
-        {/* Desktop nav links */}
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
+
+          {/* Work dropdown */}
+          <div ref={workRef} className="relative">
+            <button
+              onClick={() => setWorkOpen(v => !v)}
+              onMouseEnter={() => setHoveredLink('work')}
+              onMouseLeave={() => { setHoveredLink(null); }}
+              className={[
+                linkClass,
+                'bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1.5',
+                isWorkActive ? 'underline underline-offset-[3px] decoration-[2.84px]' : '',
+              ].join(' ')}
+              style={{
+                color: hoveredLink === 'work' ? '#60A5FA' : textColor,
+                transition: hoveredLink === 'work' ? 'color 150ms ease' : colorTransition,
+              }}
+            >
+              Work
+              {/* chevron */}
+              <svg
+                width="9" height="6" viewBox="0 0 9 6" fill="none"
+                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                style={{
+                  transform: workOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 200ms ease',
+                  marginTop: '1px',
+                }}
+              >
+                <polyline points="1,1 4.5,5 8,1" />
+              </svg>
+            </button>
+
+            {/* Dropdown panel */}
+            {workOpen && (
+              <div
+                className="absolute top-full left-0 mt-3 bg-white border border-neutral-100 shadow-sm py-1 min-w-[120px]"
+                style={{ borderRadius: '6px' }}
+              >
+                {WORK_DROPDOWN.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setWorkOpen(false)}
+                    className={[
+                      linkClass,
+                      'block px-4 py-2.5 no-underline transition-colors duration-150',
+                      isActive(href) ? 'text-black' : 'text-neutral-500 hover:text-black',
+                    ].join(' ')}
+                    style={{ fontSize: '13px' }}
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Other links */}
           {NAV_LINKS.map(({ href, label, external }) => {
             const active = !external && isActive(href);
             return (
@@ -113,12 +186,12 @@ export default function Nav() {
                 onMouseEnter={() => { if (!active) setHoveredLink(href); }}
                 onMouseLeave={() => setHoveredLink(null)}
                 className={[
-                  'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold no-underline',
+                  linkClass,
                   active ? 'underline underline-offset-[3px] decoration-[2.84px] pointer-events-none' : '',
                 ].join(' ')}
                 style={{
                   color: hoveredLink === href ? '#60A5FA' : textColor,
-                  transition: hoveredLink === href ? 'color 150ms ease' : 'color 500ms ease, fill 500ms ease',
+                  transition: hoveredLink === href ? 'color 150ms ease' : colorTransition,
                 }}
               >
                 {label}
@@ -129,7 +202,7 @@ export default function Nav() {
 
         {/* Mobile hamburger */}
         <button
-          onClick={() => setMenuOpen((v) => !v)}
+          onClick={() => setMenuOpen(v => !v)}
           className="md:hidden flex flex-col justify-center gap-[5px] w-6 h-6 p-0 bg-transparent border-0 cursor-pointer"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
@@ -150,6 +223,27 @@ export default function Nav() {
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
         >
           <ul className="flex flex-col py-6 gap-6">
+            {/* Work sub-items */}
+            <li>
+              <span className={`text-[13px] tracking-[0.04em] uppercase font-bold text-neutral-400`}>
+                Work
+              </span>
+              <ul className="flex flex-col gap-3 mt-3 pl-3">
+                {WORK_DROPDOWN.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`text-[13px] tracking-[0.04em] uppercase font-bold ${
+                        isActive(href) ? 'text-black' : 'text-neutral-700 hover:text-black'
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
             {NAV_LINKS.map(({ href, label, external }) => (
               <li key={href}>
                 <Link

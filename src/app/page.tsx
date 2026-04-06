@@ -34,7 +34,7 @@ export default async function Home() {
         />
 
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight max-w-2xl leading-tight">
-          An award-winning, full-service production company based in South Bend, Indiana.
+          Award-winning, full-service production company based in South Bend, Indiana.
         </h2>
       </section>
 

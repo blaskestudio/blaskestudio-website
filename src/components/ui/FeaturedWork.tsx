@@ -100,7 +100,7 @@ function FeaturedCard({ item, onClick, reversed }: { item: WorkItem; onClick: ()
 
       {/* Metadata */}
       <div className={`flex flex-col gap-3 sm:pt-1 sm:w-1/4 ${reversed ? 'sm:items-end sm:text-right' : ''}`}>
-        <span className="text-base md:text-lg font-bold text-black leading-tight">
+        <span className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black leading-tight">
           {item.title}
         </span>
         <span className="text-sm text-neutral-700">{item.client}</span>
