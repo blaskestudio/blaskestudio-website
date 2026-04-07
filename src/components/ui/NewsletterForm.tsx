@@ -34,7 +34,7 @@ export default function NewsletterForm() {
           name="email"
           placeholder="your@email.com"
           required
-          className="flex-1 min-w-0 text-[10px] tracking-[0.12em] font-semibold uppercase text-black placeholder:text-neutral-400 placeholder:font-normal placeholder:tracking-normal placeholder:normal-case bg-white outline-none leading-none"
+          className="flex-1 min-w-0 text-[10px] tracking-[0.12em] font-semibold uppercase text-black placeholder:text-[16px] placeholder:text-neutral-400 placeholder:font-normal placeholder:tracking-normal placeholder:normal-case bg-white outline-none leading-none"
           style={{ padding: '0.75rem 1.25rem', lineHeight: 1 }}
         />
         <button
@@ -43,7 +43,7 @@ export default function NewsletterForm() {
           className="text-[10px] tracking-[0.12em] uppercase font-semibold bg-black text-white shrink-0 hover:bg-neutral-800 transition-colors duration-150 disabled:opacity-50 cursor-pointer leading-none"
           style={{ padding: '0.75rem 1.25rem', lineHeight: 1 }}
         >
-          {pending ? '…' : 'Subscribe'}
+          {pending ? '…' : 'Sign Up'}
         </button>
       </div>
       {result && !result.ok && (

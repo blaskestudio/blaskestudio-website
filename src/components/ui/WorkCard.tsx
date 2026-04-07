@@ -70,7 +70,7 @@ export default function WorkCard({ item, onClick }: Props) {
     >
       {/* ── Media container ──────────────────────────────── */}
       <div
-        className="relative w-full aspect-video overflow-hidden"
+        className="relative w-full aspect-video overflow-hidden transition-transform duration-300 ease-out group-hover:scale-[1.02]"
         style={{ background: '#111' }}
 
       >
@@ -110,8 +110,6 @@ export default function WorkCard({ item, onClick }: Props) {
           />
         )}
 
-        {/* Dark hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300 pointer-events-none" />
 
         {isCaseStudy && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -131,11 +129,11 @@ export default function WorkCard({ item, onClick }: Props) {
       </div>
 
       {/* ── Metadata ─────────────────────────────────────── */}
-      <div className="flex flex-col gap-1">
-        <span className="text-sm font-medium text-black">{item.title}</span>
-        <p className="text-xs text-neutral-400 tracking-wide">
-          {item.client}{item.year ? ` — ${item.year}` : ''}
-        </p>
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[13px] text-neutral-400 font-normal leading-snug">{item.title}</span>
+        <span className="text-[13px] text-neutral-400 font-normal leading-snug">
+          {item.client}{item.year ? `, ${item.year}` : ''}
+        </span>
       </div>
     </div>
   );

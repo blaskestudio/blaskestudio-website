@@ -13,7 +13,7 @@ const WORK_LINKS = [
 const ABOUT_LINKS = [
   { href: '/about', label: 'About Us' },
   { href: '/studio', label: 'Studio Space' },
-  { href: 'https://blaskestudio.substack.com/', label: 'News', external: true },
+  { href: 'https://blaskestudio.substack.com/', label: 'News', external: true, arrow: true },
 ];
 
 export default function Nav() {
@@ -180,15 +180,20 @@ export default function Nav() {
                 onMouseLeave={closeAbout}
               >
                 <div className="bg-white border border-neutral-100 shadow-sm py-1 min-w-[160px]">
-                  {ABOUT_LINKS.map(({ href, label, external }) => (
+                  {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
                     <Link
                       key={href}
                       href={href}
                       onClick={() => setAboutOpen(false)}
                       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className={dropdownItemClass}
+                      className={dropdownItemClass + ' flex items-center gap-1.5'}
                     >
                       {label}
+                      {arrow && (
+                        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M2 8L8 2M4 2H8V6" />
+                        </svg>
+                      )}
                     </Link>
                   ))}
                 </div>
@@ -255,12 +260,17 @@ export default function Nav() {
             <li>
               <p className="text-[10px] tracking-[0.08em] uppercase font-bold text-neutral-400 mb-2">About</p>
               <ul className="flex flex-col gap-3 pl-3">
-                {ABOUT_LINKS.map(({ href, label, external }) => (
+                {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
                   <li key={href}>
                     <Link href={href} onClick={() => setMenuOpen(false)}
                       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className="text-[13px] tracking-[0.04em] uppercase font-bold text-neutral-700 hover:text-black no-underline">
+                      className="inline-flex items-center gap-1.5 text-[13px] tracking-[0.04em] uppercase font-bold text-neutral-700 hover:text-black no-underline">
                       {label}
+                      {arrow && (
+                        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M2 8L8 2M4 2H8V6" />
+                        </svg>
+                      )}
                     </Link>
                   </li>
                 ))}

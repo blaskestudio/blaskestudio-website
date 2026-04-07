@@ -25,7 +25,7 @@ export default function AboutPage() {
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
-          A studio built on craft, collaboration, and cinematic vision.
+          Built on craft, collaboration, and cinematic vision.
         </h1>
       </section>
 
@@ -84,8 +84,8 @@ export default function AboutPage() {
               We maintain a core team of directors, producers, and editors — and expand with trusted collaborators for every project. Our network spans cinematographers, colorists, sound designers, and motion artists across the Midwest and beyond.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-neutral-200">
-              {TEAM.map(({ name, role, initials }) => (
-                <div key={name} className="bg-white flex flex-col gap-3 p-6">
+              {TEAM.map(({ name, role, initials }, i) => (
+                <div key={`${name}-${i}`} className="bg-white flex flex-col gap-3 p-6">
                   {/* Avatar placeholder */}
                   <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center">
                     <span className="text-[11px] tracking-[0.08em] font-semibold text-neutral-500">{initials}</span>

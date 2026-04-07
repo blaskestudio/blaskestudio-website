@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { WorkItem, CATEGORY_LABELS, WorkCategory } from '@/lib/types';
-import VideoLightbox from './VideoLightbox';
 import Link from 'next/link';
+import HeroVideo from '@/components/ui/HeroVideo';
+import VideoLightbox from '@/components/ui/VideoLightbox';
+import { WorkItem, CATEGORY_LABELS, WorkCategory } from '@/lib/types';
 
+// ── Helpers ────────────────────────────────────────────────────
 function getSilentSrc(item: WorkItem): string {
   const video = item.contentType === 'project' ? item.video : item.heroVideo;
   if (!video || video.type === 'local' || !video.id) return '';
@@ -24,15 +26,12 @@ function isYouTubeItem(item: WorkItem): boolean {
 
 function getAutoThumbnail(item: WorkItem): string {
   const video = item.contentType === 'project' ? item.video : item.heroVideo;
-  if (video?.type === 'youtube')
+  if (video?.type === 'youtube' && video.id)
     return `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
   return '';
 }
 
-interface Props {
-  items: WorkItem[];
-}
-
+// ── Featured slide ─────────────────────────────────────────────
 function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void }) {
   const [iframeReady, setIframeReady] = useState(false);
   const isCaseStudy = item.contentType === 'case-study';
@@ -43,11 +42,7 @@ function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void 
   return (
     <div
       className="w-full h-full bg-black flex items-center cursor-pointer group"
-      style={{
-        paddingTop: 'var(--nav-height)',
-        paddingLeft: 'var(--page-gutter)',
-        paddingRight: 'var(--page-gutter)',
-      }}
+      style={{ paddingTop: 'var(--nav-height)', paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       onClick={onClick}
       role="button"
       tabIndex={0}
@@ -55,12 +50,8 @@ function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void 
       aria-label={isCaseStudy ? `Read case study: ${item.title}` : `Play: ${item.title}`}
     >
       <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-8 items-center">
-
         {/* Video */}
-        <div
-          className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0"
-          style={{ background: '#000' }}
-        >
+        <div className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0" style={{ background: '#000' }}>
           {thumbnail && (
             <Image
               src={thumbnail}
@@ -123,18 +114,25 @@ function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void 
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
 }
 
-export default function FeaturedWork({ items }: Props) {
+// ── Main ───────────────────────────────────────────────────────
+interface Props {
+  items: WorkItem[];
+}
+
+export default function HomeSlideDeck({ items }: Props) {
   const router = useRouter();
   const [lightboxItem, setLightboxItem] = useState<WorkItem | null>(null);
   const [scrolled, setScrolled] = useState(0);
   const [vh, setVh] = useState(800);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Total = 1 hero+studio slide + N featured slides
+  const totalSlides = items.length + 1;
 
   useEffect(() => {
     setVh(window.innerHeight);
@@ -148,48 +146,81 @@ export default function FeaturedWork({ items }: Props) {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       setScrolled(Math.max(0, -rect.top));
+      // Tell Nav to stay white as long as deck container is in the viewport
+      window.dispatchEvent(
+        new CustomEvent('hero-deck-change', { detail: { active: rect.bottom > 0 } })
+      );
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // set initial state
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleClick = useCallback(
-    (item: WorkItem) => {
-      if (item.contentType === 'case-study') {
-        router.push(`/work/${item.slug}`);
-      } else {
-        setLightboxItem(item);
-      }
-    },
-    [router]
-  );
+  const handleClick = useCallback((item: WorkItem) => {
+    if (item.contentType === 'case-study') {
+      router.push(`/work/${item.slug}`);
+    } else {
+      setLightboxItem(item);
+    }
+  }, [router]);
+
+  // Slide 0 progress (hero+studio exiting)
+  const slide0Progress = vh > 0 ? Math.min(1, Math.max(0, scrolled / vh)) : 0;
 
   return (
     <>
-      {/* Outer container creates scroll space: N slides × 100vh */}
-      <div
-        ref={containerRef}
-        style={{ height: `${items.length * 100}vh` }}
-      >
-        {/* Sticky viewport — cards stack inside here */}
-        <div
-          style={{
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            overflow: 'hidden',
-          }}
-        >
-          {items.map((item, i) => {
-            // How far through this card's scroll slot are we? (0 → 1)
-            const progress = vh > 0
-              ? Math.min(1, Math.max(0, (scrolled - i * vh) / vh))
-              : 0;
+      <div ref={containerRef} style={{ height: `${totalSlides * 100}vh` }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
 
-            // Last card never exits — it stays until the sticky zone ends
-            const translateY = i < items.length - 1
-              ? `${-progress * 100}%`
-              : '0%';
+          {/* ── Slide 0: Hero + Studio statement ── */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: totalSlides,
+              transform: `translateY(${-slide0Progress * 100}%)`,
+              willChange: 'transform',
+            }}
+          >
+            <div className="w-full h-full bg-black flex flex-col">
+              {/* Hero video — 75vh */}
+              <div className="relative overflow-hidden flex-none" style={{ height: '75vh' }}>
+                <HeroVideo />
+              </div>
+              {/* Studio statement — fills remaining 25vh */}
+              <div
+                className="flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8"
+                style={{
+                  paddingTop: 'clamp(1.5rem, 3vw, 3rem)',
+                  paddingBottom: 'clamp(1.5rem, 3vw, 3rem)',
+                  paddingLeft: 'var(--page-gutter)',
+                  paddingRight: 'var(--page-gutter)',
+                }}
+              >
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight max-w-2xl leading-tight text-white">
+                  A full-service production studio in South Bend, Indiana.
+                </h2>
+                <Link
+                  href="/work"
+                  className="shrink-0 inline-flex items-center gap-2 border border-white px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-white bg-transparent hover:bg-white hover:text-black transition-colors duration-150 no-underline"
+                >
+                  View All Work
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M0 5H12M8 1L12 5L8 9" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Featured work slides ── */}
+          {items.map((item, i) => {
+            const slideIndex = i + 1;
+            const progress = vh > 0
+              ? Math.min(1, Math.max(0, (scrolled - slideIndex * vh) / vh))
+              : 0;
+            const isLast = slideIndex === totalSlides - 1;
+            const translateY = isLast ? '0%' : `${-progress * 100}%`;
 
             return (
               <div
@@ -197,22 +228,18 @@ export default function FeaturedWork({ items }: Props) {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  // Earlier cards sit on top (they slide out over the next)
-                  zIndex: items.length - i,
+                  zIndex: totalSlides - slideIndex,
                   transform: `translateY(${translateY})`,
                   willChange: 'transform',
                 }}
               >
-                <FeaturedSlide
-                  item={item}
-                  onClick={() => handleClick(item)}
-                />
+                <FeaturedSlide item={item} onClick={() => handleClick(item)} />
               </div>
             );
           })}
+
         </div>
       </div>
-
       <VideoLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
     </>
   );

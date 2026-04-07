@@ -39,17 +39,17 @@ const LETTERS = [
 export default function FooterWordmark() {
   const svgRef = useRef<SVGSVGElement>(null);
   const [animated, setAnimated] = useState(false);
+  const hasBeenHidden = useRef(false);
 
   useEffect(() => {
     if (!svgRef.current) return;
-    const hasBeenHidden = { current: false };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Only fire after the element has been scrolled out of view at least once
         if (!entry.isIntersecting) {
           hasBeenHidden.current = true;
-        } else if (hasBeenHidden.current && !animated) {
+          setAnimated(false);
+        } else if (hasBeenHidden.current) {
           setAnimated(true);
         }
       },
@@ -57,7 +57,7 @@ export default function FooterWordmark() {
     );
     observer.observe(svgRef.current);
     return () => observer.disconnect();
-  }, [animated]);
+  }, []);
 
   return (
     <>

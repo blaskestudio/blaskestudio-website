@@ -62,11 +62,9 @@ const IndexIcon = () => (
 // ── Index row (with cursor-following thumbnail) ────────────────
 function IndexRow({
   item,
-  index,
   onClick,
 }: {
   item: WorkItem;
-  index: number;
   onClick: (item: WorkItem) => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -94,32 +92,20 @@ function IndexRow({
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(item); }}
       >
-        {/* Index number */}
-        <span className="text-[10px] tracking-[0.06em] font-semibold text-neutral-300 w-5 shrink-0 tabular-nums">
-          {String(index + 1).padStart(2, '0')}
-        </span>
-
         {/* Title */}
-        <span className="flex-1 text-[15px] font-bold tracking-tight text-black leading-snug">
+        <span className="flex-1 text-[13px] text-neutral-400 font-normal leading-snug">
           {item.title}
         </span>
 
         {/* Client */}
-        <span className="text-sm text-neutral-400 font-normal hidden sm:block shrink-0 max-w-[180px] truncate">
+        <span className="text-[13px] text-neutral-400 font-normal hidden sm:block shrink-0 w-64 whitespace-nowrap">
           {item.client}
         </span>
 
-        {/* Category */}
-        <span className="text-[10px] tracking-[0.06em] uppercase font-semibold text-neutral-400 hidden md:block shrink-0 w-28 text-right">
+        {/* Type */}
+        <span className="text-[13px] text-neutral-400 font-normal hidden md:block shrink-0 w-28">
           {item.contentType === 'case-study' ? 'Case Study' : CATEGORY_LABELS[item.category as WorkCategory]}
         </span>
-
-        {/* Year */}
-        {item.year > 0 && (
-          <span className="text-[10px] tracking-[0.06em] font-semibold text-neutral-300 w-10 text-right shrink-0 tabular-nums">
-            {item.year}
-          </span>
-        )}
       </div>
 
       {/* Cursor-following thumbnail */}
@@ -190,39 +176,43 @@ export default function WorkGrid({ items }: Props) {
   return (
     <>
       {/* ── Controls row ─────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3 pb-10">
+      <div className="pills-gray flex flex-wrap items-center gap-3 pb-4 border-b border-neutral-200">
 
         {/* Video / Photo toggle */}
         <div className="flex mr-2">
           <button
             onClick={() => setMediaType('video')}
             className={`pill${mediaType === 'video' ? ' pill-active' : ''}`}
-            style={{ borderRadius: '9999px 0 0 9999px', borderRight: 'none' }}
+            style={{ borderRight: 'none' }}
           >
             Video
           </button>
           <button
             onClick={() => setMediaType('photo')}
             className={`pill${mediaType === 'photo' ? ' pill-active' : ''}`}
-            style={{ borderRadius: '0 9999px 9999px 0' }}
           >
             Photo
           </button>
         </div>
 
-        {/* Divider */}
-        <div className="w-px h-4 bg-neutral-200 mx-1" />
+        {/* Divider — only when filters are visible */}
+        {mediaType === 'video' && <div className="w-px h-4 bg-neutral-200 mx-1" />}
 
-        {/* Video filters */}
-        {mediaType === 'video' && VIDEO_FILTERS.map(({ label, value }) => (
-          <button
-            key={value}
-            onClick={() => setActiveFilter(value)}
-            className={`pill${activeFilter === value ? ' pill-active' : ''}`}
-          >
-            {label}
-          </button>
-        ))}
+        {/* Video filters — joined block */}
+        {mediaType === 'video' && (
+          <div className="flex">
+            {VIDEO_FILTERS.map(({ label, value }, i) => (
+              <button
+                key={value}
+                onClick={() => setActiveFilter(value)}
+                className={`pill${activeFilter === value ? ' pill-active' : ''}`}
+                style={i < VIDEO_FILTERS.length - 1 ? { borderRight: 'none' } : undefined}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Grid / Index view toggle — right-aligned, video only */}
         {mediaType === 'video' && (
@@ -232,7 +222,7 @@ export default function WorkGrid({ items }: Props) {
               aria-label="Grid view"
               aria-pressed={viewMode === 'grid'}
               className={`pill${viewMode === 'grid' ? ' pill-active' : ''}`}
-              style={{ borderRadius: '9999px 0 0 9999px', borderRight: 'none', padding: '0 10px' }}
+              style={{ borderRight: 'none', padding: '0.375rem 0.625rem' }}
             >
               <GridIcon />
             </button>
@@ -241,7 +231,7 @@ export default function WorkGrid({ items }: Props) {
               aria-label="Index view"
               aria-pressed={viewMode === 'index'}
               className={`pill${viewMode === 'index' ? ' pill-active' : ''}`}
-              style={{ borderRadius: '0 9999px 9999px 0', padding: '0 10px' }}
+              style={{ padding: '0.375rem 0.625rem' }}
             >
               <IndexIcon />
             </button>
@@ -252,7 +242,7 @@ export default function WorkGrid({ items }: Props) {
       {/* ── Video — grid view ────────────────────────────────── */}
       {mediaType === 'video' && viewMode === 'grid' && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-12 pb-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-12 pt-10 pb-24">
             {filtered.map((item) => (
               <WorkCard key={item.slug} item={item} onClick={() => handleCardClick(item)} />
             ))}
@@ -265,17 +255,15 @@ export default function WorkGrid({ items }: Props) {
       {mediaType === 'video' && viewMode === 'index' && (
         <>
           {/* Column headers */}
-          <div className="flex items-center gap-6 pb-3 border-b border-neutral-200">
-            <span className="w-5 shrink-0" />
-            <span className="flex-1 text-[10px] tracking-[0.08em] uppercase font-semibold text-neutral-400">Title</span>
-            <span className="text-[10px] tracking-[0.08em] uppercase font-semibold text-neutral-400 hidden sm:block shrink-0 max-w-[180px]">Client</span>
-            <span className="text-[10px] tracking-[0.08em] uppercase font-semibold text-neutral-400 hidden md:block shrink-0 w-28 text-right">Type</span>
-            <span className="text-[10px] tracking-[0.08em] uppercase font-semibold text-neutral-400 w-10 text-right shrink-0">Year</span>
+          <div className="flex items-center gap-6 pt-10 pb-3 border-b border-neutral-200">
+            <span className="flex-1 text-[13px] text-neutral-400 font-normal">Title</span>
+            <span className="text-[13px] text-neutral-400 font-normal hidden sm:block shrink-0 w-64">Client</span>
+            <span className="text-[13px] text-neutral-400 font-normal hidden md:block shrink-0 w-28">Type</span>
           </div>
 
           <div className="pb-24">
-            {filtered.map((item, i) => (
-              <IndexRow key={item.slug} item={item} index={i} onClick={handleCardClick} />
+            {filtered.map((item) => (
+              <IndexRow key={item.slug} item={item} onClick={handleCardClick} />
             ))}
           </div>
           <VideoLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
@@ -284,7 +272,7 @@ export default function WorkGrid({ items }: Props) {
 
       {/* ── Photo grid ───────────────────────────────────────── */}
       {mediaType === 'photo' && (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-1 pb-24">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-1 pt-10 pb-24">
           {PHOTOS.map((filename) => (
             <div key={filename} className="break-inside-avoid mb-1">
               <Image
