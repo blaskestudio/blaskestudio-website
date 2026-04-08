@@ -109,7 +109,7 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
 
   return (
     <div
-      data-nav-theme="dark"
+      data-nav-theme="light"
       className="w-full bg-black flex items-center cursor-pointer group"
       style={{ paddingTop: 'var(--nav-height)', paddingBottom: 'var(--nav-height)', paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       onClick={onClick}
@@ -138,7 +138,7 @@ function HeroSection({ ready }: { ready: boolean }) {
       </div>
       {/* Studio statement — slides up from below on load */}
       <div
-        data-nav-theme="dark"
+        data-nav-theme="light"
         className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8"
         style={{
           height: '25vh',

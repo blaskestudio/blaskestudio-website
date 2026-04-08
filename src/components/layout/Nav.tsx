@@ -66,8 +66,7 @@ export default function Nav() {
           return;
         }
       }
-      // On home page, once we've gone dark stay dark (never revert to light)
-      setNavTheme(prev => (isHomeRef.current && prev === 'dark') ? 'dark' : 'light');
+      setNavTheme('light');
     };
 
     checkTheme.current = check;

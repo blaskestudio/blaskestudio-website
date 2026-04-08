@@ -14,7 +14,7 @@ export default async function Home() {
 
       {/* ── 4. Selected Clients ───────────────────────────────── */}
       <section
-        data-nav-theme="dark"
+        data-nav-theme="light"
         className="py-16 md:py-24 border-t border-neutral-100"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
