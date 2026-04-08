@@ -6,9 +6,10 @@ interface Props {
   src: string;
   alt: string;
   large?: boolean;
+  dark?: boolean;
 }
 
-export default function ClientLogo({ src, alt, large }: Props) {
+export default function ClientLogo({ src, alt, large, dark }: Props) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -25,9 +26,7 @@ export default function ClientLogo({ src, alt, large }: Props) {
       src={src}
       alt={alt}
       onError={() => setFailed(true)}
-      className={`w-auto object-contain grayscale opacity-50 hover:opacity-90 transition-opacity duration-200 ${
-        large ? 'h-20 max-w-[200px]' : 'h-14 max-w-[140px]'
-      }`}
+      className={`max-w-[50%] max-h-[35%] w-auto h-auto object-contain grayscale opacity-80 hover:opacity-100 hover:scale-105 transition-all duration-200 ${dark ? 'invert' : ''}`}
     />
   );
 }

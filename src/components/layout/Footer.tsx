@@ -42,7 +42,7 @@ const SOCIAL_LINKS = [
 ];
 
 const labelClass =
-  'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase text-black font-bold leading-none';
+  'text-base tracking-[0.08em] uppercase font-medium text-black';
 
 // External link arrow (↗)
 const ExternalArrow = () => (
@@ -58,64 +58,64 @@ const ExternalArrow = () => (
 
 export default function Footer() {
   return (
-    <footer className="mt-auto shrink-0 min-h-screen flex flex-col justify-between">
+    <footer className="mt-auto shrink-0 flex flex-col justify-between" style={{ minHeight: 'calc(100vh - var(--nav-height))' }}>
 
-      {/* Main grid — 3 cols on desktop */}
+      {/* Main grid — 4 cols on desktop, last col fills remaining space */}
       <div
-        className="py-12 grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-6"
+        className="py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-6"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
 
-        {/* Col 1 — Location & Hours */}
-        <div className="flex flex-col gap-5">
-          <p className={labelClass}>Location &amp; Hours</p>
-          <div className="flex flex-col gap-0.5 text-sm text-neutral-700 leading-relaxed">
+        {/* Col 1 — Social */}
+        <div className="flex flex-col gap-5 ">
+          <p className={labelClass}>Social</p>
+          <div className="flex flex-col gap-3 text-base text-black font-medium">
+            {SOCIAL_LINKS.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-60 transition-opacity duration-150 no-underline"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Col 2 — Location */}
+        <div className="flex flex-col gap-5 ">
+          <p className={labelClass}>Location</p>
+          <div className="flex flex-col gap-0.5 text-base text-black font-medium leading-relaxed">
             <span>240 E Tutt Street</span>
             <span>South Bend, IN 46601</span>
             <span className="mt-3">By appointment only</span>
           </div>
         </div>
 
-        {/* Col 2 — Contact Us */}
-        <div className="flex flex-col gap-5">
-          <p className={labelClass}>Contact Us</p>
-          <div className="flex flex-col gap-3 text-sm text-neutral-700">
+        {/* Col 3 — Contact */}
+        <div className="flex flex-col gap-5 ">
+          <p className={labelClass}>Contact</p>
+          <div className="flex flex-col gap-3 text-base text-black font-medium">
             <a
               href="mailto:hello@blaskestudio.com"
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors duration-150"
+              className="hover:opacity-60 transition-opacity duration-150"
             >
               hello@blaskestudio.com
-              <ExternalArrow />
             </a>
             <Link
               href="/inquire"
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors duration-150 no-underline"
+              className="hover:opacity-60 transition-opacity duration-150 no-underline"
             >
               Inquire
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M0 4H9M6 1L9 4L6 7" />
-              </svg>
             </Link>
           </div>
         </div>
 
-        {/* Col 3 — Newsletter + social */}
+        {/* Col 4 — Newsletter — fills remaining space */}
         <div className="flex flex-col gap-5">
           <NewsletterForm />
-          <div className="flex gap-3">
-            {SOCIAL_LINKS.map(({ label, href, icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="w-9 h-9 bg-black flex items-center justify-center text-white hover:bg-neutral-800 transition-colors duration-150"
-              >
-                {icon}
-              </a>
-            ))}
-          </div>
         </div>
 
       </div>
