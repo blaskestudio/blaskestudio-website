@@ -112,7 +112,6 @@ export default function Nav() {
         backgroundColor: (navDark || navHero) ? 'white' : 'black',
         color: (navDark || navHero) ? 'black' : 'white',
         border: `1px solid ${(navDark || navHero) ? 'white' : 'black'}`,
-        pointerEvents: 'none',
       };
     }
     if (hovered) {
@@ -172,7 +171,7 @@ export default function Nav() {
 
           {/* Work dropdown */}
           <div className="relative" onMouseEnter={openWork} onMouseLeave={closeWork}>
-            <Link href="/work" className={linkClass} style={itemStyle(false, workActive || workOpen)}>
+            <Link href="/work" className={linkClass} style={itemStyle(workActive, workOpen)}>
               Work
             </Link>
             {workOpen && (
@@ -205,7 +204,7 @@ export default function Nav() {
 
           {/* About dropdown */}
           <div className="relative" onMouseEnter={openAbout} onMouseLeave={closeAbout}>
-            <Link href="/about" className={linkClass} style={itemStyle(false, aboutActive || aboutOpen)}>
+            <Link href="/about" className={linkClass} style={itemStyle(aboutActive, aboutOpen)}>
               About
             </Link>
             {aboutOpen && (

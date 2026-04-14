@@ -50,6 +50,11 @@ interface WorkItemBase {
    * Static still image — used as card default state and og:image.
    */
   thumbnailStill: string;
+  /**
+   * Short looping video URL played on the work card in place of the full video.
+   * The full video still opens in the lightbox.
+   */
+  thumbnailShortUrl?: string;
   /** Surfaces on the Home page featured section. */
   featured: boolean;
   /** Manual sort order within the Work index. Lower = earlier. */
@@ -71,11 +76,18 @@ export interface Project extends WorkItemBase {
 export interface CaseStudy extends WorkItemBase {
   contentType: 'case-study';
   heroVideo: VideoSource;
+  highlightVideos?: VideoSource[];
   overview: string;
+  stats?: string[];
+  opportunity?: string;
   challenge: string;
   approach: string;
+  production?: string;
+  outcome?: string;
+  keyTakeaway?: string;
   deliverables: string[];
   results: string;
+  btsPhotosFolder?: string;
   contributors?: Contributor[];
   gallery?: GallerySection[];
   cta?: {

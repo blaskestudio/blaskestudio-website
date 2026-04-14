@@ -1,6 +1,6 @@
 'use client';
 
-const HERO_ID = 'OUhcJS9PIBE';
+const HERO_ID = 'YuHRtvPb3es';
 
 const SILENT_SRC = `https://www.youtube.com/embed/${HERO_ID}?autoplay=1&mute=1&controls=0&loop=1&playlist=${HERO_ID}&modestbranding=1&rel=0&playsinline=1&disablekb=1`;
 

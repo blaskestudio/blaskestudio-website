@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { WorkItem, WorkCategory, CATEGORY_LABELS } from '@/lib/types';
+import { PhotographyPhotosByCategory } from '@/lib/drive';
 import WorkCard from './WorkCard';
 import VideoLightbox from './VideoLightbox';
 
@@ -27,88 +28,6 @@ const PHOTO_FILTERS: { label: string; value: PhotoCategory }[] = [
   { label: 'Portraiture', value: 'portraiture' },
 ];
 
-// Files live at: public/work/photography/{category}/{filename}
-const PHOTOS_BY_CATEGORY: Record<Exclude<PhotoCategory, 'all'>, string[]> = {
-  commercial: [
-    '20230429-DSCF2796.jpg','20230429-DSCF2803.jpg','20230429-DSCF2808.jpg',
-    '20230429-DSCF2810.jpg','20230429-DSCF2816.jpg','20230429-DSCF2824.jpg',
-    '20230710-_44A0223.jpg','20230710-_44A0269.jpg','20230710-_44A0273.jpg',
-    '20230710-_44A0497.jpg','20230710-_44A0504.jpg','20230710-_44A0549.jpg',
-    '20230710-_44A0583.jpg','20230710-_44A0596.jpg','20230710-_44A0792.jpg',
-    '20230710-_44A0806.jpg','20230710-_44A1041.jpg','20230710-_44A1402.jpg',
-    '20230710-_44A1414.jpg','20230710-_44A1546.jpg','20230710-_44A2627.jpg',
-    '20230710-_44A3031.jpg','20250506-_44A8364.jpg','20250506-_44A8374.jpg',
-    '20250506-_44A8422.jpg','20250506-_44A8477.jpg','20250506-_44A8493.jpg',
-    '20250506-_44A8517.jpg','20250506-_44A8785.jpg','20250506-_44A9008.jpg',
-    '20250506-_44A9123.jpg','20250506-_44A9205.jpg','20250904-_44A2619.jpg',
-    '20250904-_44A2796.jpg','20250904-_44A2798.jpg','20250904-_44A2891.jpg',
-    '20250904-_44A2992.jpg','20250904-_44A3137.jpg','20251117-_44A5165.jpg',
-    '20251117-_44A5167.jpg','20251117-_44A5168.jpg','20251117-_44A5170.jpg',
-    '20251117-_44A5414.jpg','20251117-_44A5427.jpg','20251117-_44A5446.jpg',
-    '20251117-_44A5524.jpg','20251117-_44A5538.jpg',
-  ],
-  documentary: [
-    '20130914-img_0752_9767242844_o.jpg','20131017-IMG_4228.jpg','20131017-IMG_4683.jpg',
-    '20140416-13922312386_3026fc3219_o.jpg','20140706-IMG_0713.jpg','20141024-IMG_7682.jpg',
-    '20190823-DSCF3545.jpg','20190921-DSCF3963.jpg','20191027-DSCF4585.jpg',
-    '20200608-77400010.jpg','20200608-77400013.jpg','20200623-85720003.jpg',
-    '20200825-22770004.jpg','20200825-22780024.jpg','20220124-28820005.jpg',
-    '20220124-28820027.jpg','20220411-06660002-gigapixel-standard-scale-4_00x.jpg',
-    '20220411-06660023-gigapixel-standard-scale-4_00x.jpg',
-    '20220411-06660031-gigapixel-standard-scale-4_00x.jpg',
-    '20220916-24070001.jpg','20220916-24070003.jpg','20220916-24080001.jpg',
-    '20220916-24080011.jpg','20220930-26100015.jpg','20221021-IMG_0413.jpg',
-    '20221128-06660010.jpg','20221128-06660034.jpg','20230114-000099410005.jpg',
-    '20230114-000099410009.jpg','20230114-000099410016.jpg','20230114-000099410025.jpg',
-    '20230223-000029090010.jpg','20230223-000029090032.jpg','20230607-000001150018.jpg',
-    '20230607-000001150035.jpg','20230903-DSCF4355.jpg','20240123-DSCF6165.jpg',
-    '20240123-DSCF6167.jpg','20240123-DSCF6170.jpg','20240123-DSCF6172.jpg',
-    '20240610-000099340013.jpg','20240610-000099340024.jpg','20240717-DSCF8189.jpg',
-    '20240719-000077020024.jpg','20240719-000077020036.jpg','20240730-000066890035.jpg',
-    '20240730-000066910003.jpg','20240730-000066920016.jpg','20240907-DSCF8887.jpg',
-    '20240907-DSCF8925.jpg',
-  ],
-  performance: [
-    '20220303-33420015.jpg','20230519-DSCF3677.jpg','20230519-DSCF3681.jpg',
-    '20230519-DSCF3688.jpg','20230519-DSCF3691.jpg','20230519-DSCF3698.jpg',
-    '20230630-DSCF4098.jpg','20230630-DSCF4109.jpg','20230630-DSCF4118.jpg',
-    '20230630-DSCF4141.jpg','20230630-DSCF4143.jpg','20230630-DSCF4156-Edit.jpg',
-    '20230903-DSCF4422-Enhanced-NR.jpg','20230912-DSCF4730.jpg','20230912-DSCF4738.jpg',
-    '20230912-DSCF4740.jpg','20240719-000077000018.jpg','20250215-_44A7138.jpg',
-    '20250215-_44A7155.jpg','20250215-_44A7169.jpg','20250215-_44A7218.jpg',
-    '20250215-_44A7300.jpg','20250215-_44A7326.jpg','20250215-_44A7472.jpg',
-    '20250215-_44A7592.jpg','20250215-_44A7730.jpg','20260319-_44A6558.jpg',
-    '20260319-_44A6635.jpg','20260319-_44A6664.jpg','20260319-_44A6756.jpg',
-    '20260319-_44A6765.jpg','20260319-_44A6790.jpg','20260319-_44A6883.jpg',
-    '20260319-_44A6905.jpg','20260319-_44A6936.jpg','20260319-_44A7019.jpg',
-    '20260319-_44A7077.jpg','20260319-_44A7080.jpg','20260319-_44A7120.jpg',
-    '20260319-_44A7170.jpg','20260319-_44A7269.jpg','20260319-_44A7373.jpg',
-    '20260319-_44A7465.jpg','20260319-_44A7468.jpg',
-  ],
-  headshots: [
-    '20250312-_44A8017.jpg','20250312-_44A8097.jpg','20250515-_44A9700.jpg',
-    '20250515-_44A9746.jpg','20250515-_44A9749.jpg','20250515-_44A9801.jpg',
-    '20250515-_44A9829.jpg','20250515-_44A9867.jpg','20250515-_44A9899.jpg',
-    '20250515-_44A9929.jpg','20250515-_44A9961.jpg','20250717-_44A0287.jpg',
-    '20260213-Ricky_Headshots_02_13_26-029.jpg','20260213-Ricky_Headshots_02_13_26-054.jpg',
-    '20260213-Ricky_Headshots_02_13_26-174.jpg','20260213-Ricky_Headshots_02_13_26-348.jpg',
-    '20260213-Ricky_Headshots_02_13_26-391.jpg',
-  ],
-  portraiture: [
-    '20230307-DSCF2056.jpg','20230307-DSCF2062-Edit.jpg','20230307-DSCF2067.jpg',
-    '20230307-DSCF2068.jpg','20230307-DSCF2071.jpg','20230307-DSCF2076.jpg',
-    '20230307-DSCF2098-Edit.jpg','20230307-DSCF2111.jpg','20230307-DSCF2132.jpg',
-    '20230307-DSCF2150.jpg','20230307-DSCF2177.jpg','20230307-DSCF2194.jpg',
-    '20230307-DSCF2198.jpg','20230307-DSCF2221.jpg','20230307-DSCF2261.jpg',
-    '20230307-DSCF2291.jpg','20230907-DSCF4585.jpg','20240730-000066890025.jpg',
-    '20240730-000066900004.jpg','20240730-000066900006.jpg','20240730-000066900007.jpg',
-    '20240822-000047240029.jpg','20241216-_44A6379.jpg','20241216-_44A6381.jpg',
-    '20241216-_44A6385.jpg','20241216-_44A6406.jpg','20250204-_44A6488.jpg',
-    '20250204-_44A6499.jpg','20250204-_44A6584.jpg','20250204-_44A6604.jpg',
-    '20250204-_44A6610.jpg','20250204-_44A6612.jpg','20250204-_44A6652-Edit.jpg',
-    '20250204-_44A6661.jpg','20250204-_44A6664.jpg',
-  ],
-};
 
 type MediaType = 'video' | 'photo';
 type ViewMode = 'grid' | 'index';
@@ -206,9 +125,10 @@ function IndexRow({
 // ── Main component ─────────────────────────────────────────────
 interface Props {
   items: WorkItem[];
+  drivePhotosByCategory?: PhotographyPhotosByCategory;
 }
 
-export default function WorkGrid({ items }: Props) {
+export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mediaType, setMediaType] = useState<MediaType>('video');
@@ -237,16 +157,18 @@ export default function WorkGrid({ items }: Props) {
     return item.category === activeVideoFilter;
   });
 
-  // Resolve photos for the active filter
-  const photoEntries: { category: Exclude<PhotoCategory, 'all'>; filename: string }[] =
-    activePhotoFilter === 'all'
-      ? (Object.keys(PHOTOS_BY_CATEGORY) as Exclude<PhotoCategory, 'all'>[]).flatMap((cat) =>
-          PHOTOS_BY_CATEGORY[cat].map((filename) => ({ category: cat, filename }))
-        )
-      : PHOTOS_BY_CATEGORY[activePhotoFilter].map((filename) => ({
-          category: activePhotoFilter as Exclude<PhotoCategory, 'all'>,
-          filename,
-        }));
+  // Resolve photos for the active filter using Drive URLs.
+  const photoEntries: { src: string; key: string }[] = (() => {
+    if (!drivePhotosByCategory) return [];
+    const cats = activePhotoFilter === 'all'
+      ? (['commercial', 'documentary', 'performance', 'headshots', 'portraiture'] as Exclude<PhotoCategory, 'all'>[])
+      : [activePhotoFilter as Exclude<PhotoCategory, 'all'>];
+
+    return cats.flatMap((cat) => {
+      const urls = drivePhotosByCategory[cat] ?? [];
+      return urls.map((url, i) => ({ src: url, key: `${cat}-${i}` }));
+    });
+  })();
 
   const handleCardClick = useCallback(
     (item: WorkItem) => {
@@ -378,15 +300,16 @@ export default function WorkGrid({ items }: Props) {
       {/* ── Photo grid ───────────────────────────────────────── */}
       {mediaType === 'photo' && (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-1 pb-24">
-          {photoEntries.map(({ category, filename }) => (
-            <div key={`${category}/${filename}`} className="break-inside-avoid mb-1">
+          {photoEntries.map(({ src, key }) => (
+            <div key={key} className="break-inside-avoid mb-1">
               <Image
-                src={`/work/photography/${category}/${filename}`}
+                src={src}
                 alt=""
                 width={1200}
                 height={800}
                 className="w-full h-auto block"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                unoptimized={src.startsWith('https://')}
               />
             </div>
           ))}

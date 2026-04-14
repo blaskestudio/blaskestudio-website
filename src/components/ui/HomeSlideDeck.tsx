@@ -15,7 +15,7 @@ function getSilentSrc(item: WorkItem): string {
   if (video.type === 'vimeo')
     return `https://player.vimeo.com/video/${video.id}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`;
   if (video.type === 'youtube')
-    return `https://www.youtube.com/embed/${video.id}?enablejsapi=1&mute=1&controls=0&loop=1&playlist=${video.id}&modestbranding=1&rel=0&playsinline=1`;
+    return `https://www.youtube.com/embed/${video.id}?autoplay=1&enablejsapi=1&mute=1&controls=0&loop=1&playlist=${video.id}&modestbranding=1&rel=0&playsinline=1`;
   return '';
 }
 
@@ -56,8 +56,8 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
       {silentSrc && (
         <iframe
           src={silentSrc}
-          className="absolute inset-0 w-full h-full transition-opacity duration-500"
-          style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0 }}
+          className="absolute w-full transition-opacity duration-500"
+          style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0, top: '-5%', height: '110%', left: 0 }}
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
           title={item.title}
@@ -74,13 +74,6 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
         />
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 pointer-events-none" />
-      {isCaseStudy && (
-        <div className="absolute top-4 left-4">
-          <span className="text-[10px] tracking-[0.12em] uppercase bg-white text-black px-2.5 py-1.5 leading-none font-semibold">
-            Case Study
-          </span>
-        </div>
-      )}
     </div>
   );
 
@@ -149,11 +142,11 @@ function HeroSection({ ready }: { ready: boolean }) {
         }}
       >
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white">
-          A full-service production studio.{' '}<br />Craft, Collaboration, Cinematic Vision.
+          A full-service production studio.{' '}<br />Built on craft, collaboration, and story.
         </h2>
         <Link
           href="/work"
-          className="shrink-0 inline-flex items-center gap-2 border border-white px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-white bg-transparent hover:bg-white hover:text-black transition-colors duration-150 no-underline"
+          className="shrink-0 inline-flex items-center gap-2 px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-white hover:bg-neutral-200 transition-colors duration-150 no-underline"
         >
           Our Work
           <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

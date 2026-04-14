@@ -28,18 +28,25 @@
   --duration-medium: 300ms;
   --duration-slow: 600ms;
 
-  /* ─── Typography tokens (live-tweakable via DialKit) ─────── */
-  --type-body-size:       1rem;
-  --type-body-weight:     500;
+  /* ─── Typography tokens ──────────────────────────────────── */
+  /* Scale: 12px labels · 16px body/UI · 32px card titles · 48px+ headings */
+  --type-body-size:       1rem;        /* 16px — WCAG base */
+  --type-body-weight:     450;         /* between regular and medium for legibility */
   --type-body-leading:    1.6;
   --type-body-tracking:   0em;
+
+  /* Editorial copy — copy-heavy pages (About, Studio, etc.) */
+  --type-editorial-size:    1.0625rem; /* ~17px — slightly larger for reading comfort */
+  --type-editorial-weight:  500;       /* medium — more intentional, heavier feel */
+  --type-editorial-leading: 1.65;
+  --type-editorial-tracking: -0.01em;
 
   --type-heading-weight:  700;
   --type-heading-leading: 1.1;
   --type-heading-tracking: -0.02em;
 
-  --type-label-size:      0.625rem;   /* 10px */
-  --type-label-tracking:  0.12em;
+  --type-label-size:      0.75rem;    /* 12px */
+  --type-label-tracking:  0.08em;
 
   --type-nav-size:        1rem;
   --type-nav-tracking:    0.04em;
@@ -61,8 +68,8 @@ body {
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-leading);
   letter-spacing: var(--type-body-tracking);
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ─── Typography defaults ──────────────────────────────────── */
@@ -90,9 +97,9 @@ a {
 .pill {
   display: inline-flex;
   align-items: center;
-  font-size: 0.625rem;           /* 10px */
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;            /* 12px */
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.375rem 1rem;        /* py-1.5 px-4 */
   border-radius: 0;
@@ -142,6 +149,63 @@ a {
   color: #ffffff;
 }
 
+
+/* ─── Typography utility classes ───────────────────────────── */
+
+/* Section / column label — nav-weight uppercase heading */
+.text-label {
+  font-size: clamp(0.875rem, 1.05vw, 1.25rem); /* 14→20px */
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-black);
+}
+
+/* Standard body paragraph */
+.text-body {
+  font-size: 1rem;       /* 16px */
+  font-weight: 450;
+  line-height: 1.65;
+  color: var(--color-black);
+}
+
+/* Editorial body — copy-heavy pages: About, Studio, capabilities, etc.
+   Use for <p> blocks with substantial prose. Heavier feel, more deliberate. */
+.text-editorial {
+  font-size: var(--type-editorial-size);
+  font-weight: var(--type-editorial-weight);
+  line-height: var(--type-editorial-leading);
+  letter-spacing: var(--type-editorial-tracking);
+  color: var(--color-black);
+}
+
+/* Secondary / caption text */
+.text-body-sm {
+  font-size: 0.875rem;   /* 14px */
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-black);
+}
+
+/* Form label — Title Case, not all-caps */
+.text-form-label {
+  font-size: 0.875rem;   /* 14px */
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--color-black);
+}
+
+/* ─── Logo marquee ─────────────────────────────────────────── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
 
 /* ─── Focus ────────────────────────────────────────────────── */
 :focus-visible {

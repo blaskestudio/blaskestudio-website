@@ -18,6 +18,7 @@ export default function ConditionalShell({
 
   // Match /work/<slug> but NOT /work itself (the index)
   const isProjectPage = /^\/work\/[^/]+/.test(pathname);
+  const isHomePage = pathname === '/';
 
   if (isProjectPage) {
     return <>{children}</>;
@@ -29,7 +30,7 @@ export default function ConditionalShell({
       <div className="flex flex-col flex-1">
         {children}
       </div>
-      <Footer />
+      <Footer dark={isHomePage} />
     </>
   );
 }

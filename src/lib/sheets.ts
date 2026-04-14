@@ -1,9 +1,19 @@
-import { Project, VideoSource, WorkCategory } from './types';
+import { Project, CaseStudy, VideoSource, WorkCategory } from './types';
 
 const SHEET_ID = '1y2WQN4RD_olofaibV3kON5hKYcIihu45jQs4wsEjppw';
 const REVALIDATE = 1800; // 30 minutes
 
 const PROJECTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+const CASE_STUDIES_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=682600694`;
+
+// ── Drive share URL → direct stream URL ──────────────────────
+// Converts https://drive.google.com/file/d/FILE_ID/view?... to a streamable URL
+function parseDriveFileUrl(url: string): string {
+  if (!url?.trim()) return '';
+  const match = url.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  return url;
+}
 
 // ── Parsers ──────────────────────────────────────────────────
 
@@ -46,26 +56,35 @@ function normalizeCategory(raw: string): WorkCategory {
 // ── CSV parser (handles quoted fields with embedded commas/newlines) ──
 
 function parseCSV(text: string): string[][] {
+  // Tokenize the full text so quoted fields with embedded newlines are preserved.
   const rows: string[][] = [];
-  for (const line of text.split('\n')) {
-    const fields: string[] = [];
-    let cur = '';
-    let inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
-        else inQ = !inQ;
-      } else if (ch === ',' && !inQ) {
-        fields.push(cur);
-        cur = '';
-      } else {
-        cur += ch;
-      }
+  let cur = '';
+  let inQ = false;
+  let fields: string[] = [];
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQ && text[i + 1] === '"') { cur += '"'; i++; } // escaped quote
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      fields.push(cur);
+      cur = '';
+    } else if (!inQ && (ch === '\n' || ch === '\r')) {
+      // Skip \n that follows \r
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      fields.push(cur);
+      cur = '';
+      rows.push(fields);
+      fields = [];
+    } else {
+      cur += ch;
     }
-    fields.push(cur.replace(/\r$/, ''));
-    rows.push(fields);
   }
+  // Push trailing content
+  fields.push(cur);
+  if (fields.some(f => f.trim())) rows.push(fields);
+
   return rows;
 }
 
@@ -96,7 +115,74 @@ export async function getProjectsFromSheet(): Promise<Project[]> {
       order: parseInt(get(row, 'order')) || i + 1,
       video: parseVideoUrl(get(row, 'video_url')),
       thumbnailStill: get(row, 'thumbnail_still'),
+      thumbnailShortUrl: parseDriveFileUrl(get(row, 'thumbnail_short_url')) || undefined,
       thumbnailGif: get(row, 'thumbnail_gif'),
       contributors: parseCredits(get(row, 'credits')),
     }));
+}
+
+function parseDriveFolderUrl(url: string): string {
+  if (!url?.trim()) return '';
+  const match = url.match(/\/folders\/([A-Za-z0-9_-]+)/);
+  return match ? match[1] : '';
+}
+
+function parseStatsList(raw: string): string[] {
+  if (!raw?.trim()) return [];
+  return raw.split(/\n|\r\n/).map(s => s.trim()).filter(Boolean);
+}
+
+function parseDeliverablesList(raw: string): string[] {
+  if (!raw?.trim()) return [];
+  const byNewline = raw.split(/\n|\r\n/).map(s => s.trim()).filter(Boolean);
+  if (byNewline.length > 1) return byNewline;
+  return raw.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function deriveYtThumbnail(url: string): string {
+  const yt = url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]+)/);
+  if (yt) return `https://img.youtube.com/vi/${yt[1]}/maxresdefault.jpg`;
+  return '';
+}
+
+export async function getCaseStudiesFromSheet(): Promise<CaseStudy[]> {
+  const { rows, get } = await fetchSheet(CASE_STUDIES_URL);
+  return rows
+    .filter((row) => get(row, 'slug'))
+    .map((row, i) => {
+      const mainVideoUrl = get(row, 'video_main_url');
+      const highlights = [
+        get(row, 'video_higlight_url_1'),
+        get(row, 'video_higlight_url_2'),
+        get(row, 'video_higlight_url_3'),
+      ].filter(Boolean).map(parseVideoUrl);
+
+      return {
+        slug: get(row, 'slug'),
+        contentType: 'case-study' as const,
+        title: get(row, 'title'),
+        client: get(row, 'client'),
+        category: normalizeCategory(get(row, 'category')),
+        year: parseInt(get(row, 'year')) || 0,
+        featured: false,
+        order: parseInt(get(row, 'order')) || i + 100,
+        heroVideo: parseVideoUrl(mainVideoUrl),
+        highlightVideos: highlights.length ? highlights : undefined,
+        thumbnailStill: deriveYtThumbnail(mainVideoUrl),
+        thumbnailGif: '',
+        overview: get(row, 'overview'),
+        stats: parseStatsList(get(row, 'stats')),
+        opportunity: get(row, 'opportunity') || undefined,
+        challenge: get(row, 'challenge'),
+        approach: get(row, 'approach'),
+        production: get(row, 'production') || undefined,
+        outcome: get(row, 'outcome') || undefined,
+        keyTakeaway: get(row, 'key_takeaway') || undefined,
+        deliverables: parseDeliverablesList(get(row, 'deliverables')),
+        results: get(row, 'outcome'),
+        btsPhotosFolder: parseDriveFolderUrl(get(row, 'bts_photos')) || undefined,
+        contributors: parseCredits(get(row, 'credits')),
+        cta: get(row, 'cta_href') ? { href: get(row, 'cta_href'), label: get(row, 'cta_label') || 'Learn More' } : undefined,
+      };
+    });
 }

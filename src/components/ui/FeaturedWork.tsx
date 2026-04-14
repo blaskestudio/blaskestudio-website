@@ -33,12 +33,76 @@ interface Props {
   items: WorkItem[];
 }
 
-function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void }) {
+function FeaturedSlide({ item, index, onClick }: { item: WorkItem; index: number; onClick: () => void }) {
   const [iframeReady, setIframeReady] = useState(false);
   const isCaseStudy = item.contentType === 'case-study';
   const silentSrc = getSilentSrc(item);
   const thumbnail = item.thumbnailStill || getAutoThumbnail(item);
   const youtubeCard = isYouTubeItem(item);
+  const reversed = index % 2 !== 0;
+
+  const videoEl = (
+    <div
+      className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0"
+      style={{ background: '#000' }}
+    >
+      {thumbnail && (
+        <Image
+          src={thumbnail}
+          alt={item.title}
+          fill
+          sizes="(max-width: 640px) 100vw, 75vw"
+          className="object-cover transition-opacity duration-500"
+          style={{ opacity: iframeReady ? 0 : 1 }}
+          unoptimized={thumbnail.startsWith('https://img.youtube')}
+        />
+      )}
+      {silentSrc && (
+        <iframe
+          src={silentSrc}
+          className="absolute inset-0 w-full h-full transition-opacity duration-500"
+          style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0 }}
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          title={item.title}
+          onLoad={(e) => {
+            if (youtubeCard) {
+              try {
+                (e.target as HTMLIFrameElement).contentWindow?.postMessage(
+                  JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
+                );
+              } catch (_) {}
+            }
+            setIframeReady(true);
+          }}
+        />
+      )}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 pointer-events-none" />
+    </div>
+  );
+
+  const metaEl = (
+    <div className="flex flex-col gap-4 sm:w-1/4">
+      <div className="flex flex-col gap-1">
+        <span className="text-xl md:text-[32px] font-bold tracking-tight text-white leading-tight">
+          {item.title}
+        </span>
+        <span className="text-base text-neutral-400 font-normal">{item.client}</span>
+      </div>
+      <div className="flex flex-col gap-2 mt-2">
+        <Link
+          href={`/work?category=${item.contentType === 'case-study' ? 'case-study' : item.category}`}
+          onClick={(e) => e.stopPropagation()}
+          className="pill self-start"
+        >
+          {item.contentType === 'case-study' ? 'Case Study' : CATEGORY_LABELS[item.category as WorkCategory]}
+        </Link>
+        {item.year > 0 && (
+          <span className="text-base text-neutral-400">{item.year}</span>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -55,75 +119,11 @@ function FeaturedSlide({ item, onClick }: { item: WorkItem; onClick: () => void 
       aria-label={isCaseStudy ? `Read case study: ${item.title}` : `Play: ${item.title}`}
     >
       <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-8 items-center">
-
-        {/* Video */}
-        <div
-          className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0"
-          style={{ background: '#000' }}
-        >
-          {thumbnail && (
-            <Image
-              src={thumbnail}
-              alt={item.title}
-              fill
-              sizes="(max-width: 640px) 100vw, 75vw"
-              className="object-cover transition-opacity duration-500"
-              style={{ opacity: iframeReady ? 0 : 1 }}
-              unoptimized={thumbnail.startsWith('https://img.youtube')}
-            />
-          )}
-          {silentSrc && (
-            <iframe
-              src={silentSrc}
-              className="absolute inset-0 w-full h-full transition-opacity duration-500"
-              style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0 }}
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-              title={item.title}
-              onLoad={(e) => {
-                if (youtubeCard) {
-                  try {
-                    (e.target as HTMLIFrameElement).contentWindow?.postMessage(
-                      JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
-                    );
-                  } catch (_) {}
-                }
-                setIframeReady(true);
-              }}
-            />
-          )}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 pointer-events-none" />
-          {isCaseStudy && (
-            <div className="absolute top-4 left-4">
-              <span className="text-[10px] tracking-[0.12em] uppercase bg-white text-black px-2.5 py-1.5 leading-none font-semibold">
-                Case Study
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Metadata */}
-        <div className="flex flex-col gap-4 sm:w-1/4">
-          <div className="flex flex-col gap-1">
-            <span className="text-xl md:text-[32px] font-bold tracking-tight text-white leading-tight">
-              {item.title}
-            </span>
-            <span className="text-sm text-neutral-400 font-normal">{item.client}</span>
-          </div>
-          <div className="flex flex-col gap-2 mt-2">
-            <Link
-              href={`/work?category=${item.contentType === 'case-study' ? 'case-study' : item.category}`}
-              onClick={(e) => e.stopPropagation()}
-              className="pill self-start"
-            >
-              {item.contentType === 'case-study' ? 'Case Study' : CATEGORY_LABELS[item.category as WorkCategory]}
-            </Link>
-            {item.year > 0 && (
-              <span className="text-sm text-neutral-400">{item.year}</span>
-            )}
-          </div>
-        </div>
-
+        {reversed ? (
+          <>{metaEl}{videoEl}</>
+        ) : (
+          <>{videoEl}{metaEl}</>
+        )}
       </div>
     </div>
   );
@@ -205,6 +205,7 @@ export default function FeaturedWork({ items }: Props) {
               >
                 <FeaturedSlide
                   item={item}
+                  index={i}
                   onClick={() => handleClick(item)}
                 />
               </div>

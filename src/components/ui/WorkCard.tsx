@@ -34,16 +34,19 @@ interface Props {
 export default function WorkCard({ item, onClick }: Props) {
   const [hovered, setHovered] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const [inView, setInView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const silentSrc = getSilentEmbedSrc(item);
-  const hasVideo = !!silentSrc;
+  const shortUrl = item.thumbnailShortUrl ?? '';
+  const useShortVideo = !!shortUrl;
+  const silentSrc = useShortVideo ? '' : getSilentEmbedSrc(item);
+  const hasVideo = useShortVideo || !!silentSrc;
   const thumbnail = item.thumbnailStill || getAutoThumbnail(item);
-  const youtubeCard = isYouTubeItem(item);
+  const youtubeCard = !useShortVideo && isYouTubeItem(item);
   const isCaseStudy = item.contentType === 'case-study';
 
-  // Load iframe as soon as card enters viewport (200px margin)
+  // Load video/iframe as soon as card enters viewport (200px margin)
   useEffect(() => {
     if (!hasVideo) return;
     const el = containerRef.current;
@@ -56,10 +59,12 @@ export default function WorkCard({ item, onClick }: Props) {
     return () => observer.disconnect();
   }, [hasVideo]);
 
+  const mediaReady = useShortVideo ? videoReady : iframeReady;
+
   return (
     <div
       ref={containerRef}
-      className="group flex flex-col gap-3 cursor-pointer"
+      className="group flex flex-col cursor-pointer"
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -70,11 +75,10 @@ export default function WorkCard({ item, onClick }: Props) {
     >
       {/* ── Media container ──────────────────────────────── */}
       <div
-        className="relative w-full aspect-video overflow-hidden transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+        className="relative w-full aspect-video overflow-hidden"
         style={{ background: '#111' }}
-
       >
-        {/* Thumbnail — fades out once iframe is playing */}
+        {/* Thumbnail — fades out once video/iframe is playing */}
         {thumbnail && (
           <Image
             src={thumbnail}
@@ -82,14 +86,28 @@ export default function WorkCard({ item, onClick }: Props) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-opacity duration-700"
-            style={{ opacity: iframeReady ? 0 : 1 }}
+            style={{ opacity: mediaReady ? 0 : 1 }}
             priority={false}
             unoptimized={thumbnail.startsWith('https://img.youtube')}
           />
         )}
 
-        {/* Silent autoplay iframe — mounts when card enters viewport */}
-        {hasVideo && inView && (
+        {/* Short looping video — used when thumbnail_short_url is set */}
+        {useShortVideo && inView && (
+          <video
+            src={shortUrl}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+            style={{ pointerEvents: 'none', opacity: videoReady ? 1 : 0 }}
+            autoPlay
+            loop
+            muted
+            playsInline
+            onCanPlay={() => setVideoReady(true)}
+          />
+        )}
+
+        {/* Silent autoplay iframe — fallback when no short video */}
+        {!useShortVideo && silentSrc && inView && (
           <iframe
             src={silentSrc}
             className="absolute inset-0 w-full h-full transition-opacity duration-700"
@@ -110,31 +128,16 @@ export default function WorkCard({ item, onClick }: Props) {
           />
         )}
 
+        {/* Hover overlay — title + client */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none flex flex-col justify-end p-3 gap-0.5">
+          <span className="text-sm text-white font-medium leading-tight">{item.title}</span>
+          <span className="text-xs text-white/70 font-normal leading-tight">
+            {item.client}{item.year ? `, ${item.year}` : ''}
+          </span>
+        </div>
 
-        {isCaseStudy && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span className="text-[10px] tracking-[0.12em] uppercase text-white font-semibold">
-              Read the Story →
-            </span>
-          </div>
-        )}
-
-        {isCaseStudy && (
-          <div className="absolute top-3 left-3">
-            <span className="text-[9px] tracking-[0.12em] uppercase bg-white text-black px-2 py-1 leading-none font-semibold">
-              Case Study
-            </span>
-          </div>
-        )}
       </div>
 
-      {/* ── Metadata ─────────────────────────────────────── */}
-      <div className="flex flex-col gap-0.5">
-        <span className="text-[13px] text-neutral-400 font-normal leading-snug">{item.title}</span>
-        <span className="text-[13px] text-neutral-400 font-normal leading-snug">
-          {item.client}{item.year ? `, ${item.year}` : ''}
-        </span>
-      </div>
     </div>
   );
 }

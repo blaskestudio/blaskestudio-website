@@ -1,19 +1,9 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import ClientLogo from '@/components/ui/ClientLogo';
-import { clients } from '@/lib/clients';
 
 export const metadata = {
   title: 'About',
-  description: 'About Blaske Studio — a full-service production company based in the Midwest.',
+  description: 'About Blaske Studio — an award-winning production company based in South Bend, Indiana.',
 };
-
-const TEAM = [
-  { name: 'Jonathan Blaske', role: 'Director / Founder', initials: 'JB' },
-  { name: 'Placeholder Name', role: 'Director of Photography', initials: 'DP' },
-  { name: 'Placeholder Name', role: 'Producer', initials: 'PR' },
-  { name: 'Placeholder Name', role: 'Editor', initials: 'ED' },
-];
 
 export default function AboutPage() {
   return (
@@ -29,89 +19,98 @@ export default function AboutPage() {
         </h1>
       </section>
 
-      {/* ── Studio ──────────────────────────────────────────────── */}
+      {/* ── Studio description ──────────────────────────────────── */}
       <section
-        className="py-16 md:py-24 "
+        className="py-16 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
           <div className="md:w-1/3 shrink-0">
-            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-4">Studio</p>
+            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-4">Blaske Studio</p>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
-            <p className="text-base md:text-lg leading-relaxed text-neutral-700">
-              Blaske Studio is a creative production studio based in South Bend, Indiana.
+            <p className="text-editorial">
+              Blaske Studio is an award winning production company based in South Bend, Indiana, specializing in both commercial and documentary filmmaking. We are passionate storytellers, dedicated to crafting high quality, impactful content that elevates brands and connects with audiences.
             </p>
-            <p className="text-base leading-relaxed text-neutral-700">
-              Our work spans award-winning documentaries and commercial projects that have supported teams both regionally and nationally.
+            <p className="text-editorial">
+              From concept to final cut, our team brings creativity, technical expertise, and a collaborative spirit to every project. Whether you are looking to promote your business, tell a meaningful story, or capture a moment that matters, we approach every project with intention and care.
             </p>
-            <p className="text-base leading-relaxed text-neutral-700">
-              With over a decade of experience, we focus on storytelling and deliver the level of quality each project deserves.
+            <p className="text-editorial">
+              Our work is rooted in story first thinking, supported by a strong foundation in cinematography, editing, and production. We collaborate closely with our clients to ensure every piece not only looks great, but resonates with the audience it is meant to reach.
             </p>
-            <Link
-              href="/studio"
-              className="self-start inline-flex items-center gap-2 border border-black px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-transparent hover:bg-black hover:text-white transition-colors duration-150 no-underline mt-2"
-            >
-              See the space
-              <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M0 5H12M8 1L12 5L8 9" />
-              </svg>
-            </Link>
+            <p className="text-editorial">
+              With a reputation for excellence and a commitment to innovation, Blaske Studio is trusted by clients who value authenticity, artistry, and work that delivers real impact.
+            </p>
+            <p className="text-editorial font-semibold mt-2">
+              Let&apos;s make something powerful together.
+            </p>
           </div>
         </div>
 
-        {/* Placeholder hero image */}
-        <div className="mt-12 w-full aspect-[16/7] bg-neutral-100 rounded-lg overflow-hidden flex items-center justify-center">
-          <span className="text-base tracking-[0.08em] uppercase font-medium text-neutral-600">Studio photo placeholder</span>
+        {/* Studio hero image */}
+        <div className="mt-16 w-full aspect-[16/7] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://lh3.googleusercontent.com/d/1G5TJ5pXXlRpwI6oOpxQ0YhEB4DkVPLLv=w2000"
+            alt="Blaske Studio"
+            className="w-full h-full object-cover"
+          />
         </div>
       </section>
 
-      {/* ── Team / Collaborators ────────────────────────────────── */}
+      {/* ── Founder Bio ─────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24 "
+        className="py-16 md:py-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="flex flex-col md:flex-row gap-12 md:gap-20">
+          <div className="md:w-1/3 shrink-0">
+            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-1">Founder</p>
+            <p className="text-base font-semibold text-black">Ryan Blaske</p>
+          </div>
+          <div className="flex flex-col gap-6 md:w-2/3">
+            <p className="text-editorial">
+              Ryan Blaske is a South Bend native and filmmaker with over 15 years of experience in professional video production. He founded Blaske Studio with a vision to bring high quality, story driven filmmaking to the community he has always called home.
+            </p>
+            <p className="text-editorial">
+              Before starting the studio, Ryan led video production efforts at the University of Notre Dame and Lippert, where he developed a strong foundation in both creative direction and production execution across a wide range of projects.
+            </p>
+            <p className="text-editorial">
+              His background in the independent music scene shaped a do it yourself mindset that continues to influence his work today. It is a mentality rooted in curiosity, problem solving, and a willingness to do whatever it takes to tell the story the right way.
+            </p>
+            <p className="text-editorial">
+              Ryan&apos;s work focuses on creating meaningful, visually compelling stories that connect with people on a deeper level. Through Blaske Studio, he continues to push for a balance of high production value and authentic storytelling in every project.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Team ────────────────────────────────────────────────── */}
+      <section
+        className="py-16 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
           <div className="md:w-1/3 shrink-0">
             <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-4">Team</p>
           </div>
-          <div className="md:w-2/3">
-            <p className="text-base leading-relaxed text-neutral-700 mb-10">
-              We maintain a core team of directors, producers, and editors — and expand with trusted collaborators for every project. Our network spans cinematographers, colorists, sound designers, and motion artists across the Midwest and beyond.
+          <div className="flex flex-col gap-6 md:w-2/3">
+            <p className="text-editorial">
+              Our commitment to quality extends beyond the final frame. We are thoughtful about the teams we build, bringing together the right collaborators for each project. Through a trusted network of industry professionals, Blaske Studio is able to scale with intention and deliver at the highest level, no matter the scope.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-neutral-200">
-              {TEAM.map(({ name, role, initials }, i) => (
-                <div key={`${name}-${i}`} className="bg-white flex flex-col gap-3 p-6">
-                  {/* Avatar placeholder */}
-                  <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center">
-                    <span className="text-base font-medium text-neutral-600">{initials}</span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-base font-medium text-black">{name}</span>
-                    <span className="text-base tracking-[0.08em] uppercase font-medium text-neutral-600">{role}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Link
+              href="/culture"
+              className="self-start inline-flex items-center gap-2 border border-black px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-transparent hover:bg-black hover:text-white transition-colors duration-150 no-underline mt-2"
+            >
+              Culture
+              <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M0 5H12M8 1L12 5L8 9" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Clients ─────────────────────────────────────────────── */}
-      <section
-        data-nav-theme="light"
-        className="py-16 md:py-24 "
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
-      >
-        <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-10">Selected Clients</p>
-        <div className="grid grid-cols-3 md:grid-cols-7">
-          {clients.map((client) => (
-            <div key={client.name} className="aspect-square flex items-center justify-center">
-              <ClientLogo src={client.logo} alt={client.name} large={client.large} />
-            </div>
-          ))}
-        </div>
-      </section>
 
     </main>
   );

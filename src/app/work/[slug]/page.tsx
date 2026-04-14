@@ -2,6 +2,7 @@ import { getWorkBySlug, getAllWorkSlugs } from '@/lib/work';
 import { CATEGORY_LABELS } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getDriveFilesFromFolder } from '@/lib/drive';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -43,7 +44,7 @@ export default async function WorkSlugPage({ params }: Props) {
         <div className="fixed top-6 z-50" style={{ left: 'var(--page-gutter)' }}>
           <Link
             href="/work"
-            className="text-[11px] tracking-[0.12em] uppercase font-semibold text-white/50 hover:text-white transition-colors duration-200 no-underline"
+            className="text-base tracking-[0.08em] uppercase font-medium text-white/50 hover:text-white transition-colors duration-200 no-underline"
           >
             ← Work
           </Link>
@@ -66,7 +67,7 @@ export default async function WorkSlugPage({ params }: Props) {
                 <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center">
                   <span className="text-white/40 text-xl ml-1">▶</span>
                 </div>
-                <span className="text-[10px] tracking-[0.12em] uppercase font-semibold text-white/30">
+                <span className="text-base tracking-[0.08em] uppercase font-medium text-white/30">
                   {item.client}
                 </span>
               </div>
@@ -81,7 +82,7 @@ export default async function WorkSlugPage({ params }: Props) {
         >
           <div className="flex items-baseline justify-between gap-4 border-t border-white/10 pt-8">
             <h1 className="text-2xl md:text-3xl font-medium tracking-tight">{item.title}</h1>
-            <span className="text-[11px] tracking-[0.12em] uppercase font-semibold text-white/40 shrink-0">
+            <span className="text-base tracking-[0.08em] uppercase font-medium text-white/40 shrink-0">
               {CATEGORY_LABELS[item.category]}{item.year ? ` — ${item.year}` : ''}
             </span>
           </div>
@@ -89,8 +90,8 @@ export default async function WorkSlugPage({ params }: Props) {
           {item.contributors && item.contributors.length > 0 && (
             <dl className="flex flex-wrap gap-x-10 gap-y-2">
               {item.contributors.map((c) => (
-                <div key={`${c.role}-${c.name}`} className="flex gap-3 text-xs">
-                  <dt className="text-white/40 tracking-wide">{c.role}</dt>
+                <div key={`${c.role}-${c.name}`} className="flex gap-3 text-base">
+                  <dt className="text-white/40">{c.role}</dt>
                   <dd className="text-white/80">{c.name}</dd>
                 </div>
               ))}
@@ -109,6 +110,10 @@ export default async function WorkSlugPage({ params }: Props) {
       ? `https://player.vimeo.com/video/${heroVideo.id}?autoplay=1&byline=0&title=0&portrait=0&color=ffffff`
       : `https://www.youtube.com/embed/${heroVideo.id}?autoplay=1&rel=0&modestbranding=1`
     : '';
+
+  const btsPhotos = item.btsPhotosFolder
+    ? await getDriveFilesFromFolder(item.btsPhotosFolder)
+    : [];
 
   return (
     <main className="flex flex-col bg-white">
@@ -145,90 +150,130 @@ export default async function WorkSlugPage({ params }: Props) {
 
       {/* Header */}
       <div
-        className="pt-10 pb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b border-neutral-100"
+        className="pt-10 pb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b border-black"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col gap-2">
-          <span className="text-[9px] tracking-[0.12em] uppercase font-semibold border border-black text-black px-2 py-1 w-fit">
+          <span className="text-[11px] tracking-[0.12em] uppercase font-semibold border border-black text-black px-2 py-1 w-fit">
             Case Study
           </span>
-          <h1 className="text-3xl md:text-5xl font-medium tracking-tight">{item.title}</h1>
-          <p className="text-sm text-neutral-400 mt-1">{item.client}</p>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{item.title}</h1>
+          <p className="text-base text-neutral-500 mt-1">{item.client}</p>
         </div>
         <div className="flex flex-col gap-1 sm:text-right shrink-0">
-          <p className="text-xs tracking-[0.12em] uppercase font-semibold text-neutral-400">
+          <p className="text-base tracking-[0.08em] uppercase font-medium text-neutral-500">
             {CATEGORY_LABELS[item.category]}
           </p>
-          {item.year > 0 && <p className="text-xs text-neutral-400">{item.year}</p>}
+          {item.year > 0 && <p className="text-base text-neutral-500">{item.year}</p>}
         </div>
       </div>
 
+      {/* Stats bar */}
+      {item.stats && item.stats.length > 0 && (
+        <div
+          className="py-10 grid grid-cols-2 md:grid-cols-4 gap-px bg-black border-b border-black"
+        >
+          {item.stats.map((stat) => (
+            <div key={stat} className="bg-white flex items-center justify-center py-6 px-4 text-center">
+              <p className="text-base font-semibold text-black leading-tight">{stat}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Editorial body */}
       <div
-        className="py-16 md:py-24 flex flex-col gap-16 max-w-3xl"
+        className="py-16 md:py-24 flex flex-col gap-16"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        {item.overview && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Overview</h2>
-            <p className="text-base md:text-lg leading-relaxed text-black">{item.overview}</p>
-          </section>
-        )}
+        {/* Two-column sections */}
+        {[
+          { label: 'Overview', content: item.overview },
+          { label: 'Opportunity', content: item.opportunity },
+          { label: 'Challenge', content: item.challenge },
+          { label: 'Approach', content: item.approach },
+          { label: 'Production', content: item.production },
+          { label: 'Outcome', content: item.outcome },
+          { label: 'Key Takeaway', content: item.keyTakeaway },
+        ].filter(s => s.content).map(({ label, content }) => (
+          <div key={label} className="flex flex-col md:flex-row gap-8 md:gap-20 border-t border-neutral-100 pt-8">
+            <p className="text-[11px] tracking-[0.12em] uppercase font-semibold text-neutral-400 md:w-40 shrink-0 pt-1">{label}</p>
+            <p className="text-editorial flex-1">{content}</p>
+          </div>
+        ))}
 
-        {item.challenge && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Challenge</h2>
-            <p className="text-base leading-relaxed text-black">{item.challenge}</p>
-          </section>
-        )}
-
-        {item.approach && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Approach</h2>
-            <p className="text-base leading-relaxed text-black">{item.approach}</p>
-          </section>
-        )}
-
+        {/* Deliverables */}
         {item.deliverables && item.deliverables.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Deliverables</h2>
-            <ul className="flex flex-col gap-2">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-20 border-t border-neutral-100 pt-8">
+            <p className="text-[11px] tracking-[0.12em] uppercase font-semibold text-neutral-400 md:w-40 shrink-0 pt-1">Deliverables</p>
+            <ul className="flex flex-col gap-2 flex-1">
               {item.deliverables.map((d) => (
-                <li key={d} className="text-sm text-neutral-700 flex gap-3">
-                  <span className="text-neutral-300 select-none">—</span>
+                <li key={d} className="text-editorial flex gap-3">
+                  <span className="text-neutral-300 select-none shrink-0">—</span>
                   {d}
                 </li>
               ))}
             </ul>
-          </section>
+          </div>
         )}
 
-        {item.results && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Results</h2>
-            <p className="text-base leading-relaxed text-black">{item.results}</p>
-          </section>
+        {/* Highlight videos */}
+        {item.highlightVideos && item.highlightVideos.length > 0 && (
+          <div className="flex flex-col gap-6 border-t border-neutral-100 pt-8">
+            <p className="text-[11px] tracking-[0.12em] uppercase font-semibold text-neutral-400">Highlights</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+              {item.highlightVideos.map((v, i) => {
+                const src = v.type === 'youtube'
+                  ? `https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1`
+                  : v.type === 'vimeo'
+                  ? `https://player.vimeo.com/video/${v.id}?byline=0&title=0`
+                  : '';
+                return src ? (
+                  <div key={i} className="w-full aspect-video bg-neutral-100">
+                    <iframe src={src} className="w-full h-full" allow="autoplay; fullscreen" allowFullScreen style={{ border: 'none' }} />
+                  </div>
+                ) : null;
+              })}
+            </div>
+          </div>
         )}
 
+        {/* BTS photos */}
+        {btsPhotos.length > 0 && (
+          <div className="flex flex-col gap-6 border-t border-neutral-100 pt-8">
+            <p className="text-[11px] tracking-[0.12em] uppercase font-semibold text-neutral-400">Behind the Scenes</p>
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-1">
+              {btsPhotos.map((f) => (
+                <div key={f.id} className="break-inside-avoid mb-1">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`https://lh3.googleusercontent.com/d/${f.id}=w1200`} alt="" className="w-full h-auto block" loading="lazy" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Credits */}
         {item.contributors && item.contributors.length > 0 && (
-          <section className="flex flex-col gap-4 pt-8 border-t border-neutral-100">
-            <h2 className="text-sm tracking-[0.12em] uppercase text-black font-semibold">Credits</h2>
-            <dl className="flex flex-col gap-2">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-20 border-t border-neutral-100 pt-8">
+            <p className="text-[11px] tracking-[0.12em] uppercase font-semibold text-neutral-400 md:w-40 shrink-0 pt-1">Credits</p>
+            <dl className="flex flex-col gap-2 flex-1">
               {item.contributors.map((c) => (
-                <div key={`${c.role}-${c.name}`} className="flex justify-between text-sm max-w-xs">
-                  <dt className="text-neutral-400">{c.role}</dt>
+                <div key={`${c.role}-${c.name}`} className="flex gap-6 text-base">
+                  <dt className="text-neutral-400 w-40 shrink-0">{c.role}</dt>
                   <dd className="text-black font-medium">{c.name}</dd>
                 </div>
               ))}
             </dl>
-          </section>
+          </div>
         )}
 
+        {/* CTA */}
         {item.cta && (
           <div className="pt-8 border-t border-neutral-100">
             <Link
               href={item.cta.href}
-              className="inline-block text-xs tracking-[0.12em] uppercase font-semibold text-black border-b border-black pb-0.5 no-underline"
+              className="inline-block text-base tracking-[0.08em] uppercase font-medium text-black border-b border-black pb-0.5 no-underline"
             >
               {item.cta.label} →
             </Link>

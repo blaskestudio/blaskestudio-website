@@ -1,6 +1,7 @@
-import { getCulturePhotos, driveImageUrl } from '@/lib/drive';
+import { getCulturePhotos } from '@/lib/drive';
+import CultureGallery from './CultureGallery';
 
-export const revalidate = 3600; // re-fetch Drive folder every hour
+export const revalidate = 3600;
 
 export const metadata = {
   title: 'Culture',
@@ -18,19 +19,7 @@ export default async function CulturePage() {
       {photos.length === 0 ? (
         <p className="text-base text-neutral-400 py-16">No photos yet.</p>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:balance]">
-          {photos.map((photo, i) => (
-            <div key={photo.id} className="break-inside-avoid mb-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={driveImageUrl(photo.id)}
-                alt=""
-                className="w-full h-auto block"
-                loading={i < 6 ? 'eager' : 'lazy'}
-              />
-            </div>
-          ))}
-        </div>
+        <CultureGallery photos={photos} />
       )}
     </main>
   );

@@ -47,7 +47,7 @@ export default function VideoLightbox({ item, onClose }: Props) {
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 text-white/50 hover:text-white text-[10px] tracking-[0.12em] uppercase font-semibold transition-colors duration-150 cursor-pointer"
+        className="absolute top-6 right-6 text-white/50 hover:text-white text-[12px] tracking-[0.08em] uppercase font-normal transition-colors duration-150 cursor-pointer"
       >
         Close ✕
       </button>
@@ -76,8 +76,8 @@ export default function VideoLightbox({ item, onClose }: Props) {
 
       {/* Title below video */}
       <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1 pointer-events-none">
-        <span className="text-white/70 text-xs tracking-[0.1em]">{item.title}</span>
-        <span className="text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">{item.client}</span>
+        <span className="text-base text-white/70">{item.title}</span>
+        <span className="text-base text-white/30 tracking-[0.08em] uppercase font-medium">{item.client}</span>
       </div>
     </div>,
     document.body

@@ -1,10 +1,12 @@
-import { getProjectsFromSheet } from './sheets';
+import { getProjectsFromSheet, getCaseStudiesFromSheet } from './sheets';
 import { WorkItem, WorkCategory } from './types';
 
 export async function getAllWork(): Promise<WorkItem[]> {
-  const projects = await getProjectsFromSheet();
-  // Case studies tab will be wired in once GID is confirmed
-  return projects.sort((a, b) => a.order - b.order);
+  const [projects, caseStudies] = await Promise.all([
+    getProjectsFromSheet(),
+    getCaseStudiesFromSheet(),
+  ]);
+  return [...projects, ...caseStudies].sort((a, b) => a.order - b.order);
 }
 
 export async function getWorkBySlug(slug: string): Promise<WorkItem | undefined> {

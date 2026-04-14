@@ -5,20 +5,17 @@ export interface Client {
   large?: boolean;
 }
 
-// 21 clients — local WebP files served from public/logos/
+// Static clients — local WebP files served from public/logos/
+// (CMT, US Army, Booking.com, and old Patrick logo removed per client request)
 export const clients: Client[] = [
   { name: 'Indiana University',    logo: '/logos/iu.webp' },
   { name: 'Notre Dame',            logo: '/logos/nd.webp' },
   { name: 'Washington Post',       logo: '/logos/wp.webp',      large: true },
-  { name: 'CMT',                   logo: '/logos/cmt.webp' },
   { name: 'Lip Sync Battle',       logo: '/logos/lip.webp',     large: true },
   { name: 'The Ranch',             logo: '/logos/ranch.webp' },
   { name: 'Victory Park',          logo: '/logos/vp.webp',      large: true },
-  { name: 'US Army',               logo: '/logos/army.webp' },
-  { name: 'Booking.com',           logo: '/logos/booking.webp', large: true },
   { name: 'Girls Inc.',            logo: '/logos/girls.webp' },
   { name: 'Good Magazine',         logo: '/logos/good.webp' },
-  { name: 'P Magazine',            logo: '/logos/p.webp' },
   { name: 'We Energies',           logo: '/logos/we.webp',      large: true },
   { name: 'Smoker Craft',          logo: '/logos/smoker.webp' },
   { name: 'Viewrail',              logo: '/logos/view.webp' },

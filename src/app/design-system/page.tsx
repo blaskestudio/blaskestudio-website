@@ -1,4 +1,4 @@
-// Design System — internal reference page, not linked in nav
+// Design System — internal brand guide, not linked in nav
 // Access at /design-system
 
 export default function DesignSystemPage() {
@@ -8,70 +8,81 @@ export default function DesignSystemPage() {
       style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
     >
       {/* Header */}
-      <div className="py-12 border-b border-neutral-200 mb-16">
-        <p className="text-[10px] tracking-[0.12em] uppercase font-semibold text-neutral-400 mb-3">Internal</p>
-        <h1 className="text-5xl font-bold tracking-tight">Design System</h1>
-        <p className="text-neutral-500 mt-3">Blaske Studio — all tokens, styles, and components in one place.</p>
+      <div className="py-12 border-b border-black mb-16">
+        <p className="text-[12px] tracking-[0.08em] font-medium text-neutral-600 mb-3">Internal · Blaske Studio</p>
+        <h1 className="text-5xl font-bold tracking-tight mb-3">Brand Guide</h1>
+        <p className="text-base text-neutral-600 max-w-prose">
+          All design tokens, type styles, colors, and components. Use this page as the source of truth when building UI.
+        </p>
       </div>
 
       <div className="flex flex-col gap-24">
 
-        {/* ── Typography ───────────────────────────────────────── */}
+        {/* ── Accessibility ─────────────────────────────────────── */}
         <section>
-          <SectionLabel>Typography</SectionLabel>
+          <SectionLabel>Accessibility Standards</SectionLabel>
+          <div className="flex flex-col gap-4">
+            {[
+              { rule: 'Minimum contrast (text on white)', standard: 'WCAG AA 4.5:1', value: 'Use neutral-600 (#525252) or darker. neutral-400 (#a3a3a3) fails at 2.7:1 — never use for body text.' },
+              { rule: 'Large text contrast (18px+ bold)', standard: 'WCAG AA 3:1', value: 'neutral-500 (#737373) is acceptable at 4.6:1 for large headings only.' },
+              { rule: 'Text on black backgrounds', standard: 'WCAG AA 4.5:1', value: 'neutral-400 on black is ~6.9:1 — passes. Use freely on dark slides/overlays.' },
+              { rule: 'Minimum base font size', standard: 'WCAG 1.4.4', value: '16px (1rem). Never use 10px or 11px for readable content. Labels minimum 12px.' },
+              { rule: 'Font smoothing', standard: 'Best practice', value: 'antialiased / grayscale. Set globally in body styles.' },
+            ].map(({ rule, standard, value }) => (
+              <div key={rule} className="grid grid-cols-1 md:grid-cols-[280px_140px_1fr] gap-2 md:gap-6 py-4 border-b border-neutral-100">
+                <span className="text-[14px] font-medium text-black">{rule}</span>
+                <span className="text-[12px] font-medium text-black tracking-[0.04em]">{standard}</span>
+                <span className="text-[13px] text-neutral-600">{value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Type Scale ───────────────────────────────────────── */}
+        <section>
+          <SectionLabel>Type Scale</SectionLabel>
+          <p className="text-[13px] text-neutral-600 mb-8">Four steps only. Do not introduce new sizes outside this scale.</p>
           <div className="flex flex-col divide-y divide-neutral-100">
 
-            <TypeRow label="Hero / Display" spec="clamp(2.5rem,6vw,5rem) · bold · tight">
-              <span style={{ fontSize: 'clamp(2.5rem,6vw,5rem)', fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
-                Full-Service Studio
+            <TypeRow label="Display / Hero" spec="clamp(2.5rem, 6vw, 5rem) · bold · tracking-tight" wcag="✓ AA">
+              <span style={{ fontSize: 'clamp(2rem,5vw,4rem)', fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
+                Blaske Studio
               </span>
             </TypeRow>
 
-            <TypeRow label="H1 Page title" spec="3xl–5xl · bold · tight">
-              <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
-                Photography
-              </h1>
-            </TypeRow>
-
-            <TypeRow label="H2 Statement" spec="3xl–5xl · bold · tight">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight max-w-2xl">
-                Award-winning, full-service production company based in South Bend, Indiana.
+            <TypeRow label="Page Heading (H1/H2)" spec="text-3xl–5xl · bold · tracking-tight" wcag="✓ AA">
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
+                Built on craft.
               </h2>
             </TypeRow>
 
-            <TypeRow label="Nav / Menu links" spec="14–20px · bold · uppercase · tracking-[0.04em]">
-              <span className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold">
-                Work · Capabilities · About · Inquire
+            <TypeRow label="Card Title / Featured" spec="text-xl–[32px] · bold · tracking-tight" wcag="✓ AA">
+              <span className="text-xl md:text-[32px] font-bold tracking-tight leading-tight">
+                People of Hope
               </span>
             </TypeRow>
 
-            <TypeRow label="Featured card title" spec="14–20px · bold · uppercase · tracking-[0.04em]">
-              <span className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold">
-                Built to Take a Hit
-              </span>
-            </TypeRow>
-
-            <TypeRow label="Body" spec="base · normal">
+            <TypeRow label="Body / UI (base)" spec="16px (1rem) · weight 450 · neutral-700 or black" wcag="✓ AA">
               <p className="text-base text-neutral-700 max-w-prose">
-                Blaske Studio is a full-service production company based in South Bend, Indiana. We create branded content, documentaries, and films that connect with audiences.
+                Full-service production for brands and stories worth telling. South Bend, Indiana.
               </p>
             </TypeRow>
 
-            <TypeRow label="Body small" spec="sm · neutral-700">
-              <p className="text-sm text-neutral-700">
-                Client name · 2023
-              </p>
-            </TypeRow>
-
-            <TypeRow label="All-caps label" spec="10px · semibold · uppercase · tracking-[0.12em]">
-              <span className="text-[10px] tracking-[0.12em] uppercase font-semibold text-neutral-500">
-                Selected Work · Case Study · Documentary
+            <TypeRow label="Metadata / Secondary" spec="13px · font-medium · neutral-600" wcag="✓ AA 7:1">
+              <span className="text-[13px] font-medium text-neutral-600">
+                Indiana University · Branded · 2024
               </span>
             </TypeRow>
 
-            <TypeRow label="Footer label" spec="14–20px · bold · uppercase · tracking-[0.04em]">
-              <span className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase text-black font-bold">
-                Contact · Location · Hours
+            <TypeRow label="Labels / Caps" spec="12px · font-medium · tracking-[0.08em] · neutral-600" wcag="✓ AA 7:1">
+              <span className="text-[12px] tracking-[0.08em] font-medium text-neutral-600 uppercase">
+                Selected Clients · Medium · Category
+              </span>
+            </TypeRow>
+
+            <TypeRow label="Nav Links" spec="14–20px · font-medium · uppercase · tracking-[0.04em]" wcag="✓ AA">
+              <span className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-medium">
+                Work · Capabilities · About · Inquire
               </span>
             </TypeRow>
 
@@ -80,97 +91,131 @@ export default function DesignSystemPage() {
 
         {/* ── Color ────────────────────────────────────────────── */}
         <section>
-          <SectionLabel>Color</SectionLabel>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <SectionLabel>Color Palette</SectionLabel>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {[
-              { name: 'Black', hex: '#0a0a0a', bg: 'bg-[#0a0a0a]', light: true },
-              { name: 'White', hex: '#ffffff', bg: 'bg-white', border: true },
-              { name: 'Neutral 200', hex: '#e5e5e5', bg: 'bg-neutral-200' },
-              { name: 'Neutral 400', hex: '#a3a3a3', bg: 'bg-neutral-400' },
-              { name: 'Neutral 500', hex: '#737373', bg: 'bg-neutral-500', light: true },
-              { name: 'Neutral 700', hex: '#404040', bg: 'bg-neutral-700', light: true },
-              { name: 'Accent', hex: '#0a0a0a', bg: 'bg-[#0a0a0a]', light: true },
-              { name: 'Accent Yellow', hex: '#FFD000', bg: 'bg-[#FFD000]' },
-            ].map(({ name, hex, bg, light, border }) => (
-              <div key={hex}>
-                <div className={`${bg} ${border ? 'border border-neutral-200' : ''} h-20 rounded-sm mb-2`} />
-                <p className="text-[11px] font-semibold tracking-[0.04em]">{name}</p>
-                <p className="text-[11px] text-neutral-400 font-mono">{hex}</p>
+              { name: 'Black', hex: '#0a0a0a', contrast: '—', bg: 'bg-[#0a0a0a]', light: true, note: 'Primary text, borders, fills' },
+              { name: 'White', hex: '#ffffff', contrast: '—', bg: 'bg-white', border: true, note: 'Page background' },
+              { name: 'Neutral 600', hex: '#525252', contrast: '7:1 ✓ AA', bg: 'bg-neutral-600', light: true, note: 'Secondary text, labels, metadata' },
+              { name: 'Neutral 700', hex: '#404040', contrast: '9.7:1 ✓ AA', bg: 'bg-neutral-700', light: true, note: 'Body text on white' },
+              { name: 'Neutral 100', hex: '#f5f5f5', contrast: '—', bg: 'bg-neutral-100', note: 'Subtle backgrounds, dividers' },
+              { name: 'Neutral 200', hex: '#e5e5e5', contrast: '—', bg: 'bg-neutral-200', note: 'Borders, grid lines' },
+              { name: 'Neutral 400 ✗', hex: '#a3a3a3', contrast: '2.7:1 ✗ FAIL', bg: 'bg-neutral-400', note: 'Do not use for text on white' },
+              { name: 'Black (dark bg)', hex: '#0a0a0a', contrast: '—', bg: 'bg-[#0a0a0a]', light: true, note: 'Featured slides, hero sections' },
+            ].map(({ name, hex, contrast, bg, light, border, note }) => (
+              <div key={name}>
+                <div className={`${bg} ${border ? 'border border-neutral-200' : ''} h-16 mb-3`} />
+                <p className="text-[13px] font-medium text-black">{name}</p>
+                <p className="font-mono text-[12px] text-neutral-600">{hex}</p>
+                <p className={`text-[11px] font-medium mt-0.5 ${contrast.includes('FAIL') ? 'text-red-500' : 'text-neutral-600'}`}>{contrast}</p>
+                <p className="text-[11px] text-neutral-600 mt-0.5">{note}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Pills ────────────────────────────────────────────── */}
+        {/* ── Pills / Filters ──────────────────────────────────── */}
         <section>
-          <SectionLabel>Pills</SectionLabel>
-          <div className="flex flex-wrap gap-3 mb-8">
-            <button className="pill">All</button>
-            <button className="pill">Branded</button>
-            <button className="pill">Documentary</button>
-            <button className="pill">Case Studies</button>
-            <button className="pill pill-active">Active</button>
-            <a href="#" className="pill">As Link</a>
-          </div>
-          <div className="text-[11px] text-neutral-400 font-mono bg-neutral-50 rounded p-4 leading-relaxed">
-            {`.pill { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.375rem 1rem; border-radius: 9999px; border: 1px solid #d4d4d4; }`}
+          <SectionLabel>Pills &amp; Filters</SectionLabel>
+          <div className="flex flex-col gap-8">
+            <div>
+              <p className="text-[12px] font-medium text-neutral-600 mb-4">Default</p>
+              <div className="flex flex-wrap gap-3">
+                <button className="pill">All</button>
+                <button className="pill">Branded</button>
+                <button className="pill">Documentary</button>
+                <button className="pill">Case Studies</button>
+              </div>
+            </div>
+            <div>
+              <p className="text-[12px] font-medium text-neutral-600 mb-4">Active state</p>
+              <div className="flex flex-wrap gap-3">
+                <button className="pill pill-active">Branded</button>
+                <button className="pill">Documentary</button>
+              </div>
+            </div>
+            <div>
+              <p className="text-[12px] font-medium text-neutral-600 mb-4">Joined group (Video/Photo toggle)</p>
+              <div className="flex">
+                <button className="pill pill-active" style={{ borderRight: 'none' }}>Video</button>
+                <button className="pill">Photo</button>
+              </div>
+            </div>
+            <div className="font-mono text-[12px] text-neutral-600 bg-neutral-50 p-4 border border-neutral-200 leading-relaxed">
+              {`.pill { font-size: 0.75rem (12px); font-weight: 500; letter-spacing: 0.08em; padding: 0.375rem 1rem; border: 1px solid #0a0a0a; border-radius: 0; }`}
+            </div>
           </div>
         </section>
 
-        {/* ── Spacing / Layout ─────────────────────────────────── */}
+        {/* ── Spacing ──────────────────────────────────────────── */}
         <section>
-          <SectionLabel>Spacing & Layout</SectionLabel>
-          <div className="flex flex-col gap-4">
+          <SectionLabel>Spacing &amp; Layout</SectionLabel>
+          <div className="flex flex-col">
             {[
-              { label: '--page-gutter', value: 'clamp(0.625rem, 2.5vw, 2.5rem)', desc: 'Horizontal page padding on all sections' },
-              { label: '--nav-height', value: '64px', desc: 'Fixed nav bar height' },
-              { label: 'Section top padding', value: 'py-16 md:py-24', desc: 'Inner pages' },
-              { label: 'Section gap (featured)', value: 'py-12 per card', desc: 'FeaturedWork row vertical padding' },
-              { label: 'Grid gap', value: 'gap-x-5 gap-y-12', desc: 'WorkGrid card grid' },
-            ].map(({ label, value, desc }) => (
-              <div key={label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3 border-b border-neutral-100">
-                <span className="font-mono text-[12px] text-black min-w-[220px]">{label}</span>
-                <span className="font-mono text-[12px] text-neutral-500">{value}</span>
-                <span className="text-[12px] text-neutral-400">{desc}</span>
+              { token: '--page-gutter', value: 'clamp(0.625rem, 2.5vw, 2.5rem)', note: 'Horizontal padding on all full-width sections' },
+              { token: '--nav-height', value: '64px', note: 'Fixed nav height — used for paddingTop on sticky slide slides' },
+              { token: 'Section padding (inner pages)', value: 'py-16 md:py-24', note: 'About, Studio, Work pages' },
+              { token: 'Card grid gap', value: 'gap-x-5 gap-y-12', note: 'WorkGrid 3-col layout' },
+              { token: 'Slide deck height', value: 'N × 100vh', note: 'Each featured slide = 1 viewport of scroll space' },
+            ].map(({ token, value, note }) => (
+              <div key={token} className="grid grid-cols-1 md:grid-cols-[260px_180px_1fr] gap-2 md:gap-6 py-4 border-b border-neutral-100">
+                <span className="font-mono text-[13px] text-black">{token}</span>
+                <span className="font-mono text-[13px] text-neutral-600">{value}</span>
+                <span className="text-[13px] text-neutral-600">{note}</span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Transitions ──────────────────────────────────────── */}
+        {/* ── Motion ───────────────────────────────────────────── */}
         <section>
           <SectionLabel>Motion</SectionLabel>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col">
             {[
-              { label: 'Nav color (hover in)', value: '150ms ease', desc: 'Fast hover response' },
-              { label: 'Nav color (hover out / intro)', value: '500ms ease', desc: 'Slow color transition on scroll/intro' },
-              { label: 'Nav slide in (intro)', value: '800ms cubic-bezier(0.4,0,0.2,1)', desc: 'White bar slides down' },
-              { label: 'Nav hide/show (scroll)', value: '300ms cubic-bezier(0.4,0,0.2,1)', desc: 'translateY on scroll direction change' },
-              { label: 'Pill border/color', value: '150ms', desc: 'Filter pill hover' },
-              { label: 'Video fade in', value: '500ms', desc: 'iframe opacity on iframe load' },
-              { label: 'Card overlay', value: '500ms', desc: 'bg-black/25 on card hover' },
-            ].map(({ label, value, desc }) => (
-              <div key={label} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3 border-b border-neutral-100">
-                <span className="font-mono text-[12px] text-black min-w-[260px]">{label}</span>
-                <span className="font-mono text-[12px] text-neutral-500">{value}</span>
-                <span className="text-[12px] text-neutral-400">{desc}</span>
+              { token: 'Nav hide/show', value: '300ms cubic-bezier(0.4,0,0.2,1)', note: 'translateY on scroll direction change' },
+              { token: 'Nav bg color', value: '300ms ease', note: 'Transparent → white when scrolling past hero' },
+              { token: 'Pill hover', value: '150ms', note: 'Border/color/background transitions' },
+              { token: 'Video thumbnail fade', value: '500ms', note: 'Opacity when iframe loads' },
+              { token: 'Card scale (hover)', value: '300ms ease-out scale(1.02)', note: 'Applied to media container only, not metadata' },
+              { token: 'Footer wordmark bounce', value: '0.22s ease-in-out, 45ms stagger per letter', note: 'Fires on every scroll-into-view after first exit' },
+            ].map(({ token, value, note }) => (
+              <div key={token} className="grid grid-cols-1 md:grid-cols-[240px_280px_1fr] gap-2 md:gap-6 py-4 border-b border-neutral-100">
+                <span className="font-mono text-[13px] text-black">{token}</span>
+                <span className="font-mono text-[13px] text-neutral-600">{value}</span>
+                <span className="text-[13px] text-neutral-600">{note}</span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Reference ────────────────────────────────────────── */}
+        {/* ── Do / Don't ───────────────────────────────────────── */}
         <section>
-          <SectionLabel>Visual References</SectionLabel>
-          <div className="flex flex-col gap-3">
-            {[
-              { label: 'CHM Collections', url: 'https://www.computerhistory.org/collections/catalog/102776101/', note: 'Bold all-caps nav pills, high contrast' },
-            ].map(({ label, url, note }) => (
-              <div key={url} className="flex items-baseline gap-4 py-3 border-b border-neutral-100">
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-black hover:opacity-60 transition-opacity">{label}</a>
-                <span className="text-[12px] text-neutral-400">{note}</span>
-              </div>
-            ))}
+          <SectionLabel>Rules</SectionLabel>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-neutral-200">
+            <div className="bg-white p-8">
+              <p className="text-[12px] font-medium tracking-[0.08em] text-black mb-6">DO</p>
+              <ul className="flex flex-col gap-3 text-[13px] text-neutral-600">
+                <li>✓ Use neutral-600 or darker for all text on white</li>
+                <li>✓ Use 12px minimum for labels, 16px for body</li>
+                <li>✓ Keep type scale to 4 steps</li>
+                <li>✓ Use font-medium for labels, font-bold for headings only</li>
+                <li>✓ Use tracking-[0.04em] for nav/section labels in uppercase</li>
+                <li>✓ Use #0a0a0a (not pure #000000) for black</li>
+                <li>✓ Keep antialiased font rendering globally</li>
+              </ul>
+            </div>
+            <div className="bg-white p-8">
+              <p className="text-[12px] font-medium tracking-[0.08em] text-black mb-6">DON'T</p>
+              <ul className="flex flex-col gap-3 text-[13px] text-neutral-600">
+                <li>✗ Use neutral-400 (#a3a3a3) for text on white — fails WCAG</li>
+                <li>✗ Use font-bold for anything other than headings</li>
+                <li>✗ Use font-semibold — not in the scale</li>
+                <li>✗ Introduce new font sizes outside the 4-step scale</li>
+                <li>✗ Use tracking-[0.12em] — reduces to 0.08em max</li>
+                <li>✗ Use pure black #000000</li>
+                <li>✗ Use pill with border-radius (always square)</li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -181,18 +226,19 @@ export default function DesignSystemPage() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] tracking-[0.12em] uppercase font-semibold text-neutral-400 mb-8">
+    <p className="text-[12px] tracking-[0.08em] uppercase font-medium text-neutral-600 mb-8">
       {children}
     </p>
   );
 }
 
-function TypeRow({ label, spec, children }: { label: string; spec: string; children: React.ReactNode }) {
+function TypeRow({ label, spec, wcag, children }: { label: string; spec: string; wcag?: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 py-8">
+    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4 py-8">
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.04em] text-black">{label}</p>
-        <p className="text-[11px] text-neutral-400 font-mono mt-1 leading-relaxed">{spec}</p>
+        <p className="text-[13px] font-medium text-black">{label}</p>
+        <p className="font-mono text-[11px] text-neutral-600 mt-1 leading-relaxed">{spec}</p>
+        {wcag && <p className="text-[11px] font-medium text-neutral-600 mt-1">{wcag}</p>}
       </div>
       <div className="flex items-center">
         {children}

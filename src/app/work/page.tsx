@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { getAllWork } from '@/lib/work';
 import WorkGrid from '@/components/ui/WorkGrid';
+import { getAllPhotographyPhotos } from '@/lib/drive';
 
 export const metadata = {
   title: 'Work',
@@ -8,12 +9,15 @@ export const metadata = {
 };
 
 export default async function WorkPage() {
-  const work = await getAllWork();
+  const [work, photosByCategory] = await Promise.all([
+    getAllWork(),
+    getAllPhotographyPhotos(),
+  ]);
 
   return (
     <main className="pt-16 md:pt-24" style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
       <Suspense>
-        <WorkGrid items={work} />
+        <WorkGrid items={work} drivePhotosByCategory={photosByCategory} />
       </Suspense>
     </main>
   );

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import NewsletterForm from '@/components/ui/NewsletterForm';
-import FooterWordmark from '@/components/ui/FooterWordmark';
 
 const SOCIAL_LINKS = [
   {
@@ -30,19 +29,7 @@ const SOCIAL_LINKS = [
       </svg>
     ),
   },
-  {
-    label: 'Substack',
-    href: 'https://blaskestudio.substack.com/',
-    icon: (
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z" />
-      </svg>
-    ),
-  },
 ];
-
-const labelClass =
-  'text-base tracking-[0.08em] uppercase font-medium text-black';
 
 // External link arrow (↗)
 const ExternalArrow = () => (
@@ -56,9 +43,13 @@ const ExternalArrow = () => (
   </svg>
 );
 
-export default function Footer() {
+export default function Footer({ dark }: { dark?: boolean }) {
+  const labelClass = `text-base tracking-[0.08em] uppercase font-medium ${dark ? 'text-white' : 'text-black'}`;
+  const textClass = `text-base font-medium ${dark ? 'text-white' : 'text-black'}`;
+  const linkClass = `font-medium hover:opacity-60 transition-opacity duration-150 no-underline ${dark ? 'text-white' : 'text-black'}`;
+
   return (
-    <footer className="mt-auto shrink-0 flex flex-col justify-between" style={{ minHeight: 'calc(100vh - var(--nav-height))' }}>
+    <footer className={`mt-auto shrink-0 ${dark ? 'bg-black' : ''}`}>
 
       {/* Main grid — 4 cols on desktop, last col fills remaining space */}
       <div
@@ -67,17 +58,11 @@ export default function Footer() {
       >
 
         {/* Col 1 — Social */}
-        <div className="flex flex-col gap-5 ">
+        <div className="flex flex-col gap-5">
           <p className={labelClass}>Social</p>
-          <div className="flex flex-col gap-3 text-base text-black font-medium">
+          <div className="flex flex-col gap-3">
             {SOCIAL_LINKS.map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:opacity-60 transition-opacity duration-150 no-underline"
-              >
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>
                 {label}
               </a>
             ))}
@@ -85,9 +70,9 @@ export default function Footer() {
         </div>
 
         {/* Col 2 — Location */}
-        <div className="flex flex-col gap-5 ">
+        <div className="flex flex-col gap-5">
           <p className={labelClass}>Location</p>
-          <div className="flex flex-col gap-0.5 text-base text-black font-medium leading-relaxed">
+          <div className={`flex flex-col gap-0.5 leading-relaxed ${textClass}`}>
             <span>240 E Tutt Street</span>
             <span>South Bend, IN 46601</span>
             <span className="mt-3">By appointment only</span>
@@ -95,39 +80,44 @@ export default function Footer() {
         </div>
 
         {/* Col 3 — Contact */}
-        <div className="flex flex-col gap-5 ">
+        <div className="flex flex-col gap-5">
           <p className={labelClass}>Contact</p>
-          <div className="flex flex-col gap-3 text-base text-black font-medium">
-            <a
-              href="mailto:hello@blaskestudio.com"
-              className="hover:opacity-60 transition-opacity duration-150"
-            >
+          <div className="flex flex-col gap-3">
+            <a href="mailto:hello@blaskestudio.com" className={linkClass}>
               hello@blaskestudio.com
             </a>
-            <Link
-              href="/inquire"
-              className="hover:opacity-60 transition-opacity duration-150 no-underline"
-            >
+            <Link href="/inquire" className={linkClass}>
               Inquire
             </Link>
           </div>
         </div>
 
-        {/* Col 4 — Newsletter — fills remaining space */}
+        {/* Col 4 — Newsletter */}
         <div className="flex flex-col gap-5">
-          <NewsletterForm />
+          <NewsletterForm dark={dark} />
         </div>
 
       </div>
 
-      {/* BLASKE wordmark */}
-      <div style={{
-        paddingLeft: 'var(--page-gutter)',
-        paddingRight: 'var(--page-gutter)',
-        paddingTop: 'clamp(4rem, 10vw, 8rem)',
-        paddingBottom: 'var(--page-gutter)',
-      }}>
-        <FooterWordmark />
+      {/* Bottom bar — copyright + legal */}
+      <div
+        className={`mx-[var(--page-gutter)] border-t ${dark ? 'border-white' : 'border-black'}`}
+        style={{ marginLeft: 'var(--page-gutter)', marginRight: 'var(--page-gutter)' }}
+      />
+      <div
+        className="flex items-center justify-between pb-8 pt-6"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <span className={`text-[16px] font-normal ${dark ? 'text-white' : 'text-black'}`}>
+          © 2026 Blaske Studio
+        </span>
+        <div className={`flex items-center gap-4 text-[16px] font-normal ${dark ? 'text-white' : 'text-black'}`}>
+          <Link href="/terms" className="hover:opacity-60 transition-opacity duration-150 no-underline">Terms</Link>
+          <span className="opacity-40">|</span>
+          <Link href="/privacy" className="hover:opacity-60 transition-opacity duration-150 no-underline">Privacy</Link>
+          <span className="opacity-40">|</span>
+          <Link href="/sitemap-page" className="hover:opacity-60 transition-opacity duration-150 no-underline">Sitemap</Link>
+        </div>
       </div>
 
     </footer>
