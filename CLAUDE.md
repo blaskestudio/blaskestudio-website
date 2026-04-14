@@ -6,6 +6,43 @@ Next.js 16 App Router website for Blaske Studio, a full-service production studi
 
 ---
 
+## Daily Workflow
+
+### Making changes
+1. Open terminal in this project folder and run `claude`
+2. Describe what you want changed (be specific)
+3. Preview at `http://localhost:3000` (dev server: `npm run dev`)
+4. When happy, commit and deploy:
+
+```bash
+git add -A
+git commit -m "describe what changed"
+git push origin main
+```
+
+`git push origin main` pushes to both GitHub repos simultaneously — Vercel auto-deploys production (`blaskestudio-website.vercel.app`) within ~2 minutes.
+
+### Updating the client preview
+```bash
+git checkout preview && git merge main && git push camzyn preview && git checkout main
+```
+Client preview URL: `https://blaskestudio-website-git-preview-camille-3771s-projects.vercel.app`
+
+### Git remotes
+- `origin` → pushes to both `blaskestudio/blaskestudio-website` AND `camzyn/blaskestudio-website`
+- `camzyn` → `camzyn/blaskestudio-website` only (what Vercel watches)
+- Vercel production branch: `main` on `camzyn`
+
+### Cost-effective Claude usage
+- **Claude Code CLI** (`claude` in terminal) — for all code changes; can read/edit files and check the browser
+- **Claude.ai web** — for questions, copy writing, planning; no file access needed so cheaper
+- Keep sessions focused on one task — shorter sessions cost less
+- Start a new session for unrelated tasks rather than continuing a long one
+
+---
+
+---
+
 ## gstack
 
 Use the `/browse` skill from gstack for all web browsing tasks. **Never use `mcp__claude-in-chrome__*` tools directly.**
