@@ -110,7 +110,7 @@ export async function getAllPhotographyPhotos(): Promise<PhotographyPhotosByCate
  * sz=w2000 requests up to 2000px wide — Google will serve the best fit.
  */
 export function driveImageUrl(fileId: string): string {
-  return `https://lh3.googleusercontent.com/d/${fileId}=w2000`;
+  return `/api/drive-image?id=${fileId}`;
 }
 
 /**
