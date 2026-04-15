@@ -43,7 +43,7 @@ export default async function WorkSlugPage({ params }: Props) {
         {/* Back button */}
         <div className="fixed top-6 z-50" style={{ left: 'var(--page-gutter)' }}>
           <Link
-            href="/work"
+            href="/work/video"
             className="text-base tracking-[0.08em] uppercase font-medium text-white/50 hover:text-white transition-colors duration-200 no-underline"
           >
             ← Work

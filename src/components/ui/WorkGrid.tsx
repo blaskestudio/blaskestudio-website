@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { WorkItem, WorkCategory, CATEGORY_LABELS } from '@/lib/types';
 import { PhotographyPhotosByCategory } from '@/lib/drive';
@@ -9,25 +9,24 @@ import WorkCard from './WorkCard';
 import VideoLightbox from './VideoLightbox';
 
 // ── Video filters ──────────────────────────────────────────────
-const VIDEO_FILTERS: { label: string; value: WorkCategory | 'all' | 'case-study' }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Branded', value: 'branded' },
-  { label: 'Documentary', value: 'documentary' },
-  { label: 'Case Studies', value: 'case-study' },
+const VIDEO_FILTERS: { label: string; value: WorkCategory | 'all' | 'case-study'; slug: string }[] = [
+  { label: 'All',          value: 'all',        slug: '' },
+  { label: 'Branded',      value: 'branded',    slug: 'branded' },
+  { label: 'Documentary',  value: 'documentary', slug: 'documentary' },
+  { label: 'Case Studies', value: 'case-study', slug: 'case-studies' },
 ];
 
 // ── Photo categories ───────────────────────────────────────────
 type PhotoCategory = 'all' | 'commercial' | 'documentary' | 'performance' | 'headshots' | 'portraiture';
 
 const PHOTO_FILTERS: { label: string; value: PhotoCategory }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Commercial', value: 'commercial' },
+  { label: 'All',         value: 'all' },
+  { label: 'Commercial',  value: 'commercial' },
   { label: 'Documentary', value: 'documentary' },
   { label: 'Performance', value: 'performance' },
-  { label: 'Headshots', value: 'headshots' },
+  { label: 'Headshots',   value: 'headshots' },
   { label: 'Portraiture', value: 'portraiture' },
 ];
-
 
 type MediaType = 'video' | 'photo';
 type ViewMode = 'grid' | 'index';
@@ -126,30 +125,21 @@ function IndexRow({
 interface Props {
   items: WorkItem[];
   drivePhotosByCategory?: PhotographyPhotosByCategory;
+  mediaType: MediaType;
+  activeVideoFilter?: WorkCategory | 'all' | 'case-study';
+  activePhotoFilter?: PhotoCategory;
 }
 
-export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
+export default function WorkGrid({
+  items,
+  drivePhotosByCategory,
+  mediaType,
+  activeVideoFilter = 'all',
+  activePhotoFilter = 'all',
+}: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [mediaType, setMediaType] = useState<MediaType>('video');
-  const [activeVideoFilter, setActiveVideoFilter] = useState<WorkCategory | 'all' | 'case-study'>('all');
-  const [activePhotoFilter, setActivePhotoFilter] = useState<PhotoCategory>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [lightboxItem, setLightboxItem] = useState<WorkItem | null>(null);
-
-  useEffect(() => {
-    const type = searchParams.get('type');
-    if (type === 'photo') setMediaType('photo');
-    const cat = searchParams.get('category');
-    if (cat && VIDEO_FILTERS.some(f => f.value === cat)) {
-      setActiveVideoFilter(cat as WorkCategory | 'all' | 'case-study');
-    }
-  }, [searchParams]);
-
-  // Reset to grid view when switching to photo mode
-  useEffect(() => {
-    if (mediaType === 'photo') setViewMode('grid');
-  }, [mediaType]);
 
   const filteredVideo = items.filter((item) => {
     if (activeVideoFilter === 'all') return true;
@@ -181,6 +171,18 @@ export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
     [router]
   );
 
+  const handleVideoFilterClick = (value: WorkCategory | 'all' | 'case-study', slug: string) => {
+    router.push(slug ? `/work/video/${slug}` : '/work/video');
+  };
+
+  const handlePhotoFilterClick = (value: PhotoCategory) => {
+    router.push(value === 'all' ? '/work/photo' : `/work/photo/${value}`);
+  };
+
+  const handleMediaTypeClick = (type: MediaType) => {
+    router.push(type === 'video' ? '/work/video' : '/work/photo');
+  };
+
   return (
     <>
       {/* ── Controls row ─────────────────────────────────────── */}
@@ -191,14 +193,14 @@ export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
           <span className="text-base font-medium text-black whitespace-nowrap">Medium</span>
           <div className="flex">
             <button
-              onClick={() => setMediaType('video')}
+              onClick={() => handleMediaTypeClick('video')}
               className={`pill${mediaType === 'video' ? ' pill-active' : ''}`}
               style={{ borderRight: 'none' }}
             >
               Video
             </button>
             <button
-              onClick={() => setMediaType('photo')}
+              onClick={() => handleMediaTypeClick('photo')}
               className={`pill${mediaType === 'photo' ? ' pill-active' : ''}`}
             >
               Photo
@@ -211,10 +213,10 @@ export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
           <div className="flex items-center gap-3">
             <span className="text-base font-medium text-black whitespace-nowrap">Category</span>
             <div className="flex">
-              {VIDEO_FILTERS.map(({ label, value }, i) => (
+              {VIDEO_FILTERS.map(({ label, value, slug }, i) => (
                 <button
                   key={value}
-                  onClick={() => setActiveVideoFilter(value)}
+                  onClick={() => handleVideoFilterClick(value, slug)}
                   className={`pill${activeVideoFilter === value ? ' pill-active' : ''}`}
                   style={i < VIDEO_FILTERS.length - 1 ? { borderRight: 'none' } : undefined}
                 >
@@ -233,7 +235,7 @@ export default function WorkGrid({ items, drivePhotosByCategory }: Props) {
               {PHOTO_FILTERS.map(({ label, value }, i) => (
                 <button
                   key={value}
-                  onClick={() => setActivePhotoFilter(value)}
+                  onClick={() => handlePhotoFilterClick(value)}
                   className={`pill${activePhotoFilter === value ? ' pill-active' : ''}`}
                   style={i < PHOTO_FILTERS.length - 1 ? { borderRight: 'none' } : undefined}
                 >

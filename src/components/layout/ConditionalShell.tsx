@@ -16,8 +16,8 @@ export default function ConditionalShell({
 }) {
   const pathname = usePathname();
 
-  // Match /work/<slug> but NOT /work itself (the index)
-  const isProjectPage = /^\/work\/[^/]+/.test(pathname);
+  // Match /work/<slug> but NOT /work itself or the filter pages (/work/video, /work/photo, etc.)
+  const isProjectPage = /^\/work\/(?!video|photo)[^/]+$/.test(pathname);
   const isHomePage = pathname === '/';
 
   if (isProjectPage) {

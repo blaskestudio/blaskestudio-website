@@ -91,7 +91,7 @@ function FeaturedSlide({ item, index, onClick }: { item: WorkItem; index: number
       </div>
       <div className="flex flex-col gap-2 mt-2">
         <Link
-          href={`/work?category=${item.contentType === 'case-study' ? 'case-study' : item.category}`}
+          href={item.contentType === 'case-study' ? '/work/video/case-studies' : `/work/video/${item.category}`}
           onClick={(e) => e.stopPropagation()}
           className="pill self-start"
         >

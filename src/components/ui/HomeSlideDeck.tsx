@@ -87,7 +87,7 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
       </div>
       <div className="flex flex-col gap-1.5">
         <Link
-          href={`/work?category=${item.contentType === 'case-study' ? 'case-study' : item.category}`}
+          href={item.contentType === 'case-study' ? '/work/video/case-studies' : `/work/video/${item.category}`}
           onClick={(e) => e.stopPropagation()}
           className="text-base tracking-[0.08em] uppercase text-white font-medium hover:text-neutral-300 transition-colors duration-150 no-underline self-start"
         >

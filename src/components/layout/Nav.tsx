@@ -6,8 +6,8 @@ import { useState, useEffect, useRef, CSSProperties } from 'react';
 import Image from 'next/image';
 
 const WORK_LINKS = [
-  { href: '/work?type=video', label: 'Video' },
-  { href: '/work?type=photo', label: 'Photo' },
+  { href: '/work/video', label: 'Video' },
+  { href: '/work/photo', label: 'Photo' },
 ];
 
 const ABOUT_LINKS = [
