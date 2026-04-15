@@ -124,17 +124,16 @@ function HeroSection({ ready }: { ready: boolean }) {
   const DURATION = '700ms';
 
   return (
-    <div className="w-full bg-black flex flex-col overflow-hidden" style={{ height: '100vh' }}>
-      {/* Hero video — 75vh */}
-      <div data-nav-theme="hero" className="relative overflow-hidden flex-none" style={{ height: '75vh' }}>
+    <div className="w-full bg-black flex flex-col overflow-hidden md:h-screen">
+      {/* Hero video — 16:9 on mobile, 75vh on desktop */}
+      <div data-nav-theme="hero" className="relative overflow-hidden flex-none aspect-video md:aspect-auto md:h-[75vh]">
         <HeroVideo />
       </div>
       {/* Studio statement — slides up from below on load */}
       <div
         data-nav-theme="light"
-        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8"
+        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8 py-8 md:py-0 md:h-[25vh]"
         style={{
-          height: '25vh',
           paddingLeft: 'var(--page-gutter)',
           paddingRight: 'var(--page-gutter)',
           transform: ready ? 'translateY(0)' : 'translateY(100%)',

@@ -89,7 +89,8 @@ export default function Nav() {
 
   const navDark = navTheme === 'dark';
   const navHero = navTheme === 'hero';
-  const textColor = (navDark || navHero) ? 'white' : 'black';
+  // When mobile menu is open the background is white, so force dark text/logo
+  const textColor = (navDark || navHero) && !menuOpen ? 'white' : 'black';
 
   // Dropdown open/close with short delay so mouse can travel to panel
   const openWork  = () => { clearTimeout(workTimer.current);  setWorkOpen(true);  };
@@ -136,18 +137,19 @@ export default function Nav() {
     'block px-4 py-2.5 text-base tracking-[0.08em] uppercase font-medium text-black hover:bg-neutral-50 no-underline transition-colors duration-100';
 
   return (
+    <>
     <header
       ref={headerRef}
-      className="relative md:fixed md:top-0 md:left-0 md:right-0 z-50 overflow-visible"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
         height: 'var(--nav-height)',
-        backgroundColor: navHero ? 'transparent' : navDark ? '#0a0a0a' : 'white',
+        backgroundColor: menuOpen ? 'white' : navHero ? 'transparent' : navDark ? '#0a0a0a' : 'white',
         transform: introReady ? 'translateY(0)' : 'translateY(-100%)',
         transition: 'background-color 300ms ease, transform 700ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       <div
-        className="relative h-full flex items-center justify-between"
+        className="relative z-10 h-full flex items-center justify-between"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         {/* Logo */}
@@ -157,9 +159,10 @@ export default function Nav() {
             alt="Blaske Studio"
             width={120}
             height={46}
+            className="h-7 md:h-9"
             style={{
-              height: '36px', width: 'auto', display: 'block',
-              filter: (navDark || navHero) ? 'invert(1)' : 'invert(0)',
+              width: 'auto', display: 'block',
+              filter: (navDark || navHero) && !menuOpen ? 'invert(1)' : 'invert(0)',
               transition: 'filter 300ms ease',
             }}
             priority
@@ -264,61 +267,62 @@ export default function Nav() {
           ))}
         </button>
       </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <nav
-          className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-neutral-100"
-          style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', zIndex: 1 }}
-        >
-          <ul className="flex flex-col py-6 gap-5">
-            <li>
-              <p className="text-[12px] tracking-[0.08em] uppercase font-medium text-neutral-600 mb-2">Work</p>
-              <ul className="flex flex-col gap-3 pl-3">
-                {WORK_LINKS.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href} onClick={() => setMenuOpen(false)}
-                      className="text-[16px] tracking-[0.04em] uppercase font-medium text-neutral-700 hover:text-black no-underline">
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-            <li>
-              <Link href="/capabilities" onClick={() => setMenuOpen(false)}
-                className={`text-[16px] tracking-[0.04em] uppercase font-medium no-underline ${isActive('/capabilities') ? 'text-black' : 'text-neutral-700 hover:text-black'}`}>
-                Capabilities
-              </Link>
-            </li>
-            <li>
-              <p className="text-[12px] tracking-[0.08em] uppercase font-medium text-neutral-600 mb-2">About</p>
-              <ul className="flex flex-col gap-3 pl-3">
-                {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
-                  <li key={href}>
-                    <Link href={href} onClick={() => setMenuOpen(false)}
-                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className="inline-flex items-center gap-1.5 text-[16px] tracking-[0.04em] uppercase font-medium text-neutral-700 hover:text-black no-underline">
-                      {label}
-                      {arrow && (
-                        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M2 8L8 2M4 2H8V6" />
-                        </svg>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-            <li>
-              <Link href="/inquire" onClick={() => setMenuOpen(false)}
-                className={`text-[16px] tracking-[0.04em] uppercase font-medium no-underline ${isActive('/inquire') ? 'text-black' : 'text-neutral-700 hover:text-black'}`}>
-                Inquire
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      )}
     </header>
+
+    {/* Mobile menu — full-screen overlay, z-40 (below header z-50) */}
+    {menuOpen && (
+      <nav
+        className="md:hidden fixed inset-0 z-40 bg-white overflow-y-auto"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <ul className="flex flex-col gap-5 pb-8" style={{ paddingTop: 'calc(var(--nav-height) + 1.5rem)' }}>
+          <li>
+            <p className="text-[13px] tracking-[0.08em] uppercase font-medium text-neutral-400 mb-3">Work</p>
+            <ul className="flex flex-col gap-3 pl-3">
+              {WORK_LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} onClick={() => setMenuOpen(false)}
+                    className="text-[18px] font-medium text-neutral-800 hover:text-black no-underline">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li>
+            <Link href="/capabilities" onClick={() => setMenuOpen(false)}
+              className={`text-[18px] font-medium no-underline ${isActive('/capabilities') ? 'text-black' : 'text-neutral-800 hover:text-black'}`}>
+              Capabilities
+            </Link>
+          </li>
+          <li>
+            <p className="text-[13px] tracking-[0.08em] uppercase font-medium text-neutral-400 mb-3">About</p>
+            <ul className="flex flex-col gap-3 pl-3">
+              {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
+                <li key={href}>
+                  <Link href={href} onClick={() => setMenuOpen(false)}
+                    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="inline-flex items-center gap-1.5 text-[18px] font-medium text-neutral-800 hover:text-black no-underline">
+                    {label}
+                    {arrow && (
+                      <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M2 8L8 2M4 2H8V6" />
+                      </svg>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li>
+            <Link href="/inquire" onClick={() => setMenuOpen(false)}
+              className={`text-[18px] font-medium no-underline ${isActive('/inquire') ? 'text-black' : 'text-neutral-800 hover:text-black'}`}>
+              Inquire
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    )}
+    </>
   );
 }
