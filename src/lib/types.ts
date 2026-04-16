@@ -79,6 +79,7 @@ export interface CaseStudy extends WorkItemBase {
   highlightVideos?: VideoSource[];
   overview: string;
   stats?: string[];
+  services?: string[];
   opportunity?: string;
   challenge: string;
   approach: string;

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CaseStudy, CATEGORY_LABELS } from '@/lib/types';
 import Nav from '@/components/layout/Nav';
+import Footer from '@/components/layout/Footer';
 
 interface DriveFile { id: string; name: string; }
 interface SectionDef { id: string; label: string; }
@@ -19,10 +20,31 @@ const labelClass = 'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] 
 
 function SectionBlock({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="pt-16 border-t border-black">
-      <p className={`${labelClass} mb-6`}>{label}</p>
+    <section id={id} className="mt-16 pt-16 border-t border-black">
+      <p className={`${labelClass} mb-8`}>{label}</p>
       {children}
     </section>
+  );
+}
+
+// Render inline markdown links [text](url) as <a> tags
+function renderInline(text: string) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (m) return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:opacity-60 transition-opacity">{m[1]}</a>;
+    return part;
+  });
+}
+
+// Split text on double or single newlines and render as separate paragraphs
+function Paragraphs({ text, className = 'text-editorial' }: { text: string; className?: string }) {
+  const paras = text.split(/\n\n+|\n/).map(p => p.trim()).filter(Boolean);
+  if (paras.length <= 1) return <p className={className}>{renderInline(text)}</p>;
+  return (
+    <div className="flex flex-col gap-5">
+      {paras.map((p, i) => <p key={i} className={className}>{renderInline(p)}</p>)}
+    </div>
   );
 }
 
@@ -31,6 +53,7 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
 
   const sections: SectionDef[] = ([
     { id: 'overview',     label: 'Overview' },
+    item.services?.length ? { id: 'services',     label: 'Services' }          : null,
     item.opportunity      ? { id: 'opportunity',  label: 'Opportunity' }       : null,
     item.challenge        ? { id: 'challenge',    label: 'Challenge' }         : null,
     item.approach         ? { id: 'approach',     label: 'Approach' }          : null,
@@ -73,7 +96,7 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
         <aside className="hidden lg:block">
           {/* overflow-visible so the active line can bleed left past padding */}
           <nav
-            className="fixed w-[220px] flex flex-col gap-4 pt-14 pr-6 overflow-visible"
+            className="fixed w-[220px] flex flex-col gap-4 pt-20 pr-6 overflow-visible"
             style={{ top: 'var(--nav-height)', left: 0, paddingLeft: 'var(--page-gutter)' }}
           >
             {sections.map(({ id, label }) => {
@@ -145,7 +168,7 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
 
             {/* Stats */}
             {item.stats && item.stats.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-black mb-10">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-black mb-10 border border-black">
                 {item.stats.map((stat) => {
                   const match = stat.match(/^([\d,+\-–\/]+(?:\s*[\d,+\-–\/]+)*)\s+(.+)$/);
                   const number = match ? match[1] : stat;
@@ -153,15 +176,33 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
                   return (
                     <div key={stat} className="bg-white px-5 py-6 text-center flex flex-col items-center gap-1">
                       <span className="text-3xl font-bold tracking-tight leading-none">{number}</span>
-                      {label && <span className="text-body-sm">{label}</span>}
+                      {label && (
+                        <span className="text-body-sm whitespace-pre-line text-center">
+                          {label.replace(' (', '\n(')}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
               </div>
             )}
 
-            {item.overview && <p className="text-editorial">{item.overview}</p>}
+            {item.overview && <Paragraphs text={item.overview} />}
           </section>
+
+          {/* Services */}
+          {item.services && item.services.length > 0 && (
+            <SectionBlock id="services" label="Services">
+              <ul className="flex flex-col gap-2">
+                {item.services.map((s) => (
+                  <li key={s} className="text-editorial flex gap-3">
+                    <span className="text-black/30 select-none shrink-0">—</span>
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </SectionBlock>
+          )}
 
           {/* Text sections */}
           {([
@@ -175,7 +216,7 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
             .filter(s => s.content)
             .map(({ id, label, content }) => (
               <SectionBlock key={id} id={id} label={label}>
-                <p className="text-editorial">{content}</p>
+                <Paragraphs text={content!} />
               </SectionBlock>
             ))
           }
@@ -263,6 +304,8 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc }: Props) {
 
         </main>
       </div>
+
+      <Footer />
     </div>
   );
 }
