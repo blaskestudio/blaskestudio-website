@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import AboutHeroScroll from '@/components/about/AboutHeroScroll';
 
 export const metadata = {
   title: 'About',
@@ -9,6 +10,25 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <main className="flex flex-col">
+
+      <AboutHeroScroll />
+
+      {/* ── Hero image ──────────────────────────────────────────── */}
+      <div
+        id="about-hero-image"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB"
+            alt="Blaske Studio"
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+        </div>
+      </div>
 
       {/* ── Hero heading ────────────────────────────────────────── */}
       <section
@@ -22,12 +42,12 @@ export default function AboutPage() {
 
       {/* ── Studio description ──────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="pb-16 md:pb-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
           <div className="md:w-1/3 shrink-0">
-            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-4">Blaske Studio</p>
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Blaske Studio</p>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
             <p className="text-editorial">
@@ -48,16 +68,6 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Studio hero image */}
-        <div className="mt-16 relative w-full aspect-[16/9] overflow-hidden">
-          <Image
-            src="/api/drive-image?id=11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB"
-            alt="Blaske Studio"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 95vw"
-          />
-        </div>
       </section>
 
       {/* ── Founder Bio ─────────────────────────────────────────── */}
@@ -66,19 +76,24 @@ export default function AboutPage() {
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
-          <div className="md:w-1/3 shrink-0">
-            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-1">Founder</p>
-            <p className="text-base font-semibold text-black">Ryan Blaske</p>
+          <div className="md:w-1/3 shrink-0 md:sticky md:self-start" style={{ top: '168px' }}>
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Founder &mdash; Ryan Blaske</p>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
+            <div className="relative w-1/3 aspect-[3/4] overflow-hidden">
+              <Image
+                src="/api/drive-image?id=19znw-8kMBJPZBU0Gs8q370hMDxoYVVwe"
+                alt="Ryan Blaske"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 20vw"
+              />
+            </div>
             <p className="text-editorial">
               Ryan Blaske is a South Bend native and filmmaker with over 15 years of experience in professional video production. He founded Blaske Studio with a vision to bring high quality, story driven filmmaking to the community he has always called home.
             </p>
             <p className="text-editorial">
-              Before starting the studio, Ryan led video production efforts at the University of Notre Dame and Lippert, where he developed a strong foundation in both creative direction and production execution across a wide range of projects.
-            </p>
-            <p className="text-editorial">
-              His background in the independent music scene shaped a do it yourself mindset that continues to influence his work today. It is a mentality rooted in curiosity, problem solving, and a willingness to do whatever it takes to tell the story the right way.
+              Before starting the studio, Ryan led video production efforts at the University of Notre Dame and Lippert, where he developed a strong foundation in both creative direction and production execution across a wide range of projects. His background in the independent music scene shaped a do it yourself mindset that continues to influence his work today. It is a mentality rooted in curiosity, problem solving, and a willingness to do whatever it takes to tell the story the right way.
             </p>
             <p className="text-editorial">
               Ryan&apos;s work focuses on creating meaningful, visually compelling stories that connect with people on a deeper level. Through Blaske Studio, he continues to push for a balance of high production value and authentic storytelling in every project.
@@ -94,7 +109,7 @@ export default function AboutPage() {
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
           <div className="md:w-1/3 shrink-0">
-            <p className="text-base tracking-[0.08em] uppercase font-medium text-black mb-4">Team</p>
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Team</p>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
             <p className="text-editorial">
@@ -113,6 +128,18 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Bottom image ────────────────────────────────────────── */}
+      <div className="pb-8 md:pb-12" style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=11V0o89tksAxLVydLNap6l6LQJXciNEbx"
+            alt="Blaske Studio"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
+          />
+        </div>
+      </div>
 
     </main>
   );

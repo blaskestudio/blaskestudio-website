@@ -70,7 +70,7 @@ export default function CapabilitiesPage() {
             </h2>
             <ul className="flex flex-col gap-2">
               {items.map((item) => (
-                <li key={item} className="text-base text-black font-normal leading-snug">
+                <li key={item} className="text-editorial text-black">
                   {item}
                 </li>
               ))}
