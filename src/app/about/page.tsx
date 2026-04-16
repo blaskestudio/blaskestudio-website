@@ -13,6 +13,19 @@ export default function AboutPage() {
 
       <AboutHeroScroll />
 
+      {/* ── Hero heading ────────────────────────────────────────── */}
+      <section
+        className="pt-16 md:pt-24 pb-8 md:pb-12"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="flex items-stretch justify-between">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+            Who We Are
+          </h1>
+          <div className="w-px bg-black" />
+        </div>
+      </section>
+
       {/* ── Hero image ──────────────────────────────────────────── */}
       <div
         id="about-hero-image"
@@ -30,19 +43,9 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* ── Hero heading ────────────────────────────────────────── */}
-      <section
-        className="py-16 md:py-24"
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
-      >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
-          Who We Are
-        </h1>
-      </section>
-
       {/* ── Studio description ──────────────────────────────────── */}
       <section
-        className="pb-16 md:pb-24"
+        className="py-16 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -52,9 +55,6 @@ export default function AboutPage() {
           <div className="flex flex-col gap-6 md:w-2/3">
             <p className="text-editorial">
               Blaske Studio is an award winning production company based in South Bend, Indiana, specializing in both commercial and documentary filmmaking. We are passionate storytellers, dedicated to crafting high quality, impactful content that elevates brands and connects with audiences.
-            </p>
-            <p className="text-editorial">
-              From concept to final cut, our team brings creativity, technical expertise, and a collaborative spirit to every project. Whether you are looking to promote your business, tell a meaningful story, or capture a moment that matters, we approach every project with intention and care.
             </p>
             <p className="text-editorial">
               Our work is rooted in story first thinking, supported by a strong foundation in cinematography, editing, and production. We collaborate closely with our clients to ensure every piece not only looks great, but resonates with the audience it is meant to reach.
@@ -76,8 +76,12 @@ export default function AboutPage() {
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
-          <div className="md:w-1/3 shrink-0 md:sticky md:self-start" style={{ top: '168px' }}>
-            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Founder &mdash; Ryan Blaske</p>
+          <div className="md:w-1/3 shrink-0 md:sticky md:self-start" style={{ top: '64px' }}>
+            <div className="flex items-center gap-3">
+              <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Founder</p>
+              <div className="flex-1 border-t border-black" />
+              <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Ryan Blaske</p>
+            </div>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
             <div className="relative w-1/3 aspect-[3/4] overflow-hidden">
@@ -98,6 +102,29 @@ export default function AboutPage() {
             <p className="text-editorial">
               Ryan&apos;s work focuses on creating meaningful, visually compelling stories that connect with people on a deeper level. Through Blaske Studio, he continues to push for a balance of high production value and authentic storytelling in every project.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Our Approach ────────────────────────────────────────── */}
+      <section
+        className="py-16 md:py-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="flex flex-col md:flex-row gap-12 md:gap-20">
+          <div className="md:w-1/3 shrink-0">
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Approach</p>
+          </div>
+          <div className="flex flex-col gap-6 md:w-2/3">
+            <p className="text-editorial">
+              From concept to final cut, our team brings creativity, technical expertise, and a collaborative spirit to every project. Whether you are looking to promote your business, tell a meaningful story, or capture a moment that matters, we approach every project with intention and care.
+            </p>
+            <div className="flex items-center">
+              {['Creative Development', 'Pre Production', 'Production', 'Post Production', 'Studio'].flatMap((title, i, arr) => [
+                <span key={title} className="text-[11px] md:text-[13px] tracking-[0.05em] uppercase font-bold text-black shrink-0 whitespace-nowrap">{title}</span>,
+                ...(i < arr.length - 1 ? [<div key={`line-${i}`} className="flex-1 border-t border-black mx-2 md:mx-3" />] : [])
+              ])}
+            </div>
           </div>
         </div>
       </section>

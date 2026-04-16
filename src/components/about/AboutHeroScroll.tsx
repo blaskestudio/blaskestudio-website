@@ -10,7 +10,7 @@ export default function AboutHeroScroll() {
       const hero = document.getElementById('about-hero-image');
       if (!hero) return;
 
-      const target = hero.offsetHeight * 0.5;
+      const target = hero.offsetTop;
       const duration = 900;
       const startTime = performance.now();
 
