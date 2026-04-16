@@ -6,7 +6,12 @@ export async function getAllWork(): Promise<WorkItem[]> {
     getProjectsFromSheet(),
     getCaseStudiesFromSheet(),
   ]);
-  return [...projects, ...caseStudies].sort((a, b) => a.order - b.order);
+  // Sort each type independently — case study order values (1, 2, 3…) are
+  // relative to each other, not to projects, so merging then sorting would
+  // interleave them incorrectly.
+  const sortedProjects = [...projects].sort((a, b) => a.order - b.order);
+  const sortedCaseStudies = [...caseStudies].sort((a, b) => a.order - b.order);
+  return [...sortedProjects, ...sortedCaseStudies];
 }
 
 export async function getWorkBySlug(slug: string): Promise<WorkItem | undefined> {

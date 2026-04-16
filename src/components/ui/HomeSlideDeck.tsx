@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,35 +24,19 @@ function isYouTubeItem(item: WorkItem): boolean {
   return video?.type === 'youtube';
 }
 
-function getAutoThumbnail(item: WorkItem): string {
-  const video = item.contentType === 'project' ? item.video : item.heroVideo;
-  if (video?.type === 'youtube' && video.id)
-    return `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
-  return '';
-}
 
 // ── Featured section ───────────────────────────────────────────
 function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: number; onClick: () => void }) {
   const [iframeReady, setIframeReady] = useState(false);
   const isCaseStudy = item.contentType === 'case-study';
   const silentSrc = getSilentSrc(item);
-  const thumbnail = item.thumbnailStill || getAutoThumbnail(item);
   const youtubeCard = isYouTubeItem(item);
-  const reversed = index % 2 !== 0; // alternates: even = text left / video right, odd = video left / text right
+  const reversed = index % 2 !== 0;
+
 
   const videoEl = (
     <div className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0" style={{ background: '#000' }}>
-      {thumbnail && (
-        <Image
-          src={thumbnail}
-          alt={item.title}
-          fill
-          sizes="(max-width: 640px) 100vw, 75vw"
-          className="object-cover transition-opacity duration-500"
-          style={{ opacity: iframeReady ? 0 : 1 }}
-          unoptimized={thumbnail.startsWith('https://img.youtube')}
-        />
-      )}
+
       {silentSrc && (
         <iframe
           src={silentSrc}
@@ -62,14 +46,17 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
           allowFullScreen
           title={item.title}
           onLoad={(e) => {
+            const iframe = e.target as HTMLIFrameElement;
             if (youtubeCard) {
               try {
-                (e.target as HTMLIFrameElement).contentWindow?.postMessage(
+                iframe.contentWindow?.postMessage(
                   JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
                 );
               } catch (_) {}
+              setTimeout(() => setIframeReady(true), 1200);
+            } else {
+              setIframeReady(true);
             }
-            setIframeReady(true);
           }}
         />
       )}

@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
     ],
+    localPatterns: [
+      { pathname: '/**' },
+    ],
   },
   async headers() {
     return [

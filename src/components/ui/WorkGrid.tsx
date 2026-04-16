@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { WorkItem, WorkCategory, CATEGORY_LABELS } from '@/lib/types';
@@ -121,6 +121,24 @@ function IndexRow({
   );
 }
 
+// ── Load More button ───────────────────────────────────────────
+function LoadMore({ shown, total, onLoad }: { shown: number; total: number; onLoad: () => void }) {
+  const remaining = total - shown;
+  return (
+    <div className="flex flex-col items-center gap-3 py-16">
+      <button
+        onClick={onLoad}
+        className="inline-flex items-center gap-3 px-8 py-3 text-[13px] tracking-[0.08em] uppercase font-semibold text-black border border-black hover:bg-black hover:text-white transition-colors duration-150"
+      >
+        Load More
+        <span className="text-[11px] font-normal opacity-50">
+          {shown} of {total}
+        </span>
+      </button>
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────
 interface Props {
   items: WorkItem[];
@@ -129,6 +147,8 @@ interface Props {
   activeVideoFilter?: WorkCategory | 'all' | 'case-study';
   activePhotoFilter?: PhotoCategory;
 }
+
+const PAGE_SIZE = 12;
 
 export default function WorkGrid({
   items,
@@ -140,6 +160,12 @@ export default function WorkGrid({
   const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [lightboxItem, setLightboxItem] = useState<WorkItem | null>(null);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
+
+  // Reset pagination whenever the filter or media type changes
+  useEffect(() => {
+    setDisplayCount(PAGE_SIZE);
+  }, [activeVideoFilter, activePhotoFilter, mediaType, viewMode]);
 
   const filteredVideo = items.filter((item) => {
     if (activeVideoFilter === 'all') return true;
@@ -273,16 +299,24 @@ export default function WorkGrid({
       {/* ── Video — grid view ────────────────────────────────── */}
       {mediaType === 'video' && viewMode === 'grid' && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 pb-24">
-            {filteredVideo.map((item) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+            {filteredVideo.slice(0, displayCount).map((item) => (
               <WorkCard key={item.slug} item={item} onClick={() => handleCardClick(item)} />
             ))}
           </div>
+          {filteredVideo.length > displayCount && (
+            <LoadMore
+              shown={displayCount}
+              total={filteredVideo.length}
+              onLoad={() => setDisplayCount((n) => n + PAGE_SIZE)}
+            />
+          )}
+          {filteredVideo.length <= displayCount && <div className="pb-24" />}
           <VideoLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
         </>
       )}
 
-      {/* ── Video — index view ───────────────────────────────── */}
+      {/* ── Video — index view (show all — no videos, just text) ── */}
       {mediaType === 'video' && viewMode === 'index' && (
         <>
           <div className="flex items-center gap-6 pb-3 border-b border-black">
@@ -301,24 +335,34 @@ export default function WorkGrid({
 
       {/* ── Photo grid ───────────────────────────────────────── */}
       {mediaType === 'photo' && (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-1 pb-24">
-          {photoEntries.map(({ src, key }) => (
-            <div key={key} className="break-inside-avoid mb-1">
-              <Image
-                src={src}
-                alt=""
-                width={1200}
-                height={800}
-                className="w-full h-auto block"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                unoptimized={src.startsWith('https://')}
-              />
-            </div>
-          ))}
-          {photoEntries.length === 0 && (
-            <p className="text-base text-neutral-400 col-span-3 py-16">No photos yet in this category.</p>
+        <>
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-1">
+            {photoEntries.slice(0, displayCount).map(({ src, key }) => (
+              <div key={key} className="break-inside-avoid mb-1">
+                <Image
+                  src={src}
+                  alt=""
+                  width={1200}
+                  height={800}
+                  className="w-full h-auto block"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized={src.startsWith('https://')}
+                />
+              </div>
+            ))}
+            {photoEntries.length === 0 && (
+              <p className="text-base text-neutral-400 col-span-3 py-16">No photos yet in this category.</p>
+            )}
+          </div>
+          {photoEntries.length > displayCount && (
+            <LoadMore
+              shown={displayCount}
+              total={photoEntries.length}
+              onLoad={() => setDisplayCount((n) => n + PAGE_SIZE)}
+            />
           )}
-        </div>
+          {photoEntries.length > 0 && photoEntries.length <= displayCount && <div className="pb-24" />}
+        </>
       )}
     </>
   );

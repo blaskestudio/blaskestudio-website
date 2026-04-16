@@ -6,12 +6,16 @@ const REVALIDATE = 1800; // 30 minutes
 const PROJECTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 const CASE_STUDIES_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=682600694`;
 
-// ── Drive share URL → direct stream URL ──────────────────────
-// Converts https://drive.google.com/file/d/FILE_ID/view?... to a streamable URL
+// ── Drive share URL → proxied URL (never exposes Drive URLs to clients) ──────
+// Converts https://drive.google.com/file/d/FILE_ID/view?... to /api/drive-video?id=FILE_ID
 function parseDriveFileUrl(url: string): string {
   if (!url?.trim()) return '';
-  const match = url.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
-  if (match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  // Handle /file/d/FILE_ID/ format
+  const fileMatch = url.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (fileMatch) return `/api/drive-video?id=${fileMatch[1]}`;
+  // Handle ?id=FILE_ID or &id=FILE_ID format
+  const idMatch = url.match(/[?&]id=([A-Za-z0-9_-]+)/);
+  if (idMatch) return `/api/drive-video?id=${idMatch[1]}`;
   return url;
 }
 
@@ -110,7 +114,7 @@ export async function getProjectsFromSheet(): Promise<Project[]> {
       title: get(row, 'title'),
       client: get(row, 'client'),
       category: normalizeCategory(get(row, 'category')),
-      year: parseInt(get(row, 'year')) || 0,
+      year: 0,
       featured: get(row, 'featured').toLowerCase() === 'true',
       order: parseInt(get(row, 'order')) || i + 1,
       video: parseVideoUrl(get(row, 'video_url')),
@@ -148,7 +152,7 @@ function deriveYtThumbnail(url: string): string {
 export async function getCaseStudiesFromSheet(): Promise<CaseStudy[]> {
   const { rows, get } = await fetchSheet(CASE_STUDIES_URL);
   return rows
-    .filter((row) => get(row, 'slug'))
+    .filter((row) => get(row, 'slug') && get(row, 'status').toLowerCase() !== 'draft')
     .map((row, i) => {
       const mainVideoUrl = get(row, 'video_main_url');
       const highlights = [
@@ -163,7 +167,7 @@ export async function getCaseStudiesFromSheet(): Promise<CaseStudy[]> {
         title: get(row, 'title'),
         client: get(row, 'client'),
         category: normalizeCategory(get(row, 'category')),
-        year: parseInt(get(row, 'year')) || 0,
+        year: 0,
         featured: false,
         order: parseInt(get(row, 'order')) || i + 100,
         heroVideo: parseVideoUrl(mainVideoUrl),

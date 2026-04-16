@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { WorkItem } from '@/lib/types';
 
 function getSilentEmbedSrc(item: WorkItem): string {
@@ -14,100 +13,48 @@ function getSilentEmbedSrc(item: WorkItem): string {
   return '';
 }
 
-function isYouTubeItem(item: WorkItem): boolean {
-  const video = item.contentType === 'project' ? item.video : item.heroVideo;
-  return video?.type === 'youtube';
-}
-
-function getAutoThumbnail(item: WorkItem): string {
-  const video = item.contentType === 'project' ? item.video : item.heroVideo;
-  if (video?.type === 'youtube' && video.id)
-    return `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
-  return '';
-}
-
 interface Props {
   item: WorkItem;
   onClick: () => void;
 }
 
 export default function WorkCard({ item, onClick }: Props) {
-  const [hovered, setHovered] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
   const [inView, setInView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const shortUrl = item.thumbnailShortUrl ?? '';
-  const useShortVideo = !!shortUrl;
-  const silentSrc = useShortVideo ? '' : getSilentEmbedSrc(item);
-  const hasVideo = useShortVideo || !!silentSrc;
-  const thumbnail = item.thumbnailStill || getAutoThumbnail(item);
-  const youtubeCard = !useShortVideo && isYouTubeItem(item);
+  const silentSrc = getSilentEmbedSrc(item);
   const isCaseStudy = item.contentType === 'case-study';
+  const isYouTube = (item.contentType === 'project' ? item.video : item.heroVideo)?.type === 'youtube';
 
-  // Load video/iframe as soon as card enters viewport (200px margin)
+  // Mount iframe 800px ahead of viewport so it buffers before becoming visible
   useEffect(() => {
-    if (!hasVideo) return;
+    if (!silentSrc) return;
     const el = containerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
-      { rootMargin: '200px' }
+      { rootMargin: '800px' }
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasVideo]);
-
-  const mediaReady = useShortVideo ? videoReady : iframeReady;
+  }, [silentSrc]);
 
   return (
     <div
       ref={containerRef}
       className="group flex flex-col cursor-pointer"
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
       aria-label={isCaseStudy ? `Read case study: ${item.title}` : `Play: ${item.title}`}
     >
-      {/* ── Media container ──────────────────────────────── */}
       <div
         className="relative w-full aspect-video overflow-hidden"
         style={{ background: '#111' }}
       >
-        {/* Thumbnail — fades out once video/iframe is playing */}
-        {thumbnail && (
-          <Image
-            src={thumbnail}
-            alt={item.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-opacity duration-700"
-            style={{ opacity: mediaReady ? 0 : 1 }}
-            priority={false}
-            unoptimized={thumbnail.startsWith('https://img.youtube')}
-          />
-        )}
-
-        {/* Short looping video — used when thumbnail_short_url is set */}
-        {useShortVideo && inView && (
-          <video
-            src={shortUrl}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-            style={{ pointerEvents: 'none', opacity: videoReady ? 1 : 0 }}
-            autoPlay
-            loop
-            muted
-            playsInline
-            onCanPlay={() => setVideoReady(true)}
-          />
-        )}
-
-        {/* Silent autoplay iframe — fallback when no short video */}
-        {!useShortVideo && silentSrc && inView && (
+        {silentSrc && inView && (
           <iframe
             src={silentSrc}
             className="absolute inset-0 w-full h-full transition-opacity duration-700"
@@ -116,28 +63,32 @@ export default function WorkCard({ item, onClick }: Props) {
             allowFullScreen
             title={item.title}
             onLoad={(e) => {
-              if (youtubeCard) {
+              const iframe = e.target as HTMLIFrameElement;
+              if (isYouTube) {
+                // Trigger autoplay, then reveal after a short delay — long enough for
+                // YouTube to start playing so the branded player UI never shows.
                 try {
-                  (e.target as HTMLIFrameElement).contentWindow?.postMessage(
+                  iframe.contentWindow?.postMessage(
                     JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
                   );
                 } catch (_) {}
+                setTimeout(() => setIframeReady(true), 1200);
+              } else {
+                // Vimeo background player strips all UI — safe to reveal immediately
+                setIframeReady(true);
               }
-              setIframeReady(true);
             }}
           />
         )}
 
-        {/* Hover overlay — title + client */}
+        {/* Hover overlay */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none flex flex-col justify-end p-3 gap-0.5">
           <span className="text-sm text-white font-medium leading-tight">{item.title}</span>
           <span className="text-xs text-white/70 font-normal leading-tight">
             {item.client}{item.year ? `, ${item.year}` : ''}
           </span>
         </div>
-
       </div>
-
     </div>
   );
 }
