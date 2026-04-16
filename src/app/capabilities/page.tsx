@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import HeroScrollImage from '@/components/ui/HeroScrollImage';
 
 export const metadata = {
   title: 'Capabilities',
@@ -54,20 +54,36 @@ const CAPABILITIES = [
 
 export default function CapabilitiesPage() {
   return (
-    <main style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
+    <main className="flex flex-col">
 
-      <div className="py-16 md:py-24">
+      {/* ── Hero image at top ────────────────────────────────────── */}
+      <div
+        className="pt-16 md:pt-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <HeroScrollImage src="/api/drive-image?id=1fsCEdPeTYvhev1_pQuVrkJSLsVHxVxCX" alt="Blaske Studio workspace" />
+      </div>
+
+      {/* ── Page title ──────────────────────────────────────────── */}
+      <div
+        className="pt-16 pb-24 md:pb-32"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl">
           End-to-end production, from concept to delivery.
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 pb-24">
+      {/* ── Capabilities grid ───────────────────────────────────── */}
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 pb-32 md:pb-48"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
         {CAPABILITIES.map(({ title, items }) => (
           <div key={title} className="flex flex-col gap-4">
-            <h2 className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black leading-none">
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black leading-none">
               {title}
-            </h2>
+            </p>
             <ul className="flex flex-col gap-2">
               {items.map((item) => (
                 <li key={item} className="text-editorial text-black">
@@ -79,16 +95,21 @@ export default function CapabilitiesPage() {
         ))}
       </div>
 
-      <div className="pb-8 md:pb-12">
-        <div className="relative w-full aspect-[16/9] overflow-hidden">
-          <Image
-            src="/api/drive-image?id=1fsCEdPeTYvhev1_pQuVrkJSLsVHxVxCX"
-            alt="Blaske Studio workspace"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 95vw"
-          />
-        </div>
+      {/* ── Bottom images ───────────────────────────────────────── */}
+      <div
+        className="grid grid-cols-2 gap-1 pb-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        {['1OB8MJojetSSHJCJVISM_lEP5k8vIihpb', '1ePbGgtv4Q5NLweh7yZcJgFHoINRdGYV6'].map((id) => (
+          <div key={id} className="relative aspect-[4/3] overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/api/drive-image?id=${id}`}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
       </div>
 
     </main>

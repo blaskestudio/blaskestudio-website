@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import AboutHeroScroll from '@/components/about/AboutHeroScroll';
+import HeroScrollImage from '@/components/ui/HeroScrollImage';
 
 export const metadata = {
   title: 'About',
@@ -11,37 +11,23 @@ export default function AboutPage() {
   return (
     <main className="flex flex-col">
 
-      <AboutHeroScroll />
+      {/* ── Hero image at top ────────────────────────────────────── */}
+      <div
+        className="pt-16 md:pt-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <HeroScrollImage src="/api/drive-image?id=11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB" alt="Blaske Studio" visibleVh={0.38} />
+      </div>
 
       {/* ── Hero heading ────────────────────────────────────────── */}
       <section
-        className="pt-16 md:pt-24 pb-8 md:pb-12"
+        className="pt-16 pb-8 md:pb-12"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        <div className="flex items-stretch justify-between">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
-            Who We Are
-          </h1>
-          <div className="w-px bg-black" />
-        </div>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+          Who We Are
+        </h1>
       </section>
-
-      {/* ── Hero image ──────────────────────────────────────────── */}
-      <div
-        id="about-hero-image"
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
-      >
-        <div className="relative w-full aspect-[16/9] overflow-hidden">
-          <Image
-            src="/api/drive-image?id=11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB"
-            alt="Blaske Studio"
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-        </div>
-      </div>
 
       {/* ── Studio description ──────────────────────────────────── */}
       <section
@@ -67,7 +53,6 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-
       </section>
 
       {/* ── Founder Bio ─────────────────────────────────────────── */}
@@ -76,7 +61,7 @@ export default function AboutPage() {
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
-          <div className="md:w-1/3 shrink-0 md:sticky md:self-start" style={{ top: '64px' }}>
+          <div className="md:w-1/3 shrink-0">
             <div className="flex items-center gap-3">
               <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Founder</p>
               <div className="flex-1 border-t border-black" />
