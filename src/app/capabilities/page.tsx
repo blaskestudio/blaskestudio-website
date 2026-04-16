@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export const metadata = {
   title: 'Capabilities',
   description: 'Commercial production, documentary, music video, and photography — Blaske Studio.',
@@ -75,6 +77,18 @@ export default function CapabilitiesPage() {
             </ul>
           </div>
         ))}
+      </div>
+
+      <div className="pb-8 md:pb-12">
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=1fsCEdPeTYvhev1_pQuVrkJSLsVHxVxCX"
+            alt="Blaske Studio workspace"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
+          />
+        </div>
       </div>
 
     </main>

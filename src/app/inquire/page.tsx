@@ -24,7 +24,7 @@ export default function InquirePage() {
         <div className="w-full lg:w-1/2 lg:sticky lg:top-[var(--nav-height)] self-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://lh3.googleusercontent.com/d/12q5MWMz5e6C5yacvxV8rnRLnr5JZ5o4O=w2000"
+            src="/api/drive-image?id=1D1MozEzTzVi0ShK3epgPXuMYSztP-3BF"
             alt="Blaske Studio"
             className="w-full h-auto block object-cover"
           />

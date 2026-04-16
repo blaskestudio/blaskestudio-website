@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata = {
   title: 'About',
@@ -48,12 +49,13 @@ export default function AboutPage() {
         </div>
 
         {/* Studio hero image */}
-        <div className="mt-16 w-full aspect-[16/7] overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://lh3.googleusercontent.com/d/1G5TJ5pXXlRpwI6oOpxQ0YhEB4DkVPLLv=w2000"
+        <div className="mt-16 relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB"
             alt="Blaske Studio"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
           />
         </div>
       </section>

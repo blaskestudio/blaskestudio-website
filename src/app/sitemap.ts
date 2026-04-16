@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/work/photo/headshots`, priority: 0.7, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/work/photo/portraiture`, priority: 0.7, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/about`, priority: 0.8, changeFrequency: 'monthly' },
-    { url: `${BASE_URL}/studio`, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${BASE_URL}/space`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/culture`, priority: 0.6, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/capabilities`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/inquire`, priority: 0.8, changeFrequency: 'monthly' },

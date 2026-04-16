@@ -12,7 +12,7 @@ const WORK_LINKS = [
 
 const ABOUT_LINKS = [
   { href: '/about', label: 'Who We Are' },
-  { href: '/studio', label: 'Our Space' },
+  { href: '/space', label: 'Our Space' },
   { href: '/culture', label: 'Culture' },
   { href: 'https://blaskestudio.substack.com/', label: 'News', external: true, arrow: true },
 ];
@@ -46,7 +46,7 @@ export default function Nav() {
     pathname.startsWith(href.split('?')[0]);
 
   const workActive = pathname.startsWith('/work');
-  const aboutActive = pathname.startsWith('/about') || pathname.startsWith('/studio') || pathname.startsWith('/culture');
+  const aboutActive = pathname.startsWith('/about') || pathname.startsWith('/space') || pathname.startsWith('/culture');
 
   // Detect which section is behind the nav via elementsFromPoint
   const checkTheme = useRef<() => void>(() => {});

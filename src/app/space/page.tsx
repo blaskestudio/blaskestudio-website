@@ -1,7 +1,8 @@
+import Image from 'next/image';
 import { getDriveFilesFromFolder } from '@/lib/drive';
 
 export const metadata = {
-  title: 'Studio',
+  title: 'Our Space',
   description: 'The Blaske Studio space — 240 E Tutt Street, South Bend, Indiana.',
 };
 
@@ -79,6 +80,19 @@ export default async function StudioPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Space image ─────────────────────────────────────────── */}
+      <div style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }} className="pb-16 md:pb-24">
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=1CKKAiuJXJlMa_xg7d5Vv40JazoMQtnfP"
+            alt="Blaske Studio space"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
+          />
+        </div>
+      </div>
 
       {/* ── How it's used ───────────────────────────────────────── */}
       <section

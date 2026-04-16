@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import Image from 'next/image';
 import HomeSlideDeck from '@/components/ui/HomeSlideDeck';
 import { getFeaturedWork } from '@/lib/work';
 import { getClientLogos, driveImageUrl, logoDisplayName } from '@/lib/drive';
@@ -52,6 +53,19 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── 5. Bottom image ──────────────────────────────────────── */}
+      <div style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }} className="bg-black py-8 md:py-12">
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=1AaP5cMlFNtfFNMfeC_BSsGFTR2P-dxT5"
+            alt="Blaske Studio"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
+          />
+        </div>
+      </div>
 
     </main>
   );

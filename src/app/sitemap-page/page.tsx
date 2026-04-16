@@ -20,7 +20,7 @@ const STATIC_SECTIONS = [
     label: 'About',
     links: [
       { href: '/about', label: 'Who We Are' },
-      { href: '/studio', label: 'Our Space' },
+      { href: '/space', label: 'Our Space' },
       { href: '/culture', label: 'Culture' },
     ],
   },
