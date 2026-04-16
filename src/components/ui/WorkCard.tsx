@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { WorkItem } from '@/lib/types';
 
 function getSilentEmbedSrc(item: WorkItem): string {
+  if (item.contentType === 'project' && item.thumbnailShortUrl) {
+    const id = item.thumbnailShortUrl;
+    return `https://iframe.videodelivery.net/${id}?autoplay=true&muted=true&loop=true&controls=false&preload=true`;
+  }
   const video = item.contentType === 'project' ? item.video : item.heroVideo;
   if (!video || video.type === 'local' || !video.id) return '';
   if (video.type === 'vimeo')
@@ -19,30 +23,19 @@ interface Props {
 }
 
 export default function WorkCard({ item, onClick }: Props) {
-  const [iframeReady, setIframeReady] = useState(false);
-  const [inView, setInView] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
+  const [videoReady, setVideoReady] = useState(false);
   const silentSrc = getSilentEmbedSrc(item);
   const isCaseStudy = item.contentType === 'case-study';
-  const isYouTube = (item.contentType === 'project' ? item.video : item.heroVideo)?.type === 'youtube';
+  const isCloudflare = item.contentType === 'project' && !!item.thumbnailShortUrl;
+  const isYouTube = !isCloudflare && (item.contentType === 'project' ? item.video : item.heroVideo)?.type === 'youtube';
 
-  // Mount iframe 800px ahead of viewport so it buffers before becoming visible
-  useEffect(() => {
-    if (!silentSrc) return;
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
-      { rootMargin: '800px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [silentSrc]);
+  // CF thumbnail shown as background while iframe loads, hidden once video paints
+  const cfThumbStyle = isCloudflare
+    ? { backgroundImage: `url(https://videodelivery.net/${(item as any).thumbnailShortUrl}/thumbnails/thumbnail.jpg?time=0s)`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {};
 
   return (
     <div
-      ref={containerRef}
       className="group flex flex-col cursor-pointer"
       onClick={onClick}
       role="button"
@@ -50,33 +43,25 @@ export default function WorkCard({ item, onClick }: Props) {
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
       aria-label={isCaseStudy ? `Read case study: ${item.title}` : `Play: ${item.title}`}
     >
-      <div
-        className="relative w-full aspect-video overflow-hidden"
-        style={{ background: '#111' }}
-      >
-        {silentSrc && inView && (
+      <div className="relative w-full aspect-video overflow-hidden bg-[#111]" style={cfThumbStyle}>
+        {silentSrc && (
           <iframe
             src={silentSrc}
             className="absolute inset-0 w-full h-full transition-opacity duration-700"
-            style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0 }}
+            style={{ border: 'none', pointerEvents: 'none', opacity: videoReady ? 1 : 0 }}
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
             title={item.title}
             onLoad={(e) => {
-              const iframe = e.target as HTMLIFrameElement;
               if (isYouTube) {
-                // Trigger autoplay, then reveal after a short delay — long enough for
-                // YouTube to start playing so the branded player UI never shows.
+                const iframe = e.target as HTMLIFrameElement;
                 try {
                   iframe.contentWindow?.postMessage(
                     JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
                   );
                 } catch (_) {}
-                setTimeout(() => setIframeReady(true), 1200);
-              } else {
-                // Vimeo background player strips all UI — safe to reveal immediately
-                setIframeReady(true);
               }
+              setVideoReady(true);
             }}
           />
         )}

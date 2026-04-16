@@ -118,9 +118,9 @@ export async function getProjectsFromSheet(): Promise<Project[]> {
       featured: get(row, 'featured').toLowerCase() === 'true',
       order: parseInt(get(row, 'order')) || i + 1,
       video: parseVideoUrl(get(row, 'video_url')),
-      thumbnailStill: get(row, 'thumbnail_still'),
-      thumbnailShortUrl: parseDriveFileUrl(get(row, 'thumbnail_short_url')) || undefined,
-      thumbnailGif: get(row, 'thumbnail_gif'),
+      thumbnailStill: '',
+      thumbnailShortUrl: get(row, 'thumbnail_short_id') || undefined,
+      thumbnailGif: '',
       contributors: parseCredits(get(row, 'credits')),
     }));
 }
