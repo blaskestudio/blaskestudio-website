@@ -12,6 +12,45 @@ export interface DriveFile {
  * Revalidates every hour via Next.js ISR.
  */
 async function getDriveFolderFiles(folderId: string, label: string): Promise<DriveFile[]> {
+  const apiKey = process.env.GOOGLE_DRIVE_API_KEY;
+
+  if (apiKey) {
+    try {
+      const files: DriveFile[] = [];
+      let pageToken: string | undefined;
+
+      do {
+        const params = new URLSearchParams({
+          q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
+          key: apiKey,
+          fields: 'nextPageToken,files(id,name)',
+          pageSize: '1000',
+        });
+        if (pageToken) params.set('pageToken', pageToken);
+
+        const res = await fetch(
+          `https://www.googleapis.com/drive/v3/files?${params}`,
+          { cache: 'no-store' }
+        );
+
+        if (!res.ok) {
+          console.error(`Drive API failed (${label}):`, res.status);
+          break;
+        }
+
+        const data = await res.json();
+        files.push(...(data.files ?? []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+
+      return files.sort((a, b) => a.name.localeCompare(b.name));
+    } catch (err) {
+      console.error(`Drive API error (${label}):`, err);
+      return [];
+    }
+  }
+
+  // Fall back to HTML scraping if no API key
   try {
     const res = await fetch(
       `https://drive.google.com/drive/folders/${folderId}`,
@@ -20,8 +59,6 @@ async function getDriveFolderFiles(folderId: string, label: string): Promise<Dri
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
-        // No per-fetch caching — let page-level revalidate control freshness.
-        // Per-fetch cache was causing empty results to get locked in for 1hr.
         cache: 'no-store',
       }
     );

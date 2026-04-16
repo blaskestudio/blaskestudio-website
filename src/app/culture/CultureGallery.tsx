@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface DriveFile {
   id: string;
@@ -11,30 +12,28 @@ interface Props {
   photos: DriveFile[];
 }
 
-function photoUrl(id: string) {
-  return `https://lh3.googleusercontent.com/d/${id}=w2000`;
-}
-
 export default function CultureGallery({ photos }: Props) {
   const [displayed, setDisplayed] = useState<DriveFile[]>([]);
 
   useEffect(() => {
     const shuffled = [...photos].sort(() => Math.random() - 0.5);
-    setDisplayed(shuffled.slice(0, 20));
+    setDisplayed(shuffled);
   }, [photos]);
 
   if (displayed.length === 0) return null;
 
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:balance]">
+    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
       {displayed.map((photo, i) => (
         <div key={photo.id} className="break-inside-avoid mb-6">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={photoUrl(photo.id)}
+          <Image
+            src={`/api/drive-image?id=${photo.id}`}
             alt=""
+            width={1200}
+            height={800}
             className="w-full h-auto block"
             loading={i < 6 ? 'eager' : 'lazy'}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         </div>
       ))}
