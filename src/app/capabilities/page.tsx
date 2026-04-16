@@ -95,21 +95,19 @@ export default function CapabilitiesPage() {
         ))}
       </div>
 
-      {/* ── Bottom images ───────────────────────────────────────── */}
+      {/* ── Bottom image ────────────────────────────────────────── */}
       <div
-        className="grid grid-cols-2 gap-1 pb-24"
+        className="pb-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        {['1OB8MJojetSSHJCJVISM_lEP5k8vIihpb', '1ePbGgtv4Q5NLweh7yZcJgFHoINRdGYV6'].map((id) => (
-          <div key={id} className="relative aspect-[4/3] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`/api/drive-image?id=${id}`}
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/api/drive-image?id=1H2CWXOFGUkXkZrMU08nSpJRQY3UVEfZt"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
     </main>

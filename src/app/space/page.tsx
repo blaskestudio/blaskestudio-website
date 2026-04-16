@@ -22,12 +22,15 @@ export default async function StudioPage() {
     '1CKKAiuJXJlMa_xg7d5Vv40JazoMQtnfP', // space hero
     '11RqAvVtdf0O9-rDWqhsuLuiyIAG3QZFB',  // about hero
     '19znw-8kMBJPZBU0Gs8q370hMDxoYVVwe',  // about founder photo
-    '11V0o89tksAxLVydLNap6l6LQJXciNEbx',  // about bottom image
+    '11V0o89tksAxLVydLNap6l6LQJXciNEbx',  // about bottom image (old)
+    '1Q0Iybb9wArwHRbemK4XpuGSwiQtmgzhu',  // about bottom image + capabilities bottom
+    '1c7MRiUvhdqSX8RD8pe-CotKR7CQwFEJ5',  // about end image
     '1fsCEdPeTYvhev1_pQuVrkJSLsVHxVxCX',  // capabilities hero
     '1D1MozEzTzVi0ShK3epgPXuMYSztP-3BF',  // inquire
     '1AaP5cMlFNtfFNMfeC_BSsGFTR2P-dxT5',  // home page
     '1OB8MJojetSSHJCJVISM_lEP5k8vIihpb',  // capabilities bottom image 1
     '1ePbGgtv4Q5NLweh7yZcJgFHoINRdGYV6',  // capabilities bottom image 2
+    '1H2CWXOFGUkXkZrMU08nSpJRQY3UVEfZt',  // capabilities bottom image (current)
   ]);
   const [allStudioPhotos, culturePhotos] = await Promise.all([
     getDriveFilesFromFolder(STUDIO_FOLDER_ID),
@@ -178,7 +181,7 @@ export default async function StudioPage() {
           className="pb-24"
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
         >
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1 [&>*:last-child:nth-child(odd)]:col-span-2">
             {studioPhotos.map((f, i) => (
               <DriveGridImage key={f.id} id={f.id} loading={i < 3 ? 'eager' : 'lazy'} />
             ))}

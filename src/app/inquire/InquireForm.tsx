@@ -63,7 +63,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-black">
+      <label className="text-editorial">
         {label}
       </label>
       {children}
@@ -147,7 +147,7 @@ export default function InquireForm() {
       <Field label="Company / Organization">
         <input
           type="text"
-          placeholder="Acme Co."
+          placeholder="Good Company"
           value={form.company}
           onChange={(e) => set('company')(e.target.value)}
           className={inputClass}
@@ -186,7 +186,7 @@ export default function InquireForm() {
         <button
           type="submit"
           disabled={loading}
-          className="px-10 py-3 bg-black text-white text-[10px] tracking-[0.12em] uppercase font-semibold hover:bg-neutral-800 transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+          className="px-6 py-3 bg-black text-white text-[16px] tracking-[0.04em] uppercase font-bold hover:bg-neutral-800 transition-colors duration-150 disabled:opacity-50 cursor-pointer"
         >
           {loading ? 'Sending…' : 'Send Inquiry'}
         </button>

@@ -62,10 +62,12 @@ export default function AboutPage() {
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
           <div className="md:w-1/3 shrink-0">
-            <div className="flex items-center gap-3">
-              <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Founder</p>
-              <div className="flex-1 border-t border-black" />
-              <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Ryan Blaske</p>
+            <div className="md:sticky" style={{ top: 'var(--nav-height)' }}>
+              <div className="flex items-center gap-3">
+                <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Founder</p>
+                <div className="flex-1 border-t border-black" />
+                <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black shrink-0">Ryan Blaske</p>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
@@ -87,29 +89,6 @@ export default function AboutPage() {
             <p className="text-editorial">
               Ryan&apos;s work focuses on creating meaningful, visually compelling stories that connect with people on a deeper level. Through Blaske Studio, he continues to push for a balance of high production value and authentic storytelling in every project.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Our Approach ────────────────────────────────────────── */}
-      <section
-        className="py-16 md:py-24"
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
-      >
-        <div className="flex flex-col md:flex-row gap-12 md:gap-20">
-          <div className="md:w-1/3 shrink-0">
-            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Approach</p>
-          </div>
-          <div className="flex flex-col gap-6 md:w-2/3">
-            <p className="text-editorial">
-              From concept to final cut, our team brings creativity, technical expertise, and a collaborative spirit to every project. Whether you are looking to promote your business, tell a meaningful story, or capture a moment that matters, we approach every project with intention and care.
-            </p>
-            <div className="flex items-center">
-              {['Creative Development', 'Pre Production', 'Production', 'Post Production', 'Studio'].flatMap((title, i, arr) => [
-                <span key={title} className="text-[11px] md:text-[13px] tracking-[0.05em] uppercase font-bold text-black shrink-0 whitespace-nowrap">{title}</span>,
-                ...(i < arr.length - 1 ? [<div key={`line-${i}`} className="flex-1 border-t border-black mx-2 md:mx-3" />] : [])
-              ])}
-            </div>
           </div>
         </div>
       </section>
@@ -144,7 +123,72 @@ export default function AboutPage() {
       <div className="pb-8 md:pb-12" style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
         <div className="relative w-full aspect-[16/9] overflow-hidden">
           <Image
-            src="/api/drive-image?id=11V0o89tksAxLVydLNap6l6LQJXciNEbx"
+            src="/api/drive-image?id=1Q0Iybb9wArwHRbemK4XpuGSwiQtmgzhu"
+            alt="Blaske Studio"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 95vw"
+          />
+        </div>
+      </div>
+
+      {/* ── Our Approach ────────────────────────────────────────── */}
+      <section
+        className="py-16 md:py-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="flex flex-col md:flex-row gap-12 md:gap-20">
+          <div className="md:w-1/3 shrink-0">
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Approach</p>
+          </div>
+          <div className="flex flex-col gap-6 md:w-2/3">
+            <p className="text-editorial">
+              From concept to final cut, our team brings creativity, technical expertise, and a collaborative spirit to every project. Whether you are looking to promote your business, tell a meaningful story, or capture a moment that matters, we approach every project with intention and care.
+            </p>
+            <Link
+              href="/capabilities"
+              className="self-start inline-flex items-center gap-2 border border-black px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-transparent hover:bg-black hover:text-white transition-colors duration-150 no-underline mt-2"
+            >
+              Capabilities
+              <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M0 5H12M8 1L12 5L8 9" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Studio ──────────────────────────────────────────────── */}
+      <section
+        className="py-16 md:py-24"
+        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
+      >
+        <div className="flex flex-col md:flex-row gap-12 md:gap-20">
+          <div className="md:w-1/3 shrink-0">
+            <p className="text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold text-black mb-4">Studio</p>
+          </div>
+          <div className="flex flex-col gap-6 md:w-2/3">
+            <p className="text-editorial">
+              Located at 240 E Tutt Street in South Bend, Indiana, our studio is built for professional production. Designed to support commercial shoots, documentary interviews, photography, and gear rental, it is a space where creative work gets done at a high level.
+            </p>
+            <Link
+              href="/space"
+              className="self-start inline-flex items-center gap-2 border border-black px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-transparent hover:bg-black hover:text-white transition-colors duration-150 no-underline mt-2"
+            >
+              Our Space
+              <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M0 5H12M8 1L12 5L8 9" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── End image ───────────────────────────────────────────── */}
+      <div className="pb-8 md:pb-12" style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <Image
+            src="/api/drive-image?id=1c7MRiUvhdqSX8RD8pe-CotKR7CQwFEJ5"
             alt="Blaske Studio"
             fill
             className="object-cover"

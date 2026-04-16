@@ -10,7 +10,7 @@ export default function InquirePage() {
     <main style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}>
 
       {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-medium tracking-tight pt-16 md:pt-24 pb-8">
+      <h1 className="text-4xl md:text-6xl font-bold tracking-tight pt-16 md:pt-24 pb-8">
         Let&rsquo;s make something.
       </h1>
 

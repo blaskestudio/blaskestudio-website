@@ -34,6 +34,10 @@ export default function CultureGallery({ photos }: Props) {
             className="w-full h-auto block"
             loading={i < 6 ? 'eager' : 'lazy'}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onError={(e) => {
+              const el = e.currentTarget.parentElement;
+              if (el) el.style.display = 'none';
+            }}
           />
         </div>
       ))}
