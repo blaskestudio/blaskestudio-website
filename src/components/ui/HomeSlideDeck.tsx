@@ -153,7 +153,7 @@ function HeroSection({ ready }: { ready: boolean }) {
           transition: `transform ${DURATION} ${EASING}`,
         }}
       >
-        <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white">
+        <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white text-balance sm:text-pretty">
           A full-service production studio.{' '}<br className="hidden sm:block" />Built on craft, collaboration, and story.
         </h2>
         <Link
