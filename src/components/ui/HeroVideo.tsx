@@ -11,6 +11,9 @@ export default function HeroVideo() {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
+    // Fallback for iOS Safari which blocks autoplay events — show after 4s regardless
+    const fallback = setTimeout(() => setPlaying(true), 4000);
+
     function handleMessage(e: MessageEvent) {
       if (e.source !== iframeRef.current?.contentWindow) return;
       try {
@@ -20,14 +23,18 @@ export default function HeroVideo() {
             JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
           );
         }
-        // info: 1 = playing
+        // info: 1 = playing — fires on Chrome/Android, not iOS Safari
         if (data?.event === 'onStateChange' && data?.info === 1) {
+          clearTimeout(fallback);
           setPlaying(true);
         }
       } catch (_) {}
     }
     window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    return () => {
+      clearTimeout(fallback);
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   return (
