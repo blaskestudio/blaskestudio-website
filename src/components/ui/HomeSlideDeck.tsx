@@ -64,26 +64,30 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
     </div>
   );
 
+  const categoryLabel = item.contentType === 'case-study' ? 'Case Study' : CATEGORY_LABELS[item.category as WorkCategory];
+  const categoryHref = item.contentType === 'case-study' ? '/work/video/case-studies' : `/work/video/${item.category}`;
+
   const metaEl = (
-    <div className="flex flex-col justify-between sm:w-1/4 self-stretch border border-white p-6">
-      <div className="flex flex-col gap-2">
-        <span className="text-[32px] font-semibold tracking-tight text-white leading-snug">
+    <div className="flex flex-col justify-between sm:w-1/4 self-stretch border border-white p-4 sm:p-6">
+      <div className="flex flex-col gap-1.5 sm:gap-2">
+        <span className="text-[22px] sm:text-[28px] font-semibold tracking-tight text-white leading-snug">
           {item.title}
         </span>
-        <span className="text-[24px] text-neutral-300 font-normal">{item.client}</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[17px] sm:text-[22px] text-neutral-300 font-normal">{item.client}</span>
+          <span className="text-[17px] sm:text-[22px] text-neutral-500 font-normal select-none">·</span>
+          <Link
+            href={categoryHref}
+            onClick={(e) => e.stopPropagation()}
+            className="text-[17px] sm:text-[22px] text-neutral-300 font-normal hover:text-white transition-colors duration-150 no-underline"
+          >
+            {categoryLabel}
+          </Link>
+        </div>
       </div>
-      <div className="flex flex-col gap-1.5">
-        <Link
-          href={item.contentType === 'case-study' ? '/work/video/case-studies' : `/work/video/${item.category}`}
-          onClick={(e) => e.stopPropagation()}
-          className="text-base tracking-[0.08em] uppercase text-white font-medium hover:text-neutral-300 transition-colors duration-150 no-underline self-start"
-        >
-          {item.contentType === 'case-study' ? 'Case Study' : CATEGORY_LABELS[item.category as WorkCategory]}
-        </Link>
-        {item.year > 0 && (
-          <span className="text-base text-neutral-500 font-semibold">{item.year}</span>
-        )}
-      </div>
+      {item.year > 0 && (
+        <span className="text-base text-neutral-500 font-semibold">{item.year}</span>
+      )}
     </div>
   );
 
@@ -98,8 +102,9 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
       aria-label={isCaseStudy ? `Read case study: ${item.title}` : `Play: ${item.title}`}
     >
-      <div className="w-full flex flex-col sm:flex-row gap-6 sm:gap-8 items-center">
-        {reversed ? <>{videoEl}{metaEl}</> : <>{metaEl}{videoEl}</>}
+      <div className={`w-full flex flex-col items-center gap-[var(--page-gutter)] sm:gap-8 ${reversed ? 'sm:flex-row' : 'sm:flex-row-reverse'}`}>
+        {videoEl}
+        {metaEl}
       </div>
     </div>
   );
@@ -112,14 +117,14 @@ function HeroSection({ ready }: { ready: boolean }) {
 
   return (
     <div className="w-full bg-black flex flex-col overflow-hidden md:h-screen">
-      {/* Hero video — 16:9 on mobile, 75vh on desktop */}
+      {/* Hero video — natural 16:9 on mobile, cover crop on desktop */}
       <div data-nav-theme="hero" className="relative overflow-hidden flex-none aspect-video md:aspect-auto md:h-[75vh]">
         <HeroVideo />
       </div>
       {/* Studio statement — slides up from below on load */}
       <div
         data-nav-theme="light"
-        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8 py-8 md:py-0 md:h-[25vh]"
+        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 sm:gap-8 py-6 sm:py-8 md:py-0 md:h-[25vh]"
         style={{
           paddingLeft: 'var(--page-gutter)',
           paddingRight: 'var(--page-gutter)',
@@ -127,12 +132,12 @@ function HeroSection({ ready }: { ready: boolean }) {
           transition: `transform ${DURATION} ${EASING}`,
         }}
       >
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white">
-          A full-service production studio.{' '}<br />Built on craft, collaboration, and story.
+        <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white">
+          A full-service production studio.{' '}<br className="hidden sm:block" />Built on craft, collaboration, and story.
         </h2>
         <Link
           href="/work"
-          className="shrink-0 inline-flex items-center gap-2 px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-white hover:bg-neutral-200 transition-colors duration-150 no-underline"
+          className="self-start sm:self-auto shrink-0 inline-flex items-center gap-2 px-6 py-3 text-[16px] tracking-[0.04em] uppercase font-bold text-black bg-white hover:bg-neutral-200 transition-colors duration-150 no-underline"
         >
           Our Work
           <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

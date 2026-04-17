@@ -54,17 +54,17 @@ export default async function StudioPage() {
 
       {/* ── Heading ─────────────────────────────────────────────── */}
       <section
-        className="pt-16 pb-8 md:pb-12"
+        className="pt-10 pb-6 md:pt-16 md:pb-12"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
           A space built for<br className="hidden md:block" /> serious work.
         </h1>
       </section>
 
       {/* ── Location ────────────────────────────────────────────── */}
       <section
-        className="pt-8 pb-0 md:pt-12"
+        className="pt-6 pb-0 md:pt-12"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -97,7 +97,7 @@ export default async function StudioPage() {
 
       {/* ── Space ───────────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -141,7 +141,7 @@ export default async function StudioPage() {
 
       {/* ── How it's used ───────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">

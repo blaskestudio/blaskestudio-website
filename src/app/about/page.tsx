@@ -21,17 +21,17 @@ export default function AboutPage() {
 
       {/* ── Hero heading ────────────────────────────────────────── */}
       <section
-        className="pt-16 pb-8 md:pb-12"
+        className="pt-10 pb-6 md:pt-16 md:pb-12"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
           Who We Are
         </h1>
       </section>
 
       {/* ── Studio description ──────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
       {/* ── Founder Bio ─────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -71,7 +71,7 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="flex flex-col gap-6 md:w-2/3">
-            <div className="relative w-1/3 aspect-[3/4] overflow-hidden">
+            <div className="relative w-1/2 sm:w-2/5 md:w-1/3 aspect-[3/4] overflow-hidden">
               <Image
                 src="/api/drive-image?id=19znw-8kMBJPZBU0Gs8q370hMDxoYVVwe"
                 alt="Ryan Blaske"
@@ -95,7 +95,7 @@ export default function AboutPage() {
 
       {/* ── Team ────────────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -134,7 +134,7 @@ export default function AboutPage() {
 
       {/* ── Our Approach ────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">
@@ -160,7 +160,7 @@ export default function AboutPage() {
 
       {/* ── Studio ──────────────────────────────────────────────── */}
       <section
-        className="py-16 md:py-24"
+        className="py-10 md:py-24"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         <div className="flex flex-col md:flex-row gap-12 md:gap-20">

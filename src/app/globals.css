@@ -207,6 +207,20 @@ a {
   to   { transform: translateX(0); }
 }
 
+/* ─── Hero video iframe — natural fill on mobile, cover on desktop ── */
+.hero-video-iframe {
+  width: 100%;
+  height: 100%;
+}
+@media (min-width: 768px) {
+  .hero-video-iframe {
+    width: calc(100vw + 200px);
+    height: calc((100vw + 200px) * 9 / 16);
+    min-height: calc(100vh + 200px);
+    min-width: calc((100vh + 200px) * 16 / 9);
+  }
+}
+
 /* ─── Focus ────────────────────────────────────────────────── */
 :focus-visible {
   outline: 1.5px solid var(--color-black);

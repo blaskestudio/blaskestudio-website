@@ -115,8 +115,6 @@ export default function Footer({ dark }: { dark?: boolean }) {
           <Link href="/terms" className="hover:opacity-60 transition-opacity duration-150 no-underline">Terms</Link>
           <span className="opacity-40">|</span>
           <Link href="/privacy" className="hover:opacity-60 transition-opacity duration-150 no-underline">Privacy</Link>
-          <span className="opacity-40">|</span>
-          <Link href="/sitemap-page" className="hover:opacity-60 transition-opacity duration-150 no-underline">Sitemap</Link>
         </div>
       </div>
 

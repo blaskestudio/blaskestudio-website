@@ -171,7 +171,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-12 lg:gap-16">
+        <nav className="hidden md:flex items-center gap-6 lg:gap-12 xl:gap-16">
 
           {/* Work dropdown */}
           <div className="relative" onMouseEnter={openWork} onMouseLeave={closeWork}>
@@ -239,13 +239,20 @@ export default function Nav() {
             )}
           </div>
 
-          {/* Inquire */}
+          {/* Inquire — always rendered as a filled button */}
           <Link
             href="/inquire"
             className={linkClass}
-            onMouseEnter={() => setHoveredLink('/inquire')}
-            onMouseLeave={() => setHoveredLink(null)}
-            style={itemStyle(isActive('/inquire'), hoveredLink === '/inquire')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              height: '36px',
+              padding: '0 14px',
+              backgroundColor: (navDark || navHero) ? 'white' : 'black',
+              color: (navDark || navHero) ? 'black' : 'white',
+              border: `1px solid ${(navDark || navHero) ? 'white' : 'black'}`,
+              transition: 'background-color 150ms ease, color 150ms ease',
+            }}
           >
             Inquire
           </Link>
@@ -255,14 +262,14 @@ export default function Nav() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(v => !v)}
-          className="md:hidden flex flex-col justify-center gap-[5px] w-6 h-6 p-0 bg-transparent border-0 cursor-pointer"
+          className="md:hidden flex flex-col justify-center gap-[6px] w-8 h-8 p-0 bg-transparent border-0 cursor-pointer"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          {(['rotate-45 translate-y-[7px]', '', '-rotate-45 -translate-y-[7px]'] as const).map((rotate, i) => (
+          {(['rotate-45 translate-y-[8px]', '', '-rotate-45 -translate-y-[8px]'] as const).map((rotate, i) => (
             <span
               key={i}
-              className={`block h-px transition-all duration-300 ${i === 0 ? `origin-center ${menuOpen ? rotate : ''}` : i === 1 ? `${menuOpen ? 'opacity-0' : ''}` : `origin-center ${menuOpen ? rotate : ''}`}`}
+              className={`block h-px w-full transition-all duration-300 ${i === 0 ? `origin-center ${menuOpen ? rotate : ''}` : i === 1 ? `${menuOpen ? 'opacity-0 scale-x-0' : ''}` : `origin-center ${menuOpen ? rotate : ''}`}`}
               style={{ backgroundColor: textColor }}
             />
           ))}
@@ -270,60 +277,79 @@ export default function Nav() {
       </div>
     </header>
 
-    {/* Mobile menu — full-screen overlay, z-40 (below header z-50) */}
-    {menuOpen && (
-      <nav
-        className="md:hidden fixed inset-0 z-40 bg-white overflow-y-auto"
-        style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
-      >
-        <ul className="flex flex-col gap-5 pb-8" style={{ paddingTop: 'calc(var(--nav-height) + 1.5rem)' }}>
-          <li>
-            <p className="text-[13px] tracking-[0.08em] uppercase font-medium text-neutral-400 mb-3">Work</p>
-            <ul className="flex flex-col gap-3 pl-3">
-              {WORK_LINKS.map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} onClick={() => setMenuOpen(false)}
-                    className="text-[18px] font-medium text-neutral-800 hover:text-black no-underline">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-          <li>
-            <Link href="/capabilities" onClick={() => setMenuOpen(false)}
-              className={`text-[18px] font-medium no-underline ${isActive('/capabilities') ? 'text-black' : 'text-neutral-800 hover:text-black'}`}>
-              Capabilities
-            </Link>
-          </li>
-          <li>
-            <p className="text-[13px] tracking-[0.08em] uppercase font-medium text-neutral-400 mb-3">About</p>
-            <ul className="flex flex-col gap-3 pl-3">
-              {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
-                <li key={href}>
-                  <Link href={href} onClick={() => setMenuOpen(false)}
-                    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="inline-flex items-center gap-1.5 text-[18px] font-medium text-neutral-800 hover:text-black no-underline">
-                    {label}
-                    {arrow && (
-                      <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M2 8L8 2M4 2H8V6" />
-                      </svg>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-          <li>
-            <Link href="/inquire" onClick={() => setMenuOpen(false)}
-              className={`text-[18px] font-medium no-underline ${isActive('/inquire') ? 'text-black' : 'text-neutral-800 hover:text-black'}`}>
-              Inquire
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    )}
+    {/* Mobile menu — full-screen overlay, always rendered for smooth transitions */}
+    <nav
+      className="md:hidden fixed inset-0 z-40 bg-white flex flex-col overflow-y-auto"
+      style={{
+        paddingLeft: 'max(var(--page-gutter), 1.25rem)',
+        paddingRight: 'max(var(--page-gutter), 1.25rem)',
+        paddingTop: 'calc(var(--nav-height) + 2rem)',
+        paddingBottom: '2rem',
+        opacity: menuOpen ? 1 : 0,
+        pointerEvents: menuOpen ? 'auto' : 'none',
+        transform: menuOpen ? 'translateY(0)' : 'translateY(-6px)',
+        transition: 'opacity 220ms ease, transform 220ms ease',
+      }}
+      aria-hidden={!menuOpen}
+    >
+      {/* Primary nav items */}
+      <div className="flex flex-col flex-1">
+
+        {/* Work */}
+        <div className="py-4 border-b border-neutral-100">
+          <p className="text-[28px] font-bold tracking-tight text-black leading-none mb-3">Work</p>
+          <div className="flex flex-col gap-2.5">
+            {WORK_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                className="text-[18px] font-medium text-black no-underline leading-snug">
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Capabilities */}
+        <div className="py-4 border-b border-neutral-100">
+          <Link href="/capabilities" onClick={() => setMenuOpen(false)}
+            className="text-[28px] font-bold tracking-tight text-black no-underline leading-none block">
+            Capabilities
+          </Link>
+        </div>
+
+        {/* About */}
+        <div className="py-4 border-b border-neutral-100">
+          <p className="text-[28px] font-bold tracking-tight text-black leading-none mb-3">About</p>
+          <div className="flex flex-col gap-2.5">
+            {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className="inline-flex items-center gap-1.5 text-[18px] font-medium text-black no-underline leading-snug">
+                {label}
+                {arrow && (
+                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 8L8 2M4 2H8V6" />
+                  </svg>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Inquire CTA — filled button pinned to bottom */}
+      <div className="mt-6">
+        <Link
+          href="/inquire"
+          onClick={() => setMenuOpen(false)}
+          className="flex items-center justify-between w-full px-5 py-4 bg-black text-white text-[16px] tracking-[0.05em] uppercase font-bold no-underline"
+        >
+          Inquire
+          <svg width="18" height="11" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M0 5H12M8 1L12 5L8 9" />
+          </svg>
+        </Link>
+      </div>
+    </nav>
     </>
   );
 }

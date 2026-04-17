@@ -9,15 +9,8 @@ export default function HeroVideo() {
     <div className="absolute inset-0">
       <iframe
         src={SILENT_SRC}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{
-          width: 'calc(100vw + 200px)',
-          height: 'calc((100vw + 200px) * 9 / 16)',
-          minHeight: 'calc(100vh + 200px)',
-          minWidth: 'calc((100vh + 200px) * 16 / 9)',
-          border: 'none',
-          pointerEvents: 'none',
-        }}
+        className="hero-video-iframe absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ border: 'none', pointerEvents: 'none' }}
         allow="autoplay; fullscreen"
         title="Blaske Studio reel"
       />

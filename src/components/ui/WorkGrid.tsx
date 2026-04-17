@@ -149,6 +149,7 @@ interface Props {
 }
 
 const PAGE_SIZE = 12;
+const PHOTO_PAGE_SIZE = 18;
 
 export default function WorkGrid({
   items,
@@ -160,12 +161,10 @@ export default function WorkGrid({
   const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [lightboxItem, setLightboxItem] = useState<WorkItem | null>(null);
-  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
-
-  // Reset pagination whenever the filter or media type changes
-  useEffect(() => {
-    setDisplayCount(PAGE_SIZE);
-  }, [activeVideoFilter, activePhotoFilter, mediaType, viewMode]);
+  const [displayCount, setDisplayCount] = useState(mediaType === 'photo' ? PHOTO_PAGE_SIZE : PAGE_SIZE);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const [photoLightboxIndex, setPhotoLightboxIndex] = useState<number | null>(null);
 
   const filteredVideo = items.filter((item) => {
     if (activeVideoFilter === 'all') return true;
@@ -185,6 +184,35 @@ export default function WorkGrid({
       return urls.map((url, i) => ({ src: url, key: `${cat}-${i}` }));
     });
   })();
+
+  // Reset pagination whenever the filter or media type changes
+  useEffect(() => {
+    setDisplayCount(mediaType === 'photo' ? PHOTO_PAGE_SIZE : PAGE_SIZE);
+  }, [activeVideoFilter, activePhotoFilter, mediaType, viewMode]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!filterOpen) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [filterOpen]);
+
+  // Photo lightbox keyboard navigation
+  useEffect(() => {
+    if (photoLightboxIndex === null) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPhotoLightboxIndex(null);
+      if (e.key === 'ArrowLeft') setPhotoLightboxIndex(i => (i !== null && i > 0) ? i - 1 : i);
+      if (e.key === 'ArrowRight') setPhotoLightboxIndex(i => (i !== null && i < photoEntries.length - 1) ? i + 1 : i);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [photoLightboxIndex, photoEntries.length]);
 
   const handleCardClick = useCallback(
     (item: WorkItem) => {
@@ -209,15 +237,19 @@ export default function WorkGrid({
     router.push(type === 'video' ? '/work/video' : '/work/photo');
   };
 
+  const activeCategoryLabel = mediaType === 'video'
+    ? (VIDEO_FILTERS.find(f => f.value === activeVideoFilter)?.label ?? 'All')
+    : (PHOTO_FILTERS.find(f => f.value === activePhotoFilter)?.label ?? 'All');
+  const categoryIsFiltered = mediaType === 'video' ? activeVideoFilter !== 'all' : activePhotoFilter !== 'all';
+
   return (
     <>
       {/* ── Controls row ─────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-6 py-3 mb-10">
-
-        {/* Medium label + Video/Photo toggle */}
+      <div className="py-3 mb-8">
         <div className="flex items-center gap-3">
-          <span className="text-base font-medium text-black whitespace-nowrap">Medium</span>
-          <div className="flex">
+
+          {/* Video/Photo toggle */}
+          <div className="flex shrink-0">
             <button
               onClick={() => handleMediaTypeClick('video')}
               className={`pill${mediaType === 'video' ? ' pill-active' : ''}`}
@@ -232,74 +264,89 @@ export default function WorkGrid({
               Photo
             </button>
           </div>
+
+          {/* Category dropdown */}
+          <div className="relative shrink-0" ref={filterRef}>
+            <button
+              onClick={() => setFilterOpen(v => !v)}
+              className={`pill flex items-center gap-2${categoryIsFiltered ? ' pill-active' : ''}`}
+            >
+              <span>{categoryIsFiltered ? activeCategoryLabel : 'Category'}</span>
+              <svg
+                width="10" height="6" viewBox="0 0 10 6" fill="none"
+                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true"
+                style={{ transform: filterOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 150ms ease' }}
+              >
+                <path d="M1 1l4 4 4-4" />
+              </svg>
+            </button>
+
+            {filterOpen && (
+              <div className="absolute left-0 top-full mt-1 bg-white border border-black z-20 min-w-[160px]">
+                {mediaType === 'video'
+                  ? VIDEO_FILTERS.map(({ label, value, slug }) => (
+                    <button
+                      key={value}
+                      onClick={() => { handleVideoFilterClick(value, slug); setFilterOpen(false); }}
+                      className="flex items-center justify-between w-full text-left px-4 py-2.5 text-[12px] tracking-[0.08em] uppercase font-medium hover:bg-neutral-50 transition-colors duration-100"
+                    >
+                      {label}
+                      {activeVideoFilter === value && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M1 4l3 3 5-6" />
+                        </svg>
+                      )}
+                    </button>
+                  ))
+                  : PHOTO_FILTERS.map(({ label, value }) => (
+                    <button
+                      key={value}
+                      onClick={() => { handlePhotoFilterClick(value); setFilterOpen(false); }}
+                      className="flex items-center justify-between w-full text-left px-4 py-2.5 text-[12px] tracking-[0.08em] uppercase font-medium hover:bg-neutral-50 transition-colors duration-100"
+                    >
+                      {label}
+                      {activePhotoFilter === value && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M1 4l3 3 5-6" />
+                        </svg>
+                      )}
+                    </button>
+                  ))
+                }
+              </div>
+            )}
+          </div>
+
+          {/* Grid / Index view toggle — right-aligned, video only, hidden on mobile */}
+          {mediaType === 'video' && (
+            <div className="hidden sm:flex shrink-0 ml-auto">
+              <button
+                onClick={() => setViewMode('grid')}
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
+                className={`pill${viewMode === 'grid' ? ' pill-active' : ''}`}
+                style={{ borderRight: 'none' }}
+              >
+                <GridIcon />
+              </button>
+              <button
+                onClick={() => setViewMode('index')}
+                aria-label="Index view"
+                aria-pressed={viewMode === 'index'}
+                className={`pill${viewMode === 'index' ? ' pill-active' : ''}`}
+              >
+                <IndexIcon />
+              </button>
+            </div>
+          )}
         </div>
-
-        {/* Video category filters */}
-        {mediaType === 'video' && (
-          <div className="flex items-center gap-3">
-            <span className="text-base font-medium text-black whitespace-nowrap">Category</span>
-            <div className="flex">
-              {VIDEO_FILTERS.map(({ label, value, slug }, i) => (
-                <button
-                  key={value}
-                  onClick={() => handleVideoFilterClick(value, slug)}
-                  className={`pill${activeVideoFilter === value ? ' pill-active' : ''}`}
-                  style={i < VIDEO_FILTERS.length - 1 ? { borderRight: 'none' } : undefined}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Photo category filters */}
-        {mediaType === 'photo' && (
-          <div className="flex items-center gap-3">
-            <span className="text-base font-medium text-black whitespace-nowrap">Category</span>
-            <div className="flex">
-              {PHOTO_FILTERS.map(({ label, value }, i) => (
-                <button
-                  key={value}
-                  onClick={() => handlePhotoFilterClick(value)}
-                  className={`pill${activePhotoFilter === value ? ' pill-active' : ''}`}
-                  style={i < PHOTO_FILTERS.length - 1 ? { borderRight: 'none' } : undefined}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Grid / Index view toggle — right-aligned, video only */}
-        {mediaType === 'video' && (
-          <div className="flex ml-auto">
-            <button
-              onClick={() => setViewMode('grid')}
-              aria-label="Grid view"
-              aria-pressed={viewMode === 'grid'}
-              className={`pill${viewMode === 'grid' ? ' pill-active' : ''}`}
-              style={{ borderRight: 'none' }}
-            >
-              <GridIcon />
-            </button>
-            <button
-              onClick={() => setViewMode('index')}
-              aria-label="Index view"
-              aria-pressed={viewMode === 'index'}
-              className={`pill${viewMode === 'index' ? ' pill-active' : ''}`}
-            >
-              <IndexIcon />
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ── Video — grid view ────────────────────────────────── */}
       {mediaType === 'video' && viewMode === 'grid' && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 -mx-[var(--page-gutter)] sm:mx-0">
             {filteredVideo.slice(0, displayCount).map((item) => (
               <WorkCard key={item.slug} item={item} onClick={() => handleCardClick(item)} />
             ))}
@@ -333,22 +380,25 @@ export default function WorkGrid({
         </>
       )}
 
-      {/* ── Photo grid ───────────────────────────────────────── */}
+      {/* ── Photo grid — Instagram-style square grid ─────────── */}
       {mediaType === 'photo' && (
         <>
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-1">
-            {photoEntries.slice(0, displayCount).map(({ src, key }) => (
-              <div key={key} className="break-inside-avoid mb-1">
-                <Image
+          <div className="grid grid-cols-3 gap-0.5 -mx-[var(--page-gutter)] sm:mx-0">
+            {photoEntries.slice(0, displayCount).map(({ src, key }, i) => (
+              <button
+                key={key}
+                className="aspect-[4/5] overflow-hidden block w-full p-0 border-0 bg-neutral-100 cursor-pointer"
+                onClick={() => setPhotoLightboxIndex(i)}
+                aria-label="View photo"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={src}
                   alt=""
-                  width={1200}
-                  height={800}
-                  className="w-full h-auto block"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  unoptimized={src.startsWith('https://')}
+                  className="w-full h-full object-cover"
+                  loading={i < 9 ? 'eager' : 'lazy'}
                 />
-              </div>
+              </button>
             ))}
             {photoEntries.length === 0 && (
               <p className="text-base text-neutral-400 col-span-3 py-16">No photos yet in this category.</p>
@@ -362,6 +412,62 @@ export default function WorkGrid({
             />
           )}
           {photoEntries.length > 0 && photoEntries.length <= displayCount && <div className="pb-24" />}
+
+          {/* ── Photo lightbox ───────────────────────────────── */}
+          {photoLightboxIndex !== null && (
+            <div
+              className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+              onClick={() => setPhotoLightboxIndex(null)}
+            >
+              {/* Close */}
+              <button
+                onClick={() => setPhotoLightboxIndex(null)}
+                className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white hover:text-neutral-300 transition-colors duration-150"
+                aria-label="Close"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="M2 2l14 14M16 2L2 16" />
+                </svg>
+              </button>
+
+              {/* Counter */}
+              <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white text-[12px] tracking-[0.08em] uppercase font-medium opacity-50">
+                {photoLightboxIndex + 1} / {photoEntries.length}
+              </span>
+
+              {/* Prev arrow */}
+              <button
+                onClick={(e) => { e.stopPropagation(); setPhotoLightboxIndex(i => (i !== null && i > 0) ? i - 1 : i); }}
+                className={`absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-white transition-opacity duration-150 ${photoLightboxIndex === 0 ? 'opacity-20 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
+                aria-label="Previous photo"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M13 3l-7 7 7 7" />
+                </svg>
+              </button>
+
+              {/* Image */}
+              <div className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photoEntries[photoLightboxIndex].src}
+                  alt=""
+                  className="max-w-full max-h-[85vh] object-contain"
+                />
+              </div>
+
+              {/* Next arrow */}
+              <button
+                onClick={(e) => { e.stopPropagation(); setPhotoLightboxIndex(i => (i !== null && i < photoEntries.length - 1) ? i + 1 : i); }}
+                className={`absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-white transition-opacity duration-150 ${photoLightboxIndex === photoEntries.length - 1 ? 'opacity-20 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
+                aria-label="Next photo"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M7 3l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
         </>
       )}
     </>

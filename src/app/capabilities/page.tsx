@@ -66,17 +66,17 @@ export default function CapabilitiesPage() {
 
       {/* ── Page title ──────────────────────────────────────────── */}
       <div
-        className="pt-16 pb-24 md:pb-32"
+        className="pt-10 pb-12 md:pt-16 md:pb-32"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight max-w-3xl">
           End-to-end production, from concept to delivery.
         </h1>
       </div>
 
       {/* ── Capabilities grid ───────────────────────────────────── */}
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 pb-32 md:pb-48"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 sm:gap-y-14 pb-16 md:pb-48"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
         {CAPABILITIES.map(({ title, items }) => (
