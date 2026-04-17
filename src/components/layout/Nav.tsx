@@ -266,10 +266,10 @@ export default function Nav() {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          {(['rotate-45 translate-y-[8px]', '', '-rotate-45 -translate-y-[8px]'] as const).map((rotate, i) => (
+          {(['rotate-45 translate-y-[7px]', '', '-rotate-45 -translate-y-[7px]'] as const).map((rotate, i) => (
             <span
               key={i}
-              className={`block h-px w-full transition-all duration-300 ${i === 0 ? `origin-center ${menuOpen ? rotate : ''}` : i === 1 ? `${menuOpen ? 'opacity-0 scale-x-0' : ''}` : `origin-center ${menuOpen ? rotate : ''}`}`}
+              className={`block h-px w-full transition-all duration-150 ${i === 0 ? `origin-center ${menuOpen ? rotate : ''}` : i === 1 ? `${menuOpen ? 'opacity-0 scale-x-0' : ''}` : `origin-center ${menuOpen ? rotate : ''}`}`}
               style={{ backgroundColor: textColor }}
             />
           ))}
@@ -288,7 +288,7 @@ export default function Nav() {
         opacity: menuOpen ? 1 : 0,
         pointerEvents: menuOpen ? 'auto' : 'none',
         transform: menuOpen ? 'translateY(0)' : 'translateY(-6px)',
-        transition: 'opacity 220ms ease, transform 220ms ease',
+        transition: 'opacity 150ms ease, transform 150ms ease',
       }}
       aria-hidden={!menuOpen}
     >
@@ -296,12 +296,13 @@ export default function Nav() {
       <div className="flex flex-col flex-1">
 
         {/* Work */}
-        <div className="py-4 border-b border-neutral-100">
-          <p className="text-[28px] font-bold tracking-tight text-black leading-none mb-3">Work</p>
-          <div className="flex flex-col gap-2.5">
+        <div className="py-4">
+          <p className="text-[22px] font-bold tracking-tight text-black leading-none mb-3">Work</p>
+          <div className="flex flex-col gap-2.5 pl-1">
             {WORK_LINKS.map(({ href, label }) => (
               <Link key={href} href={href} onClick={() => setMenuOpen(false)}
-                className="text-[18px] font-medium text-black no-underline leading-snug">
+                className="inline-flex items-center gap-2 text-[20px] font-medium text-black no-underline leading-snug">
+                <span className="text-black font-normal leading-none shrink-0" aria-hidden="true">└</span>
                 {label}
               </Link>
             ))}
@@ -309,21 +310,22 @@ export default function Nav() {
         </div>
 
         {/* Capabilities */}
-        <div className="py-4 border-b border-neutral-100">
+        <div className="py-4">
           <Link href="/capabilities" onClick={() => setMenuOpen(false)}
-            className="text-[28px] font-bold tracking-tight text-black no-underline leading-none block">
+            className="text-[22px] font-bold tracking-tight text-black no-underline leading-none block">
             Capabilities
           </Link>
         </div>
 
         {/* About */}
-        <div className="py-4 border-b border-neutral-100">
-          <p className="text-[28px] font-bold tracking-tight text-black leading-none mb-3">About</p>
-          <div className="flex flex-col gap-2.5">
+        <div className="py-4">
+          <p className="text-[22px] font-bold tracking-tight text-black leading-none mb-3">About</p>
+          <div className="flex flex-col gap-2.5 pl-1">
             {ABOUT_LINKS.map(({ href, label, external, arrow }) => (
               <Link key={href} href={href} onClick={() => setMenuOpen(false)}
                 {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                className="inline-flex items-center gap-1.5 text-[18px] font-medium text-black no-underline leading-snug">
+                className="inline-flex items-center gap-2 text-[20px] font-medium text-black no-underline leading-snug">
+                <span className="text-black font-normal leading-none shrink-0" aria-hidden="true">└</span>
                 {label}
                 {arrow && (
                   <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
