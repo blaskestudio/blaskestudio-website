@@ -84,7 +84,7 @@ export default function Footer({ dark }: { dark?: boolean }) {
           <p className={labelClass}>Contact</p>
           <div className="flex flex-col gap-3">
             <a href="mailto:hello@blaskestudio.com" className={linkClass}>
-              Contact
+              Email
             </a>
             <Link href="/inquire" className={linkClass}>
               Inquire
