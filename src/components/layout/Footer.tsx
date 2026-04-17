@@ -51,14 +51,14 @@ export default function Footer({ dark }: { dark?: boolean }) {
   return (
     <footer className={`mt-auto shrink-0 ${dark ? 'bg-black' : ''}`}>
 
-      {/* Main grid — 4 cols on desktop, last col fills remaining space */}
+      {/* Main grid — 4 cols on desktop, 2 cols on mobile */}
       <div
-        className="py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-6"
+        className="py-12 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-6"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
       >
 
-        {/* Col 1 — Social */}
-        <div className="flex flex-col gap-5">
+        {/* Col 1 — Social (desktop only) */}
+        <div className="hidden sm:flex flex-col gap-5">
           <p className={labelClass}>Social</p>
           <div className="flex flex-col gap-3">
             {SOCIAL_LINKS.map(({ label, href }) => (
@@ -84,7 +84,7 @@ export default function Footer({ dark }: { dark?: boolean }) {
           <p className={labelClass}>Contact</p>
           <div className="flex flex-col gap-3">
             <a href="mailto:hello@blaskestudio.com" className={linkClass}>
-              hello@blaskestudio.com
+              Contact
             </a>
             <Link href="/inquire" className={linkClass}>
               Inquire
@@ -92,18 +92,25 @@ export default function Footer({ dark }: { dark?: boolean }) {
           </div>
         </div>
 
-        {/* Col 4 — Newsletter */}
-        <div className="flex flex-col gap-5">
+        {/* Col 4 — Newsletter (first on mobile, full-width) */}
+        <div className="flex flex-col gap-5 order-first sm:order-none col-span-2 sm:col-span-1">
           <NewsletterForm dark={dark} />
+          {/* Social icons — mobile only, below newsletter */}
+          <div className="flex items-center gap-3 sm:hidden">
+            {SOCIAL_LINKS.map(({ label, href, icon }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                className={`flex items-center justify-center w-9 h-9 rounded-full border hover:opacity-60 transition-opacity duration-150 ${dark ? 'border-white text-white' : 'border-black text-black'}`}
+                aria-label={label}>
+                {icon}
+              </a>
+            ))}
+          </div>
         </div>
 
       </div>
 
       {/* Bottom bar — copyright + legal */}
-      <div
-        className={`mx-[var(--page-gutter)] border-t ${dark ? 'border-white' : 'border-black'}`}
-        style={{ marginLeft: 'var(--page-gutter)', marginRight: 'var(--page-gutter)' }}
-      />
+      <div className={`mx-[var(--page-gutter)] border-t ${dark ? 'border-white' : 'border-black'}`} />
       <div
         className="flex items-center justify-between pb-8 pt-6"
         style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}

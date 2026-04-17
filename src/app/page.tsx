@@ -45,8 +45,7 @@ export default async function Home() {
               <img
                 src={logo.src}
                 alt={logo.alt}
-                className="max-h-[40%] max-w-[60%] w-auto object-contain"
-
+                className={`w-auto object-contain ${logo.alt.toLowerCase().includes('harrington') ? 'max-h-[65%] max-w-[75%]' : 'max-h-[40%] max-w-[60%]'}`}
                 loading="lazy"
               />
             </div>
