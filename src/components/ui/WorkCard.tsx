@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { WorkItem } from '@/lib/types';
 
 function getSilentEmbedSrc(item: WorkItem): string {
-  if (item.contentType === 'project' && item.thumbnailShortUrl) {
-    const id = item.thumbnailShortUrl;
-    return `https://iframe.videodelivery.net/${id}?autoplay=true&muted=true&loop=true&controls=false&preload=true`;
+  // Cloudflare Stream — works for both projects and case studies
+  if (item.thumbnailShortUrl) {
+    return `https://iframe.videodelivery.net/${item.thumbnailShortUrl}?autoplay=true&muted=true&loop=true&controls=false&preload=true`;
   }
-  const video = item.contentType === 'project' ? item.video : item.heroVideo;
+  // Case studies without a Cloudflare thumbnail get no looping video (YouTube player UI can't be hidden)
+  if (item.contentType === 'case-study') return '';
+  const video = item.video;
   if (!video || video.type === 'local' || !video.id) return '';
   if (video.type === 'vimeo')
     return `https://player.vimeo.com/video/${video.id}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`;
@@ -67,11 +69,20 @@ export default function WorkCard({ item, onClick }: Props) {
         )}
 
         {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none flex flex-col justify-end p-3 gap-0.5">
-          <span className="text-sm text-white font-medium leading-tight">{item.title}</span>
-          <span className="text-xs text-white/70 font-normal leading-tight">
-            {item.client}{item.year ? `, ${item.year}` : ''}
-          </span>
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none flex flex-col justify-end p-3">
+          <div className="flex items-end justify-between gap-2">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm text-white font-medium leading-tight">{item.title}</span>
+              <span className="text-xs text-white/70 font-normal leading-tight">
+                {item.client}{item.year ? `, ${item.year}` : ''}
+              </span>
+            </div>
+            {isCaseStudy && (
+              <span className="self-stretch shrink-0 text-[10px] tracking-[0.08em] uppercase font-semibold text-white border border-white/60 px-2 flex items-center">
+                Case Study
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

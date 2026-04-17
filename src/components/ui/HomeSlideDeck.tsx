@@ -73,21 +73,31 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
         <span className="text-[22px] sm:text-[28px] font-semibold tracking-tight text-white leading-snug">
           {item.title}
         </span>
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Mobile: client · category in one row. Desktop: client only here, category moves to bottom */}
+        <div className="flex items-center gap-2 flex-wrap sm:block">
           <span className="text-[17px] sm:text-[22px] text-neutral-300 font-normal">{item.client}</span>
-          <span className="text-[17px] sm:text-[22px] text-neutral-500 font-normal select-none">·</span>
+          <span className="text-[17px] sm:text-[22px] text-neutral-500 font-normal select-none sm:hidden">·</span>
           <Link
             href={categoryHref}
             onClick={(e) => e.stopPropagation()}
-            className="text-[17px] sm:text-[22px] text-neutral-300 font-normal hover:text-white transition-colors duration-150 no-underline"
+            className="text-[17px] sm:hidden text-neutral-300 font-normal hover:text-white transition-colors duration-150 no-underline"
           >
             {categoryLabel}
           </Link>
         </div>
       </div>
-      {item.year > 0 && (
-        <span className="text-base text-neutral-500 font-semibold">{item.year}</span>
-      )}
+      <div className="flex flex-col gap-1.5">
+        <Link
+          href={categoryHref}
+          onClick={(e) => e.stopPropagation()}
+          className="hidden sm:inline text-base tracking-[0.08em] uppercase text-white font-medium hover:text-neutral-300 transition-colors duration-150 no-underline self-start"
+        >
+          {categoryLabel}
+        </Link>
+        {item.year > 0 && (
+          <span className="text-base text-neutral-500 font-semibold">{item.year}</span>
+        )}
+      </div>
     </div>
   );
 
@@ -156,7 +166,8 @@ interface Props {
 
 export default function HomeSlideDeck({ items }: Props) {
   const router = useRouter();
-  const [lightboxItem, setLightboxItem] = useState<WorkItem | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const lightboxItems = items.filter(i => i.contentType !== 'case-study');
   const [introReady, setIntroReady] = useState(false);
 
   useEffect(() => {
@@ -168,9 +179,10 @@ export default function HomeSlideDeck({ items }: Props) {
     if (item.contentType === 'case-study') {
       router.push(`/work/${item.slug}`);
     } else {
-      setLightboxItem(item);
+      const idx = lightboxItems.indexOf(item);
+      setLightboxIndex(idx >= 0 ? idx : null);
     }
-  }, [router]);
+  }, [router, lightboxItems]);
 
   return (
     <>
@@ -187,7 +199,7 @@ export default function HomeSlideDeck({ items }: Props) {
         />
       ))}
 
-      <VideoLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
+      <VideoLightbox items={lightboxItems} index={lightboxIndex} onClose={() => setLightboxIndex(null)} onNavigate={setLightboxIndex} />
     </>
   );
 }

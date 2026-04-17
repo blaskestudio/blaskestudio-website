@@ -311,7 +311,7 @@ export default function CaseStudyPage({ item, btsPhotos, heroSrc, challengePhoto
 
         {/* ── Content — centered in full viewport ─────────── */}
         <main
-          className="mx-auto pb-32"
+          className="mx-auto pb-[50vh]"
           style={{ maxWidth: '720px', paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
         >
 

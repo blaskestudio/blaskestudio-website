@@ -181,9 +181,11 @@ export default async function StudioPage() {
           className="pb-24"
           style={{ paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)' }}
         >
-          <div className="grid grid-cols-2 gap-1 [&>*:last-child:nth-child(odd)]:col-span-2">
+          <div className="columns-2 gap-1">
             {studioPhotos.map((f, i) => (
-              <DriveGridImage key={f.id} id={f.id} loading={i < 3 ? 'eager' : 'lazy'} />
+              <div key={f.id} className="break-inside-avoid mb-1">
+                <DriveGridImage id={f.id} loading={i < 3 ? 'eager' : 'lazy'} />
+              </div>
             ))}
           </div>
         </div>
