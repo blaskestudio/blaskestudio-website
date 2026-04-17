@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -28,35 +28,46 @@ function isYouTubeItem(item: WorkItem): boolean {
 // ── Featured section ───────────────────────────────────────────
 function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: number; onClick: () => void }) {
   const [iframeReady, setIframeReady] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const isCaseStudy = item.contentType === 'case-study';
   const silentSrc = getSilentSrc(item);
   const youtubeCard = isYouTubeItem(item);
   const reversed = index % 2 !== 0;
 
+  // Listen for YouTube onReady and trigger play — more reliable than onLoad timing
+  useEffect(() => {
+    if (!youtubeCard) return;
+    function handleMessage(e: MessageEvent) {
+      if (e.source !== iframeRef.current?.contentWindow) return;
+      try {
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        if (data?.event === 'onReady') {
+          iframeRef.current?.contentWindow?.postMessage(
+            JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
+          );
+          setTimeout(() => setIframeReady(true), 500);
+        }
+      } catch (_) {}
+    }
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [youtubeCard]);
 
   const videoEl = (
     <div className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0" style={{ background: '#000' }}>
 
       {silentSrc && (
         <iframe
+          ref={iframeRef}
           src={silentSrc}
           className="absolute w-full transition-opacity duration-500"
           style={{ border: 'none', pointerEvents: 'none', opacity: iframeReady ? 1 : 0, top: '-5%', height: '110%', left: 0 }}
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
           title={item.title}
-          onLoad={(e) => {
-            const iframe = e.target as HTMLIFrameElement;
-            if (youtubeCard) {
-              try {
-                iframe.contentWindow?.postMessage(
-                  JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
-                );
-              } catch (_) {}
-              setTimeout(() => setIframeReady(true), 1200);
-            } else {
-              setIframeReady(true);
-            }
+          onLoad={() => {
+            // Vimeo background mode autoplays on its own; YouTube relies on onReady listener above
+            if (!youtubeCard) setIframeReady(true);
           }}
         />
       )}
@@ -126,9 +137,9 @@ function HeroSection({ ready }: { ready: boolean }) {
   const DURATION = '700ms';
 
   return (
-    <div className="w-full bg-black flex flex-col overflow-hidden md:h-screen">
-      {/* Hero video — natural 16:9 on mobile, cover crop on desktop */}
-      <div data-nav-theme="hero" className="relative overflow-hidden flex-none aspect-video md:aspect-auto md:h-[75vh]">
+    <div className="w-full bg-black flex flex-col overflow-hidden sm:h-screen">
+      {/* Mobile: natural 16:9 height. sm+: fills remaining space so nav+video+statement = 100vh */}
+      <div data-nav-theme="hero" className="relative overflow-hidden aspect-video sm:aspect-auto sm:flex-1">
         <HeroVideo />
       </div>
       {/* Studio statement — slides up from below on load */}
