@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import './globals.css';
-import 'dialkit/styles.css';
 import ConditionalShell from '@/components/layout/ConditionalShell';
-import { DialRoot } from 'dialkit';
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +26,6 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.variable}>
       <body className="flex flex-col min-h-screen">
         <ConditionalShell>{children}</ConditionalShell>
-        <DialRoot />
       </body>
     </html>
   );
