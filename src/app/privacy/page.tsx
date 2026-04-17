@@ -11,6 +11,7 @@ const SECTIONS = [
   { id: 'storage',        label: 'Storage' },
   { id: 'cookies',        label: 'Cookies' },
   { id: 'third-party',    label: 'Third-Party Services' },
+  { id: 'marketing',      label: 'Marketing' },
   { id: 'your-rights',    label: 'Your Rights' },
   { id: 'childrens',      label: "Children's Privacy" },
   { id: 'changes',        label: 'Changes' },
@@ -170,8 +171,15 @@ export default function PrivacyPage() {
           <p className="text-editorial">These services may process your data according to their own privacy policies.</p>
         </section>
 
+        <section id="marketing" className="mb-12">
+          <p className={`${labelClass} mb-6`}>7. Marketing</p>
+          <p className="text-editorial">
+            We may use platforms such as Meta to promote our services. If you interact with our advertisements on these platforms, they may collect information in accordance with their own privacy policies. We do not receive personal data about you from these platforms unless you choose to contact us.
+          </p>
+        </section>
+
         <section id="your-rights" className="mb-12">
-          <p className={`${labelClass} mb-6`}>7. Your Rights</p>
+          <p className={`${labelClass} mb-6`}>8. Your Rights</p>
           <p className="text-editorial mb-3">Depending on your location (including California), you may have the right to:</p>
           <ul className="text-editorial flex flex-col gap-1 mb-6 list-disc pl-5">
             {['Request access to your data', 'Request deletion of your data', 'Opt out of communications'].map(item => (
@@ -187,19 +195,19 @@ export default function PrivacyPage() {
         </section>
 
         <section id="childrens" className="mb-12">
-          <p className={`${labelClass} mb-6`}>8. Children&apos;s Privacy</p>
+          <p className={`${labelClass} mb-6`}>9. Children&apos;s Privacy</p>
           <p className="text-editorial">
             This website is intended for a general audience and is not directed at children under 13. We do not knowingly collect data from children.
           </p>
         </section>
 
         <section id="changes" className="mb-12">
-          <p className={`${labelClass} mb-6`}>9. Changes to This Policy</p>
+          <p className={`${labelClass} mb-6`}>10. Changes to This Policy</p>
           <p className="text-editorial">We may update this policy occasionally. Updates will be posted on this page.</p>
         </section>
 
         <section id="contact" className="mb-12">
-          <p className={`${labelClass} mb-6`}>10. Contact</p>
+          <p className={`${labelClass} mb-6`}>11. Contact</p>
           <div className="text-editorial flex flex-col gap-1">
             <p>Blaske Studio</p>
             <p>240 E Tutt St</p>
