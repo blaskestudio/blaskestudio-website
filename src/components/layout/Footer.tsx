@@ -75,7 +75,6 @@ export default function Footer({ dark }: { dark?: boolean }) {
           <div className={`flex flex-col gap-0.5 leading-relaxed ${textClass}`}>
             <span>240 E Tutt Street</span>
             <span>South Bend, IN 46601</span>
-            <span className="mt-3">By appointment only</span>
           </div>
         </div>
 
