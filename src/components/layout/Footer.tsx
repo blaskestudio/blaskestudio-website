@@ -118,7 +118,7 @@ export default function Footer({ dark }: { dark?: boolean }) {
         <span className={`text-[16px] font-normal ${dark ? 'text-white' : 'text-black'}`}>
           © 2026 Blaske Studio
         </span>
-        <div className={`hidden sm:flex items-center gap-4 text-[16px] font-normal ${dark ? 'text-white' : 'text-black'}`}>
+        <div className={`flex items-center gap-4 text-[16px] font-normal ${dark ? 'text-white' : 'text-black'}`}>
           <Link href="/terms" className="hover:opacity-60 transition-opacity duration-150 no-underline">Terms</Link>
           <span className="opacity-40">|</span>
           <Link href="/privacy" className="hover:opacity-60 transition-opacity duration-150 no-underline">Privacy</Link>
