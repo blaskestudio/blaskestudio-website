@@ -161,6 +161,15 @@ export async function getCaseStudiesFromSheet(): Promise<CaseStudy[]> {
         get(row, 'video_higlight_url_3'),
       ].filter(Boolean).map(parseVideoUrl);
 
+      const sectionImageRaw = get(row, 'section_image');
+      const sectionImageMatch = sectionImageRaw?.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+      const sectionImageId = sectionImageMatch ? sectionImageMatch[1] : (sectionImageRaw?.trim() || undefined);
+
+      const highlightLabelRaw = get(row, 'highlight_labels');
+      const highlightLabels = highlightLabelRaw
+        ? highlightLabelRaw.split('|').map(s => s.trim()).filter(Boolean)
+        : undefined;
+
       return {
         slug: get(row, 'slug'),
         contentType: 'case-study' as const,
@@ -172,6 +181,8 @@ export async function getCaseStudiesFromSheet(): Promise<CaseStudy[]> {
         order: parseInt(get(row, 'order')) || i + 100,
         heroVideo: parseVideoUrl(mainVideoUrl),
         highlightVideos: highlights.length ? highlights : undefined,
+        highlightLabels,
+        sectionImageId,
         thumbnailStill: deriveYtThumbnail(mainVideoUrl),
         thumbnailShortUrl: get(row, 'thumbnail_short_id') || undefined,
         thumbnailGif: '',

@@ -77,6 +77,10 @@ export interface CaseStudy extends WorkItemBase {
   contentType: 'case-study';
   heroVideo: VideoSource;
   highlightVideos?: VideoSource[];
+  /** Labels for each highlight video, e.g. ["S1 E1", "S1 E2"]. Pipe-separated in sheet. */
+  highlightLabels?: string[];
+  /** Drive file ID for an image shown between Opportunity and Challenge sections. */
+  sectionImageId?: string;
   overview: string;
   stats?: string[];
   services?: string[];

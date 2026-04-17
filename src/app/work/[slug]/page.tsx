@@ -116,5 +116,9 @@ export default async function WorkSlugPage({ params }: Props) {
     ? await getDriveFilesFromFolder(item.btsPhotosFolder)
     : [];
 
-  return <CaseStudyPage item={item} btsPhotos={btsPhotos} heroSrc={heroSrc} />;
+  const challengePhotos = slug === 'the-journey'
+    ? [{ id: '1pksmxpjsCj9hm8W4SXsKoJk4glppyYfk', name: 'challenge' }]
+    : [];
+
+  return <CaseStudyPage item={item} btsPhotos={btsPhotos} heroSrc={heroSrc} challengePhotos={challengePhotos} />;
 }

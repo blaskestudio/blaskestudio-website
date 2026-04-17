@@ -8,6 +8,7 @@ import Image from 'next/image';
 const WORK_LINKS = [
   { href: '/work/video', label: 'Video' },
   { href: '/work/photo', label: 'Photo' },
+  { href: '/work/video/case-studies', label: 'Case Studies' },
 ];
 
 const ABOUT_LINKS = [
@@ -134,7 +135,7 @@ export default function Nav() {
   const linkClass = 'text-[14px] md:text-[17px] lg:text-[20px] tracking-[0.04em] uppercase font-bold no-underline';
 
   const dropdownItemClass =
-    'block px-4 py-2.5 text-base tracking-[0.08em] uppercase font-medium text-black hover:bg-neutral-50 no-underline transition-colors duration-100';
+    'block px-4 py-2.5 text-base tracking-[0.08em] uppercase font-medium text-black hover:bg-neutral-50 no-underline transition-colors duration-100 whitespace-nowrap';
 
   return (
     <>
@@ -183,7 +184,7 @@ export default function Nav() {
                 onMouseEnter={keepWork}
                 onMouseLeave={closeWork}
               >
-                <div className="bg-white border border-neutral-100 shadow-sm py-1 min-w-[148px]">
+                <div className="bg-white border border-neutral-100 shadow-sm py-1 min-w-[168px]">
                   {WORK_LINKS.map(({ href, label }) => (
                     <Link key={href} href={href} onClick={() => setWorkOpen(false)} className={dropdownItemClass}>
                       {label}
