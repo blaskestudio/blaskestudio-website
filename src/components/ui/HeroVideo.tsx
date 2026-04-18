@@ -10,11 +10,10 @@ const POSTER = `https://img.youtube.com/vi/${HERO_ID}/maxresdefault.jpg`;
 
 export default function HeroVideo() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [playing, setPlaying] = useState(false);
+  // posterVisible starts true; we fade it out once the video is playing
+  const [posterVisible, setPosterVisible] = useState(true);
 
   useEffect(() => {
-    let readyTimer: ReturnType<typeof setTimeout>;
-
     function handleMessage(e: MessageEvent) {
       if (e.source !== iframeRef.current?.contentWindow) return;
       try {
@@ -23,45 +22,42 @@ export default function HeroVideo() {
           iframeRef.current?.contentWindow?.postMessage(
             JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
           );
-          // Show after 600ms — enough for the first frame to decode
-          readyTimer = setTimeout(() => setPlaying(true), 600);
         }
-        // state 1 = playing — reveal immediately, cancels the readyTimer wait
+        // state 1 = playing — fade out the poster immediately
         if (data?.event === 'onStateChange' && data?.info === 1) {
-          clearTimeout(readyTimer);
-          setPlaying(true);
+          setPosterVisible(false);
         }
       } catch (_) {}
     }
     window.addEventListener('message', handleMessage);
-    // Hard fallback: if the API never responds at all (rare)
-    const fallback = setTimeout(() => setPlaying(true), 1200);
+    // Fallback: hide poster after 1.5s even if events never fire (iOS Safari)
+    const fallback = setTimeout(() => setPosterVisible(false), 1500);
     return () => {
       window.removeEventListener('message', handleMessage);
-      clearTimeout(readyTimer);
       clearTimeout(fallback);
     };
   }, []);
 
   return (
     <div className="absolute inset-0 bg-black">
-      {/* Poster: shows instantly, fades out when video plays.
-          Stays visible on iOS Safari where autoplay is blocked — no black, no YouTube UI. */}
+      {/* iframe is always visible and playing underneath — no fade-in delay */}
+      <iframe
+        ref={iframeRef}
+        src={SILENT_SRC}
+        className="hero-video-iframe absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ border: 'none', pointerEvents: 'none' }}
+        allow="autoplay; fullscreen"
+        title="Blaske Studio reel"
+      />
+      {/* Poster sits on top and fades out once the video is confirmed playing.
+          On iOS Safari where autoplay is blocked, it stays visible — no black, no YouTube UI. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={POSTER}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: playing ? 0 : 1, transition: 'opacity 700ms ease' }}
-      />
-      <iframe
-        ref={iframeRef}
-        src={SILENT_SRC}
-        className="hero-video-iframe absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ border: 'none', pointerEvents: 'none', opacity: playing ? 1 : 0, transition: 'opacity 700ms ease' }}
-        allow="autoplay; fullscreen"
-        title="Blaske Studio reel"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        style={{ opacity: posterVisible ? 1 : 0, transition: 'opacity 600ms ease' }}
       />
       <div className="absolute inset-0 bg-black/20 pointer-events-none" />
     </div>
