@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
             <p>In the meantime, feel free to explore our work at <a href="https://blaskestudio.com/work">blaskestudio.com</a>.</p>
             <br />
             <p>— The Blaske Studio Team</p>
-            <img src="https://blaske.studio/logo.webp" alt="Blaske Studio" style="height: 48px; width: auto; margin: 16px 0 8px;" />
+            <img src="https://blaskestudio.com/logo.webp" alt="Blaske Studio" style="height: 48px; width: auto; margin: 16px 0 8px;" />
             <p style="color: #666; margin: 0;">--</p>
             <p style="margin: 8px 0 4px;">W. <a href="https://blaske.studio/">blaske.studio</a></p>
             <p style="margin: 4px 0;">E. <a href="mailto:hello@blaskestudio.com">hello@blaskestudio.com</a></p>
