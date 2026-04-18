@@ -13,6 +13,8 @@ export default function HeroVideo() {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
+    let readyTimer: ReturnType<typeof setTimeout>;
+
     function handleMessage(e: MessageEvent) {
       if (e.source !== iframeRef.current?.contentWindow) return;
       try {
@@ -21,18 +23,22 @@ export default function HeroVideo() {
           iframeRef.current?.contentWindow?.postMessage(
             JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*'
           );
+          // Show after 600ms — enough for the first frame to decode
+          readyTimer = setTimeout(() => setPlaying(true), 600);
         }
-        // state 1 = playing — fires on Chrome/Android but not iOS Safari
+        // state 1 = playing — reveal immediately, cancels the readyTimer wait
         if (data?.event === 'onStateChange' && data?.info === 1) {
+          clearTimeout(readyTimer);
           setPlaying(true);
         }
       } catch (_) {}
     }
     window.addEventListener('message', handleMessage);
-    // Fallback: show iframe after 3s even if onStateChange never fires
-    const fallback = setTimeout(() => setPlaying(true), 3000);
+    // Hard fallback: if the API never responds at all (rare)
+    const fallback = setTimeout(() => setPlaying(true), 1200);
     return () => {
       window.removeEventListener('message', handleMessage);
+      clearTimeout(readyTimer);
       clearTimeout(fallback);
     };
   }, []);
