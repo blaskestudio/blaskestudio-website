@@ -26,6 +26,16 @@ function isYouTubeItem(item: WorkItem): boolean {
 
 
 // ── Featured section ───────────────────────────────────────────
+function getThumbnail(item: WorkItem): string {
+  const video = item.contentType === 'project' ? item.video : item.heroVideo;
+  if (item.thumbnailStill) return item.thumbnailStill;
+  if (video?.type === 'youtube' && video.id)
+    return `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
+  if (video?.type === 'vimeo' && video.id)
+    return `https://vumbnail.com/${video.id}.jpg`;
+  return '';
+}
+
 function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: number; onClick: () => void }) {
   const [iframeReady, setIframeReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -33,8 +43,9 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
   const silentSrc = getSilentSrc(item);
   const youtubeCard = isYouTubeItem(item);
   const reversed = index % 2 !== 0;
+  const thumbnail = getThumbnail(item);
 
-  // Listen for YouTube onReady and trigger play — more reliable than onLoad timing
+  // Listen for YouTube onReady and trigger play
   useEffect(() => {
     if (!youtubeCard) return;
     function handleMessage(e: MessageEvent) {
@@ -50,11 +61,28 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
       } catch (_) {}
     }
     window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    // Fallback: show iframe after 3s even if onReady never fires
+    const fallback = setTimeout(() => setIframeReady(true), 3000);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearTimeout(fallback);
+    };
   }, [youtubeCard]);
 
   const videoEl = (
     <div className="relative w-full sm:w-3/4 aspect-video overflow-hidden shrink-0" style={{ background: '#000' }}>
+
+      {/* Thumbnail — visible while video loads */}
+      {thumbnail && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={thumbnail}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+          style={{ opacity: iframeReady ? 0 : 1 }}
+        />
+      )}
 
       {silentSrc && (
         <iframe
@@ -66,7 +94,6 @@ function FeaturedSection({ item, index, onClick }: { item: WorkItem; index: numb
           allowFullScreen
           title={item.title}
           onLoad={() => {
-            // Vimeo background mode autoplays on its own; YouTube relies on onReady listener above
             if (!youtubeCard) setIframeReady(true);
           }}
         />
