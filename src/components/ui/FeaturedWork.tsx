@@ -214,7 +214,7 @@ export default function FeaturedWork({ items }: Props) {
         </div>
       </div>
 
-      <VideoLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />
+      <VideoLightbox items={lightboxItem ? [lightboxItem] : []} index={lightboxItem ? 0 : null} onClose={() => setLightboxItem(null)} onNavigate={() => {}} />
     </>
   );
 }
