@@ -35,7 +35,7 @@ const PHOTO_FILTERS: { label: string; value: PhotoCategory }[] = [
   { label: 'Documentary', value: 'documentary' },
   { label: 'Performance', value: 'performance' },
   { label: 'Headshots',   value: 'headshots' },
-  { label: 'Portraiture', value: 'portraiture' },
+  { label: 'Portraits', value: 'portraiture' },
 ];
 
 type MediaType = 'video' | 'photo';
