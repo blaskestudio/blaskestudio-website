@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const HERO_ID = 'YuHRtvPb3es';
+const HERO_ID = '606Rf0aH9N0';
 
 const SILENT_SRC = `https://www.youtube.com/embed/${HERO_ID}?autoplay=1&mute=1&controls=0&loop=1&playlist=${HERO_ID}&modestbranding=1&rel=0&playsinline=1&disablekb=1&enablejsapi=1&iv_load_policy=3`;
 
