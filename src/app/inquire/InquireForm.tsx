@@ -109,7 +109,10 @@ export default function InquireForm() {
 
   if (submitted) {
     return (
-      <div className="py-20">
+      <div
+        className="flex flex-col justify-center"
+        style={{ minHeight: 'calc(100vh - var(--nav-height) - 4rem - 6rem)' }}
+      >
         <p className="text-sm tracking-[0.12em] uppercase text-black font-semibold mb-6">
           Received
         </p>
