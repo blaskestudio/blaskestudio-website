@@ -44,7 +44,7 @@ export default function HeroVideo() {
       <iframe
         ref={iframeRef}
         src={SILENT_SRC}
-        className="hero-video-iframe absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="hero-video-iframe absolute"
         style={{ border: 'none', pointerEvents: 'none' }}
         allow="autoplay; fullscreen"
         title="Blaske Studio reel"
