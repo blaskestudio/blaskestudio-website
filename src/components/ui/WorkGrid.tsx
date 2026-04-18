@@ -1,22 +1,12 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { WorkItem, WorkCategory, CATEGORY_LABELS } from '@/lib/types';
 import { PhotographyPhotosByCategory } from '@/lib/drive';
 import WorkCard from './WorkCard';
 import VideoLightbox from './VideoLightbox';
-
-// ── Fisher-Yates shuffle ───────────────────────────────────────
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 // ── Video filters ──────────────────────────────────────────────
 const VIDEO_FILTERS: { label: string; value: WorkCategory | 'all' | 'case-study'; slug: string }[] = [
@@ -175,7 +165,6 @@ export default function WorkGrid({
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const [photoLightboxIndex, setPhotoLightboxIndex] = useState<number | null>(null);
-  const [shuffledPhotoEntries, setShuffledPhotoEntries] = useState<{ src: string; key: string }[]>([]);
 
   const filteredVideo = (() => {
     const filtered = items.filter((item) => {
@@ -223,25 +212,17 @@ export default function WorkGrid({
     return () => document.removeEventListener('mousedown', handleOutside);
   }, [filterOpen]);
 
-  // Shuffle photos on mount and when filter changes — useLayoutEffect prevents
-  // a visible reorder flash (fires before browser paint, unlike useEffect)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    setShuffledPhotoEntries(shuffle(photoEntries));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePhotoFilter, drivePhotosByCategory]);
-
   // Photo lightbox keyboard navigation
   useEffect(() => {
     if (photoLightboxIndex === null) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setPhotoLightboxIndex(null);
       if (e.key === 'ArrowLeft') setPhotoLightboxIndex(i => (i !== null && i > 0) ? i - 1 : i);
-      if (e.key === 'ArrowRight') setPhotoLightboxIndex(i => (i !== null && i < shuffledPhotoEntries.length - 1) ? i + 1 : i);
+      if (e.key === 'ArrowRight') setPhotoLightboxIndex(i => (i !== null && i < photoEntries.length - 1) ? i + 1 : i);
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [photoLightboxIndex, shuffledPhotoEntries.length]);
+  }, [photoLightboxIndex, photoEntries.length]);
 
   const handleCardClick = useCallback(
     (item: WorkItem) => {
@@ -393,13 +374,13 @@ export default function WorkGrid({
       {/* ── Photo grid ───────────────────────────────────────── */}
       {mediaType === 'photo' && (
         <>
-          {shuffledPhotoEntries.length === 0 && (
+          {photoEntries.length === 0 && (
             <p className="text-base text-neutral-400 py-16">No photos yet in this category.</p>
           )}
 
           {/* Mobile / tablet (<lg): Instagram-style square tiles */}
           <div className="lg:hidden grid grid-cols-3 gap-0.5 -mx-[var(--page-gutter)]">
-            {shuffledPhotoEntries.slice(0, displayCount).map(({ src, key }, i) => (
+            {photoEntries.slice(0, displayCount).map(({ src, key }, i) => (
               <button
                 key={key}
                 className="aspect-[4/5] overflow-hidden block w-full p-0 border-0 bg-neutral-100 cursor-pointer"
@@ -414,7 +395,7 @@ export default function WorkGrid({
 
           {/* Desktop (lg+): masonry columns */}
           <div className="hidden lg:block columns-3 gap-2">
-            {shuffledPhotoEntries.slice(0, displayCount).map(({ src, key }, i) => (
+            {photoEntries.slice(0, displayCount).map(({ src, key }, i) => (
               <button
                 key={key}
                 className="break-inside-avoid block w-full p-0 border-0 bg-neutral-100 cursor-pointer mb-2"
@@ -426,14 +407,14 @@ export default function WorkGrid({
               </button>
             ))}
           </div>
-          {shuffledPhotoEntries.length > displayCount && (
+          {photoEntries.length > displayCount && (
             <LoadMore
               shown={displayCount}
-              total={shuffledPhotoEntries.length}
+              total={photoEntries.length}
               onLoad={() => setDisplayCount((n) => n + PAGE_SIZE)}
             />
           )}
-          {shuffledPhotoEntries.length > 0 && shuffledPhotoEntries.length <= displayCount && <div className="pb-24" />}
+          {photoEntries.length > 0 && photoEntries.length <= displayCount && <div className="pb-24" />}
 
           {/* ── Photo lightbox ───────────────────────────────── */}
           {photoLightboxIndex !== null && (
@@ -454,7 +435,7 @@ export default function WorkGrid({
 
               {/* Counter */}
               <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white text-[12px] tracking-[0.08em] uppercase font-medium opacity-50">
-                {photoLightboxIndex + 1} / {shuffledPhotoEntries.length}
+                {photoLightboxIndex + 1} / {photoEntries.length}
               </span>
 
               {/* Prev arrow */}
@@ -472,7 +453,7 @@ export default function WorkGrid({
               <div className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={shuffledPhotoEntries[photoLightboxIndex].src}
+                  src={photoEntries[photoLightboxIndex].src}
                   alt=""
                   className="max-w-full max-h-[85vh] object-contain"
                 />
@@ -480,8 +461,8 @@ export default function WorkGrid({
 
               {/* Next arrow */}
               <button
-                onClick={(e) => { e.stopPropagation(); setPhotoLightboxIndex(i => (i !== null && i < shuffledPhotoEntries.length - 1) ? i + 1 : i); }}
-                className={`absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-white transition-opacity duration-150 ${photoLightboxIndex === shuffledPhotoEntries.length - 1 ? 'opacity-20 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
+                onClick={(e) => { e.stopPropagation(); setPhotoLightboxIndex(i => (i !== null && i < photoEntries.length - 1) ? i + 1 : i); }}
+                className={`absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-white transition-opacity duration-150 ${photoLightboxIndex === photoEntries.length - 1 ? 'opacity-20 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                 aria-label="Next photo"
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

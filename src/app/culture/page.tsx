@@ -1,6 +1,15 @@
 import { getCulturePhotos } from '@/lib/drive';
 import CultureGallery from './CultureGallery';
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export const revalidate = 3600;
 
 export const metadata = {
@@ -9,7 +18,7 @@ export const metadata = {
 };
 
 export default async function CulturePage() {
-  const photos = await getCulturePhotos();
+  const photos = shuffle(await getCulturePhotos());
 
   return (
     <main className="flex flex-col">
