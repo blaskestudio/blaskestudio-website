@@ -94,8 +94,15 @@ export default function InquireForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    // TODO: wire up to a server action, Formspree, or Resend
-    await new Promise((r) => setTimeout(r, 800));
+    try {
+      await fetch('/api/inquire', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+    } catch (err) {
+      console.error('Inquiry submit error:', err);
+    }
     setLoading(false);
     setSubmitted(true);
   }
