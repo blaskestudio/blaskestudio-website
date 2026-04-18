@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { WorkItem, WorkCategory, CATEGORY_LABELS } from '@/lib/types';
@@ -223,8 +223,10 @@ export default function WorkGrid({
     return () => document.removeEventListener('mousedown', handleOutside);
   }, [filterOpen]);
 
-  // Shuffle photos on mount and when filter changes
-  useEffect(() => {
+  // Shuffle photos on mount and when filter changes — useLayoutEffect prevents
+  // a visible reorder flash (fires before browser paint, unlike useEffect)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
     setShuffledPhotoEntries(shuffle(photoEntries));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePhotoFilter, drivePhotosByCategory]);

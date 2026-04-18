@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import Image from 'next/image';
 
 interface DriveFile {
@@ -24,7 +24,7 @@ function shuffle<T>(arr: T[]): T[] {
 export default function CultureGallery({ photos }: Props) {
   const [displayed, setDisplayed] = useState<DriveFile[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setDisplayed(shuffle(photos));
   }, [photos]);
 
