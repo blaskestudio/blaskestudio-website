@@ -29,7 +29,12 @@ export default function HeroVideo() {
       } catch (_) {}
     }
     window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    // Fallback: show iframe after 3s even if onStateChange never fires
+    const fallback = setTimeout(() => setPlaying(true), 3000);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (
