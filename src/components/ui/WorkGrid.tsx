@@ -8,6 +8,16 @@ import { PhotographyPhotosByCategory } from '@/lib/drive';
 import WorkCard from './WorkCard';
 import VideoLightbox from './VideoLightbox';
 
+// ── Fisher-Yates shuffle ───────────────────────────────────────
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // ── Video filters ──────────────────────────────────────────────
 const VIDEO_FILTERS: { label: string; value: WorkCategory | 'all' | 'case-study'; slug: string }[] = [
   { label: 'All',          value: 'all',        slug: '' },
@@ -215,7 +225,7 @@ export default function WorkGrid({
 
   // Shuffle photos on mount and when filter changes
   useEffect(() => {
-    setShuffledPhotoEntries([...photoEntries].sort(() => Math.random() - 0.5));
+    setShuffledPhotoEntries(shuffle(photoEntries));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePhotoFilter, drivePhotosByCategory]);
 
@@ -378,10 +388,15 @@ export default function WorkGrid({
         </>
       )}
 
-      {/* ── Photo grid — Instagram-style square grid ─────────── */}
+      {/* ── Photo grid ───────────────────────────────────────── */}
       {mediaType === 'photo' && (
         <>
-          <div className="grid grid-cols-3 gap-0.5 -mx-[var(--page-gutter)] sm:mx-0">
+          {shuffledPhotoEntries.length === 0 && (
+            <p className="text-base text-neutral-400 py-16">No photos yet in this category.</p>
+          )}
+
+          {/* Mobile / tablet (<lg): Instagram-style square tiles */}
+          <div className="lg:hidden grid grid-cols-3 gap-0.5 -mx-[var(--page-gutter)]">
             {shuffledPhotoEntries.slice(0, displayCount).map(({ src, key }, i) => (
               <button
                 key={key}
@@ -390,17 +405,24 @@ export default function WorkGrid({
                 aria-label="View photo"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={src}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  loading={i < 9 ? 'eager' : 'lazy'}
-                />
+                <img src={src} alt="" className="w-full h-full object-cover" loading={i < 9 ? 'eager' : 'lazy'} />
               </button>
             ))}
-            {shuffledPhotoEntries.length === 0 && (
-              <p className="text-base text-neutral-400 col-span-3 py-16">No photos yet in this category.</p>
-            )}
+          </div>
+
+          {/* Desktop (lg+): masonry columns */}
+          <div className="hidden lg:block columns-3 gap-2">
+            {shuffledPhotoEntries.slice(0, displayCount).map(({ src, key }, i) => (
+              <button
+                key={key}
+                className="break-inside-avoid block w-full p-0 border-0 bg-neutral-100 cursor-pointer mb-2"
+                onClick={() => setPhotoLightboxIndex(i)}
+                aria-label="View photo"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt="" className="w-full h-auto block" loading={i < 9 ? 'eager' : 'lazy'} />
+              </button>
+            ))}
           </div>
           {shuffledPhotoEntries.length > displayCount && (
             <LoadMore

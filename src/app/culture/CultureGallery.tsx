@@ -12,12 +12,20 @@ interface Props {
   photos: DriveFile[];
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function CultureGallery({ photos }: Props) {
   const [displayed, setDisplayed] = useState<DriveFile[]>([]);
 
   useEffect(() => {
-    const shuffled = [...photos].sort(() => Math.random() - 0.5);
-    setDisplayed(shuffled);
+    setDisplayed(shuffle(photos));
   }, [photos]);
 
   if (displayed.length === 0) return null;
