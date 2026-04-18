@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
   const notionDbId = process.env.NOTION_DATABASE_ID;
   if (notionSecret && notionDbId) {
     try {
-      await fetch('https://api.notion.com/v1/pages', {
+      const notionRes = await fetch('https://api.notion.com/v1/pages', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${notionSecret}`,
@@ -84,16 +84,23 @@ export async function POST(req: NextRequest) {
             Email: { email: email },
             Company: { rich_text: [{ text: { content: company || '' } }] },
             Budget: { select: budget ? { name: budget } : null },
-            Timeline: { select: timeline ? { name: timeline } : null },
+            'Timeline ': { select: timeline ? { name: timeline } : null },
             Source: { select: source ? { name: source } : null },
             Project: { rich_text: [{ text: { content: project } }] },
           },
         }),
       });
+      if (!notionRes.ok) {
+        const body = await notionRes.json().catch(() => ({}));
+        console.error('Notion API error:', notionRes.status, JSON.stringify(body));
+        errors.push('notion');
+      }
     } catch (err) {
       console.error('Notion error:', err);
       errors.push('notion');
     }
+  } else {
+    console.error('Notion env vars missing — NOTION_SECRET:', !!notionSecret, 'NOTION_DATABASE_ID:', !!notionDbId);
   }
 
   return NextResponse.json({ ok: true, errors });
