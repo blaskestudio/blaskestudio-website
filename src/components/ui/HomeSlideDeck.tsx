@@ -164,7 +164,7 @@ function HeroSection({ ready }: { ready: boolean }) {
   const DURATION = '700ms';
 
   return (
-    <div className="w-full bg-black flex flex-col overflow-hidden sm:h-screen">
+    <div className="w-full bg-black flex flex-col overflow-hidden sm:min-h-screen">
       {/* Mobile: natural 16:9 height. sm+: fills remaining space so nav+video+statement = 100vh */}
       <div data-nav-theme="hero" className="relative overflow-hidden aspect-video sm:aspect-auto sm:flex-1">
         <HeroVideo />
@@ -172,7 +172,7 @@ function HeroSection({ ready }: { ready: boolean }) {
       {/* Studio statement — slides up from below on load */}
       <div
         data-nav-theme="light"
-        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 sm:gap-8 py-6 sm:py-8 md:py-0 md:h-[25vh]"
+        className="flex-none flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 sm:gap-8 py-6 sm:py-8 md:py-0 md:min-h-[25vh]"
         style={{
           paddingLeft: 'var(--page-gutter)',
           paddingRight: 'var(--page-gutter)',
@@ -180,7 +180,7 @@ function HeroSection({ ready }: { ready: boolean }) {
           transition: `transform ${DURATION} ${EASING}`,
         }}
       >
-        <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight max-w-5xl leading-tight text-white text-balance sm:text-pretty">
+        <h2 className="flex-1 min-w-0 text-2xl sm:text-[clamp(1.875rem,3vw,3rem)] font-bold tracking-tight leading-tight text-white sm:text-pretty">
           A full-service production studio.{' '}<br className="hidden sm:block" />Built on craft, collaboration, and story.
         </h2>
         <Link
